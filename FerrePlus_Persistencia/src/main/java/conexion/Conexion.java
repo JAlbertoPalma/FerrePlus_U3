@@ -92,8 +92,6 @@ public class Conexion {
             }catch(MongoException me){
                 System.out.println("Error al conectar MongoBD Atlas");
             }
-        }
-        
-        
+        } 
     }
 }
