@@ -15,6 +15,8 @@ import java.util.Date;
  * @author Beto_
  */
 public class FechaCvr {
+    //Ponía la hora a las 7 siempre, con esto debería funcionar
+    private static ZoneId sonoraZoneId = ZoneId.of("America/Hermosillo");
     
     /**
      * Convierte un java.time.LocalDate a java.util.Date.
@@ -61,8 +63,7 @@ public class FechaCvr {
         if (localDateTime == null) {
             return null;
         }
-        ZoneId defaultZoneId = ZoneId.systemDefault();
-        Instant instant = localDateTime.atZone(defaultZoneId).toInstant();
+        Instant instant = localDateTime.atZone(sonoraZoneId).toInstant();
         return Date.from(instant);
     }
 
@@ -73,12 +74,11 @@ public class FechaCvr {
      * @param date El objeto Date a convertir.
      * @return La fecha y hora LocalDateTime resultante, o null si date es null.
      */
-    public static LocalDateTime toDateTime(Date date) {
+    public static LocalDateTime toLocalDateTime(Date date) {
         if (date == null) {
-            return null;
+        return null;
         }
         Instant instant = date.toInstant();
-        ZoneId defaultZoneId = ZoneId.systemDefault();
-        return LocalDateTime.ofInstant(instant, defaultZoneId);
+        return LocalDateTime.ofInstant(instant, sonoraZoneId);
     }
 }

@@ -32,6 +32,15 @@ public class Compra implements Serializable{
         this.detalles = detalles;
     }
 
+    public Compra(ObjectId id, String folio, LocalDate fecha, Double total, String proveedor, List<DetalleCompra> detalles) {
+        this.id = id;
+        this.folio = folio;
+        this.fecha = fecha;
+        this.total = total;
+        this.proveedor = proveedor;
+        this.detalles = detalles;
+    }
+
     public ObjectId getId() {
         return id;
     }

@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
  */
 public class Venta implements Serializable{
     private ObjectId id;
+    private String folio;
     private LocalDate fechaHora;
     private Double total;
     private ObjectId idCaja;

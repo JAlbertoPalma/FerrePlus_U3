@@ -99,10 +99,7 @@ public class ProductoDAO implements IProductoDAO{
         }
         
         try{
-            //1. Le sacamos el id al producto del parámetro
-            ObjectId objectId = new ObjectId(producto.getId().toHexString());
-            
-            //2. Creamos el documento con los atributos del parámetro
+            //1. Creamos el documento con los atributos del parámetro
             Document document = new Document()
                     .append("SKU", producto.getSKU())
                     .append("nombre", producto.getNombre())
@@ -114,10 +111,10 @@ public class ProductoDAO implements IProductoDAO{
                     .append("estado", producto.getEstado())
                     .append("observaciones", producto.getObservaciones());
             
-            //3. Dentro de la colección reemplazamos con el id extraído el doc del producto a actualizar
-            collection.replaceOne(Filters.eq("_id", objectId), document);
+            //2. Dentro de la colección reemplazamos con el id extraído el doc del producto a actualizar
+            collection.replaceOne(Filters.eq("_id", producto.getId()), document);
             
-            //4. regresamos el mismo producto
+            //3. regresamos el mismo producto
             return producto;
         }catch(Exception e){
             throw new PersistenciaException("Error al actualizar el producto: " + e.getMessage());

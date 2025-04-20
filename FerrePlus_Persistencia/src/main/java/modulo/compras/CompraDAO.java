@@ -48,7 +48,7 @@ public class CompraDAO implements ICompraDAO{
             this.collection = database.getCollection("compras");
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
-            throw new PersistenciaException("Error construyendo ProductoDAO: " + e.getMessage());
+            throw new PersistenciaException("Error construyendo CompraDAO: " + e.getMessage());
         }
     }
     
@@ -58,7 +58,7 @@ public class CompraDAO implements ICompraDAO{
      *
      * @return La instancia única de CompraDAO
      * @throws excepciones.PersistenciaException si ocurre un error creando
-     * la instancia de ProductoDAO
+     * la instancia de compraDAO
      */
     public static CompraDAO getInstanceDAO() throws PersistenciaException {
         if (instanceCompraDAO == null) {
