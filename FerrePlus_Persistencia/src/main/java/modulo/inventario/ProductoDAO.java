@@ -190,6 +190,7 @@ public class ProductoDAO implements IProductoDAO{
             //1. Extraemos el documento con la coincidencia del SKU del parámetro
             Document document = collection.find(Filters.eq("SKU", sku)).first();
             
+            //2. retornamos el producto encontrado, nulo si no
             if(document != null){
                 return toProducto(document);
             } else{

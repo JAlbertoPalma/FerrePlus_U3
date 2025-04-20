@@ -15,19 +15,20 @@ import org.bson.types.ObjectId;
  */
 public class Compra implements Serializable{
     private ObjectId id;
+    private String folio;
     private LocalDate fecha;
     private Double total;
-    private ObjectId proveedorId;
+    private String proveedor;
     private List<DetalleCompra> detalles;
 
     public Compra() {
     }
 
-    public Compra(ObjectId id, LocalDate fecha, Double total, ObjectId proveedorId, List<DetalleCompra> detalles) {
-        this.id = id;
+    public Compra(String folio, LocalDate fecha, Double total, String proveedor, List<DetalleCompra> detalles) {
+        this.folio = folio;
         this.fecha = fecha;
         this.total = total;
-        this.proveedorId = proveedorId;
+        this.proveedor = proveedor;
         this.detalles = detalles;
     }
 
@@ -55,12 +56,12 @@ public class Compra implements Serializable{
         this.total = total;
     }
 
-    public ObjectId getProveedorId() {
-        return proveedorId;
+    public String getProveedor() {
+        return proveedor;
     }
 
-    public void setProveedorId(ObjectId proveedorId) {
-        this.proveedorId = proveedorId;
+    public void setProveedor(String proveedor) {
+        this.proveedor = proveedor;
     }
 
     public List<DetalleCompra> getDetalles() {
@@ -71,13 +72,21 @@ public class Compra implements Serializable{
         this.detalles = detalles;
     }
 
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
+    }
+
     @Override
     public String toString() {
-        return "Compra{" + "id=" + id + ", fecha=" + fecha + ", total=" + total + ", proveedorId=" + proveedorId + ", detalles=" + detalles + '}';
+        return "Compra{" + "id=" + id + ", folio=" + folio + ", fecha=" + fecha + ", total=" + total + ", proveedor=" + proveedor + ", detalles=" + detalles + '}';
     }
     
     public static class DetalleCompra implements Serializable {
-        private ObjectId productoId;
+        private ObjectId idProducto;
         private Integer cantidad;
         private Double precioDeCompra;
         private Double subtotal;
@@ -85,19 +94,19 @@ public class Compra implements Serializable{
         public DetalleCompra() {
         }
 
-        public DetalleCompra(ObjectId productoId, Integer cantidad, Double precioDeCompra, Double subtotal) {
-            this.productoId = productoId;
+        public DetalleCompra(ObjectId idProducto, Integer cantidad, Double precioDeCompra, Double subtotal) {
+            this.idProducto = idProducto;
             this.cantidad = cantidad;
             this.precioDeCompra = precioDeCompra;
             this.subtotal = subtotal;
         }
 
-        public ObjectId getProductoId() {
-            return productoId;
+        public ObjectId getIdProducto() {
+            return idProducto;
         }
 
-        public void setProductoId(ObjectId productoId) {
-            this.productoId = productoId;
+        public void setIdProducto(ObjectId idProducto) {
+            this.idProducto = idProducto;
         }
 
         public Integer getCantidad() {
@@ -126,7 +135,7 @@ public class Compra implements Serializable{
 
         @Override
         public String toString() {
-            return "DetalleCompra{" + "productoId=" + productoId + ", cantidad=" + cantidad + ", precioDeCompra=" + precioDeCompra + ", subtotal=" + subtotal + '}';
+            return "DetalleCompra{" + "idProducto=" + idProducto + ", cantidad=" + cantidad + ", precioDeCompra=" + precioDeCompra + ", subtotal=" + subtotal + '}';
         }
     }
 }

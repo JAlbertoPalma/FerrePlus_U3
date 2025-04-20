@@ -17,19 +17,10 @@ import modulo.inventario.ProductoDAO;
  *
  * @author Beto_
  */
-public class FerrePlus_Persistencia {
+public class PruebaProductos {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
-        MongoClient cliente1 = Conexion.getInstance().getMongoClient();
-        MongoDatabase mongobd1 = Conexion.getInstance().getDatabase();
-        
-        MongoClient cliente2 = Conexion.getInstance().getMongoClient();
-        MongoDatabase mongobd2 = Conexion.getInstance().getDatabase();
-        
-        System.out.println("Prueba de instancia de cliente única: " + (cliente1 == cliente2));
-        System.out.println("Prueba de instancia de bd única: " + (mongobd1 == mongobd2));
-        
         //0. Productos de prueba
          IProductoDAO productoDAO = null;
         try{
@@ -117,7 +108,7 @@ public class FerrePlus_Persistencia {
         //7. Eliminar un producto
         try{
             Boolean resultado = productoDAO.eliminar(producto2.getId().toHexString());
-            System.out.println("Eliminado: " + resultado);
+            System.out.println("7. Eliminado: " + resultado);
         }catch(PersistenciaException pe){
             System.out.println("7. Uhh algo salió mal");
         }
