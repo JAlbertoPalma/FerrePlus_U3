@@ -2,19 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modulo.compras;
+package modulo.ventas;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import conexion.Conexion;
 import conversores.FechaCvr;
-import entidades.Compra;
 import entidades.Producto;
+import entidades.Venta;
 import excepciones.PersistenciaException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -28,186 +29,202 @@ import org.bson.types.ObjectId;
  *
  * @author Beto_
  */
-public class CompraDAO implements ICompraDAO{
+public class VentaDAO implements IVentaDAO{
     private final MongoCollection<Document> collection;
     private IProductoDAO productoDAO;
     /**
-     * Instancia única de la clase CompraDAO (Patrón Singleton).
+     * Instancia única de la clase VentaDAO (Patrón Singleton).
      */
-    private static CompraDAO instanceCompraDAO;
+    private static VentaDAO instanceVentaDAO;
 
     /**
      * Constructor privado para evitar la instanciación directa desde fuera de la clase
      * (parte del Patrón Singleton).
      */
-    private CompraDAO() throws PersistenciaException{
+    private VentaDAO() throws PersistenciaException{
         try{
             Conexion conexion = Conexion.getInstance();
             MongoClient mongoClient = conexion.getMongoClient();
             MongoDatabase database = conexion.getDatabase();
-            this.collection = database.getCollection("compras");
+            this.collection = database.getCollection("ventas");
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
-            throw new PersistenciaException("Error construyendo CompraDAO: " + e.getMessage());
+            throw new PersistenciaException("Error construyendo VentaDAO: " + e.getMessage());
         }
     }
     
     /**
-     * Obtiene la instancia única de CompraDAO (Patrón Singleton).
+     * Obtiene la instancia única de VentaDAO (Patrón Singleton).
      * Si la instancia no existe, la crea.
      *
-     * @return La instancia única de CompraDAO
+     * @return La instancia única de VentaDAO
      * @throws excepciones.PersistenciaException si ocurre un error creando
-     * la instancia de compraDAO
+     * la instancia de VentaDAO
      */
-    public static CompraDAO getInstanceDAO() throws PersistenciaException {
-        if (instanceCompraDAO == null) {
-            instanceCompraDAO = new CompraDAO();
+    public static VentaDAO getInstanceDAO() throws PersistenciaException {
+        if (instanceVentaDAO == null) {
+            instanceVentaDAO = new VentaDAO();
         }
-        return instanceCompraDAO;
+        return instanceVentaDAO;
     }
-    
+
     @Override
-    public Compra agregar(Compra compra) throws PersistenciaException {
-        //0. Validamos compra no nula
-        if(compra == null){
-            throw new PersistenciaException("No se puede agregar una compra nula");
+    public Venta agregar(Venta venta) throws PersistenciaException {
+        //0. Validamos venta no nula
+        if(venta == null){
+            throw new PersistenciaException("No se puede agregar una venta nula");
         }
         try{
-            //1. Creamos le documento de la compra a agregar
+            //1. Creamos le documento de la venta a agregar
             Document document = new Document()
-                    .append("folio", compra.getFolio())
-                    .append("fecha", FechaCvr.toDate(compra.getFecha()))
-                    .append("total", compra.getTotal())
-                    .append("proveedor", compra.getProveedor());
+                    .append("folio", venta.getFolio())
+                    .append("fecha", FechaCvr.toDate(venta.getFechaHora()))
+                    .append("total", venta.getTotal())
+                    .append("estado", venta.getEstado())
+                    .append("idCaja", venta.getIdCaja());
             
-            //2 Creamos una lista de documentos donde guardaremos los detalles de la compra
+            //2 Creamos una lista de documentos donde guardaremos los detalles de la venta
             List<Document> listaDetallesDocuments = new ArrayList<>();
-            if(compra.getDetalles() != null){ 
-                for (Compra.DetalleCompra detalle : compra.getDetalles()) {
+            if(venta.getDetalles() != null){ 
+                for (Venta.DetalleVenta detalle : venta.getDetalles()) {
                     
                     //2.1 Sacamos el producto del detalle para trabajarlo
                     Producto producto = productoDAO.obtenerPorId(detalle.getIdProducto().toHexString());
                     
                     //2.2 Validamos el id del producto
                     if(producto == null){
-                        throw new PersistenciaException("Un producto del detalle de la compra no existe");
+                        throw new PersistenciaException("Un producto del detalle de la venta no existe");
                     }
                     
-                    //2.3 Actualizamos el precio referencial con el precio de compra
-                    if(!detalle.getPrecioDeCompra().equals(producto.getPrecioCompraReferencial())){
-                        producto.setPrecioCompraReferencial(detalle.getPrecioDeCompra());
-                        productoDAO.actualizar(producto);
-                    }
-                    
-                    //2.4 Actualizamos el stock, aumentando por la cantidad comprada
-                    producto.setStock(producto.getStock() + detalle.getCantidad());
+                    //2.4 Actualizamos el stock, disminuyendo por la cantidad vendida
+                    producto.setStock(producto.getStock() - detalle.getCantidad());
                     productoDAO.actualizar(producto);
                     
                     //2.5 Creamos un documento con la información del detalle y la añadimos a la lista
                     Document detalleDocument = new Document()
                             .append("idProducto", detalle.getIdProducto())
                             .append("cantidad", detalle.getCantidad())
-                            .append("precioDeCompra", detalle.getPrecioDeCompra())
+                            .append("descuento", detalle.getDescuento())
                             .append("subtotal", detalle.getSubtotal());
                     listaDetallesDocuments.add(detalleDocument);
                 }
             }
             
-            //3. Añadimos la lista de documentos de detalles a la compra
+            //3. Añadimos la lista de documentos de detalles a la venta
             document.append("detalles", listaDetallesDocuments);
             
             //4. Insertamos el documento
             collection.insertOne(document);
             
-            //5. Extraemos le id de la inserción del documento y se lo ponemos a la compra
-            compra.setId(document.getObjectId("_id"));
+            //5. Extraemos el id de la inserción del documento y se lo ponemos a la venta
+            venta.setId(document.getObjectId("_id"));
             
-            //6. Regresamos la compra ya con el id
-            return compra;
+            //6. Regresamos la venta ya con el id
+            return venta;
         }catch(PersistenciaException pe){
-            throw new PersistenciaException("Error al agregar detalles de compra: " + pe.getMessage());
+            throw new PersistenciaException("Error al agregar detalles de venta: " + pe.getMessage());
         }catch(Exception e){
-            throw new PersistenciaException("Error al agregar la compra: " + e.getMessage());
+            throw new PersistenciaException("Error al agregar la venta: " + e.getMessage());
         }
     }
 
     @Override
-    public Compra actualizar(Compra compra) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public boolean eliminar(String id) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Compra obtenerPorId(String id) throws PersistenciaException {
-        //0. Validar id nulo
-        if(id == null || id.length() <= 0){
-            throw new PersistenciaException("No se puede obtener una compra con id nulo");
+    public Venta cancelar(String id) throws PersistenciaException {
+        if(id == null){
+            throw new PersistenciaException("No se puede cancelar con id nulo");
         }
         try{
-            //1. Creamos el objectId con el parametro
-            ObjectId objectId = new ObjectId(id);
+            Venta venta = obtenerPorId(id);
+            //0. Validamos caja existente
+            if(venta == null){
+                throw new PersistenciaException("No se encontró la venta en los registros");
+            }
+            
+            //1. Combinamos el estado de la venta, cambiandolo a false, osea cancelado
+            collection.updateOne(
+                Filters.eq("_id", venta.getId()),
+                Updates.set("estado", false)
+            );
+            
+            //2. Regresamos la caja con el cambio
+            venta.setEstado(false);
+            return venta;
+            
+        }catch(PersistenciaException e){
+            throw new PersistenciaException(e.getMessage());
+        }catch(Exception e){
+            throw new PersistenciaException("Error al cerrar la caja: " + e.getMessage());
+        }
+    }
 
-            //2. Obtenemos el documento de compra obtenido por el id
+    @Override
+    public Venta obtenerPorId(String id) throws PersistenciaException {
+        //0. Vlidar id nulo
+        if(id == null){
+            throw new PersistenciaException("No se puede obtener una sesión de caja con id nulo");
+        }
+        
+        try{
+            //1. Creamos el objectId con el id del parametro
+            Object objectId = new ObjectId(id);
+            
+            //2. Obtenemos el documento de la sesión de caja con el id
             Document document = collection.find(Filters.eq("_id", objectId)).first();
-
-            //3. Retornamos la compra encontrada, nulo si no
+            
+            //3. Retornamos la sesión de caja encontrada, nulo si no
             if(document != null){
-                return toCompra(document);
+                return toVenta(document);
             }else{
                 return null;
             }
+            
         }catch(IllegalArgumentException iae){
             throw new PersistenciaException("Id inválido: " + id);
         }catch(Exception e){
-            throw new PersistenciaException("Error al obtener la compra por Id: " + e.getMessage());
+            throw new PersistenciaException("Error al obtener la sesión de caja por Id: " + e.getMessage());
         }
     }
 
     @Override
-    public Compra obtenerPorFolio(String folio) throws PersistenciaException {
+    public Venta obtenerPorFolio(String folio) throws PersistenciaException {
         //0. Validar id nulo
         if(folio == null || folio.length() <= 0){
-            throw new PersistenciaException("No se puede obtener una compra con folio nulo");
+            throw new PersistenciaException("No se puede obtener una venta con folio nulo");
         }
         try{
             
-            //1. Obtenemos el documento de compra obtenido por el id
+            //1. Obtenemos el documento de venta obtenido por el id
             Document document = collection.find(Filters.eq("folio", folio)).first();
 
-            //2. Retornamos la compra encontrada, nulo si no
+            //2. Retornamos la venta encontrada, nulo si no
             if(document != null){
-                return toCompra(document);
+                return toVenta(document);
             }else{
                 return null;
             }
         }catch(Exception e){
-            throw new PersistenciaException("Error al obtener la compra por folio: " + e.getMessage());
+            throw new PersistenciaException("Error al obtener la venta por folio: " + e.getMessage());
         }
     }
 
     @Override
-    public List<Compra> obtenerTodas() throws PersistenciaException {
-        List<Compra> compras = new ArrayList<>();
+    public List<Venta> obtenerTodas() throws PersistenciaException {
+        List<Venta> ventas = new ArrayList<>();
         try{
             collection.find().forEach(document -> {
-            compras.add(toCompra(document));
+            ventas.add(toVenta(document));
         });
         
-            return compras;
+            return ventas;
         }catch(Exception e){
-            throw new PersistenciaException("Error al obtener todas las compras" + e.getMessage());
+            throw new PersistenciaException("Error al obtener todas las ventas" + e.getMessage());
         }
     }
 
     @Override
-    public List<Compra> obtenerPorFiltros(LocalDate fechaInicio, LocalDate fechaFin, String proveedor, String nombreProducto) throws PersistenciaException {
-        //Lista de compras filtradas
-        List<Compra> compras = new ArrayList<>();
+    public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String proveedor, String nombreProducto, Boolean estado) throws PersistenciaException {
+        //Lista de ventas filtradas
+        List<Venta> ventas = new ArrayList<>();
         
         /**
          * Lista de pipeline para construír las etapas de 
@@ -241,19 +258,24 @@ public class CompraDAO implements ICompraDAO{
                 Pattern patternProveedor = Pattern.compile(".*" + proveedor + ".*", Pattern.CASE_INSENSITIVE);
                 pipeline.add(Aggregates.match(Filters.regex("proveedor", patternProveedor)));
             }
+            
+            //3. Agregamos el siguiente filtro, true para confirmado, false para cancelado
+            if(estado != null){
+                pipeline.add(Aggregates.match(Filters.eq("estado", estado)));
+            }
 
             /**
              * Se utiliza $lookup para crear una especie de "JOIN" y extraer el nombre del id
-             * del producto que esta en el detalle dentro de compra ya que en el detalle
+             * del producto que esta en el detalle dentro de venta ya que en el detalle
              * no se encuentra, así que hay que accder a él mediante una unión
              */ 
             if(nombreProducto != null && !nombreProducto.isEmpty()){
                 Pattern patternProducto = Pattern.compile(".*" + nombreProducto + ".*", Pattern.CASE_INSENSITIVE);
                 pipeline.add(Aggregates.lookup("productos", //from: la colección con la que uniremos
-                                               "detalles.idProducto", //localField: el atributo de compras que esta dentro del arreglo de detalles
+                                               "detalles.idProducto", //localField: el atributo de ventas que esta dentro del arreglo de detalles
                                                "_id", //el atributo de productos con el que vamos a unir
                                                "infoProductos")); //as: Foreignfield: El nuevo arreglo de los documentos unidos
-                //Filtramos las compras donde hay almenos una coincidencia
+                //Filtramos las ventas donde hay almenos una coincidencia
                 //del nombre dentro de sus detalles
                 pipeline.add(Aggregates.match(Filters.elemMatch("infoProductos", Filters.regex("nombre", patternProducto))));
             }
@@ -269,22 +291,22 @@ public class CompraDAO implements ICompraDAO{
              */
             try(var cursor = collection.aggregate(pipeline).iterator()){
                 while(cursor.hasNext()){
-                    //Por cada coincidencia se van añadiendo a las compras filtradas
+                    //Por cada coincidencia se van añadiendo a las ventas filtradas
                     Document doc = cursor.next();
-                    compras.add(toCompra(doc));
+                    ventas.add(toVenta(doc));
                 }
-                //Regresamos las compras filtradas
-                return compras;
+                //Regresamos las ventas filtradas
+                return ventas;
             }catch(Exception e){
-                throw new PersistenciaException("Error al obtener compras por filtro (lookup): " + e.getMessage());
+                throw new PersistenciaException("Error al obtener ventas por filtro (lookup): " + e.getMessage());
             }
         }catch(Exception e){
-            throw new PersistenciaException("Error al obtener compras por filtro. " + e.getMessage());
+            throw new PersistenciaException("Error al obtener ventas por filtro. " + e.getMessage());
         }
     }
 
     @Override
-    public List<Compra.DetalleCompra> obtenerDetalles(String id) throws PersistenciaException {
+    public List<Venta.DetalleVenta> obtenerDetalles(String id) throws PersistenciaException {
         //0. validamos id no nulo
         if(id == null || id.length() <= 0){
             throw new PersistenciaException("No se puede obtener detalles de un id nulo");
@@ -303,36 +325,36 @@ public class CompraDAO implements ICompraDAO{
             }
             
             //4. Retornamos la lista de detalles
-            return toCompra(document).getDetalles();
+            return toVenta(document).getDetalles();
         }catch(IllegalArgumentException iae){
             throw new PersistenciaException("Id inválido: " + id);
         }catch(Exception e){
-            throw new PersistenciaException("Error al obtener los detalles de la compra: " + e.getMessage());
+            throw new PersistenciaException("Error al obtener los detalles de la venta: " + e.getMessage());
         }
     }
     
-    private Compra toCompra(Document document){
-        Compra compra = new Compra();
-        compra.setId(document.getObjectId("_id"));
-        compra.setFolio(document.getString("folio"));
-        compra.setFecha(FechaCvr.toLocalDate(document.getDate("fecha")));
-        compra.setTotal(document.getDouble("total"));
-        compra.setProveedor(document.getString("proveedor"));
+    private Venta toVenta(Document document) {
+        Venta venta = new Venta();
+        venta.setId(document.getObjectId("_id"));
+        venta.setFolio(document.getString("folio"));
+        venta.setFechaHora(FechaCvr.toLocalDateTime(document.getDate("fechaHora")));
+        venta.setTotal(document.getDouble("total"));
+        venta.setEstado(document.getBoolean("estado"));
+        venta.setIdCaja(document.getObjectId("idCaja"));
 
         List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
-        List<Compra.DetalleCompra> detallesCompraList = new ArrayList<>();
+        List<Venta.DetalleVenta> detallesVentaList = new ArrayList<>();
         if (detallesDocumentList != null) {
             for (Document detalleDoc : detallesDocumentList) {
-                Compra.DetalleCompra detalle = new Compra.DetalleCompra();
+                Venta.DetalleVenta detalle = new Venta.DetalleVenta();
                 detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
                 detalle.setCantidad(detalleDoc.getInteger("cantidad"));
-                detalle.setPrecioDeCompra(detalleDoc.getDouble("precioDeCompra"));
+                detalle.setDescuento(detalleDoc.getDouble("descuento"));
                 detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
-                detallesCompraList.add(detalle);
+                detallesVentaList.add(detalle);
             }
         }
-        compra.setDetalles(detallesCompraList);
-        return compra;
+        venta.setDetalles(detallesVentaList);
+        return venta;
     }
-    
 }

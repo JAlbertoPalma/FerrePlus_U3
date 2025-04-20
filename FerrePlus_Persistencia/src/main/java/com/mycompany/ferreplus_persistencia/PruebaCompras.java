@@ -39,12 +39,12 @@ public class PruebaCompras {
                 new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 2, 15.0, 30.0),
                 new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 1, 15.0, 15.0)
         );
-        Compra compra1 = new Compra("OBSON1", LocalDate.now(), 45.0, "Distribuidora del Norte", detalles1);
+        Compra compra1 = new Compra("COBSON1", LocalDate.now(), 45.0, "Distribuidora del Norte", detalles1);
         
         List<Compra.DetalleCompra> detalles2 = Arrays.asList(
                 new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 5, 15.0, 75.0)
         );
-        Compra compra2 = new Compra("OBSON2", LocalDate.now(), 75.0, "Distribuidora del Norte", detalles2);
+        Compra compra2 = new Compra("COBSON2", LocalDate.now(), 75.0, "Distribuidora del Norte", detalles2);
         
         //1. Agregar dos compras
 //        try{
@@ -65,7 +65,7 @@ public class PruebaCompras {
         
         //3. buscar por folio
         try{
-            Compra compra = compraDAO.obtenerPorFolio("OBSON2");
+            Compra compra = compraDAO.obtenerPorFolio("COBSON2");
             System.out.println("3. Encontrada compra: " + compra.getFolio());
         }catch(PersistenciaException pe){
             System.out.println("3. Error al obtener por folio");
@@ -90,7 +90,6 @@ public class PruebaCompras {
             System.out.println("6. Encontrada compra: " + compraDAO.obtenerDetalles("680442066ac1cb0f1d865599"));
         }catch(PersistenciaException pe){
             System.out.println("6. Error al obtener todas");
-        } 
-        
+        }
     }
 }

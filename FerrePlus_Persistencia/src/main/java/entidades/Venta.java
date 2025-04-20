@@ -6,6 +6,8 @@ package entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -16,25 +18,39 @@ import org.bson.types.ObjectId;
 public class Venta implements Serializable{
     private ObjectId id;
     private String folio;
-    private LocalDate fechaHora;
+    private LocalDateTime fechaHora;
     private Double total;
+    private Boolean estado;
     private ObjectId idCaja;
     private List<DetalleVenta> detalles;
 
     public Venta() {
+        this.detalles = new ArrayList<>();
     }
 
-    public Venta(LocalDate fechaHora, Double total, ObjectId idCaja, List<DetalleVenta> detalles) {
+    public Venta(String folio, LocalDateTime fechaHora, Double total, ObjectId idCaja) {
+        this.folio = folio;
         this.fechaHora = fechaHora;
         this.total = total;
+        this.idCaja = idCaja;
+        this.detalles = new ArrayList<>();
+    }
+
+    public Venta(String folio, LocalDateTime fechaHora, Double total, ObjectId idCaja, List<DetalleVenta> detalles) {
+        this.folio = folio;
+        this.fechaHora = fechaHora;
+        this.total = total;
+        this.estado = true;
         this.idCaja = idCaja;
         this.detalles = detalles;
     }
 
-    public Venta(ObjectId id, LocalDate fechaHora, Double total, ObjectId idCaja, List<DetalleVenta> detalles) {
+    public Venta(ObjectId id, String folio, LocalDateTime fechaHora, Double total, Boolean estado, ObjectId idCaja, List<DetalleVenta> detalles) {
         this.id = id;
+        this.folio = folio;
         this.fechaHora = fechaHora;
         this.total = total;
+        this.estado = estado;
         this.idCaja = idCaja;
         this.detalles = detalles;
     }
@@ -47,11 +63,19 @@ public class Venta implements Serializable{
         this.id = id;
     }
 
-    public LocalDate getFechaHora() {
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
+    }
+
+    public LocalDateTime getFechaHora() {
         return fechaHora;
     }
 
-    public void setFechaHora(LocalDate fechaHora) {
+    public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
     }
 
@@ -63,11 +87,19 @@ public class Venta implements Serializable{
         this.total = total;
     }
 
-    public ObjectId getCajaId() {
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public ObjectId getIdCaja() {
         return idCaja;
     }
 
-    public void setCajaId(ObjectId idCaja) {
+    public void setIdCaja(ObjectId idCaja) {
         this.idCaja = idCaja;
     }
 
@@ -81,23 +113,23 @@ public class Venta implements Serializable{
 
     @Override
     public String toString() {
-        return "Venta{" + "id=" + id + ", fechaHora=" + fechaHora + ", total=" + total + ", idCaja=" + idCaja + ", detalles=" + detalles + '}';
+        return "Venta{" + "id=" + id + ", folio=" + folio + ", fechaHora=" + fechaHora + ", total=" + total + ", estado=" + estado + ", idCaja=" + idCaja + ", detalles=" + detalles + '}';
     }
     
     public static class DetalleVenta implements Serializable{
         private ObjectId idProducto;
         private Integer cantidad;
-        private Double subtotal;
         private Double descuento;
+        private Double subtotal;
 
         public DetalleVenta() {
         }
 
-        public DetalleVenta(ObjectId idProducto, Integer cantidad, Double subtotal, Double descuento) {
+        public DetalleVenta(ObjectId idProducto, Integer cantidad, Double descuento, Double subtotal) {
             this.idProducto = idProducto;
             this.cantidad = cantidad;
-            this.subtotal = subtotal;
             this.descuento = descuento;
+            this.subtotal = subtotal;
         }
 
         public ObjectId getIdProducto() {

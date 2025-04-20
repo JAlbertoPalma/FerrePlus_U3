@@ -6,6 +6,7 @@ package entidades;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -22,8 +23,17 @@ public class Compra implements Serializable{
     private List<DetalleCompra> detalles;
 
     public Compra() {
+        this.detalles = new ArrayList<>();
     }
 
+    public Compra(String folio, LocalDate fecha, Double total, String proveedor) {
+        this.folio = folio;
+        this.fecha = fecha;
+        this.total = total;
+        this.proveedor = proveedor;
+        this.detalles = new ArrayList<>();
+    }
+    
     public Compra(String folio, LocalDate fecha, Double total, String proveedor, List<DetalleCompra> detalles) {
         this.folio = folio;
         this.fecha = fecha;
