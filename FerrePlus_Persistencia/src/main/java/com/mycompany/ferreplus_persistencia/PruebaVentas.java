@@ -36,15 +36,15 @@ public class PruebaVentas {
         
         //0. ventas de prueba
         List<Venta.DetalleVenta> detalles1 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("6803305d2f6b9d23e6e6d754"), 2, 10.0, 90.0),
-                new Venta.DetalleVenta(new ObjectId("6803305d2f6b9d23e6e6d754"), 1, 0.0, 50.0)
+                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 2, 10.0, 90.0), //directo de la bd
+                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 1, 0.0, 50.0) //directo de la bd
         );
-        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("6804a8e57e3c6229336358e4"), detalles1);
+        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("68060fd3184e5e29873b6788"), detalles1); //directo de la bd
         
         List<Venta.DetalleVenta> detalles2 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("6803305d2f6b9d23e6e6d754"), 1, 20.0, 5.0)
+                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 1, 20.0, 5.0) //directo de la bd
         );
-        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("6804a8e57e3c6229336358e4"), detalles2);
+        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("68060fd3184e5e29873b6788"), detalles2); //directo de la bd
         
         //1. Agregar dos compras
         try{
@@ -80,7 +80,7 @@ public class PruebaVentas {
         
         //5. obtener por filtro
         try{
-            System.out.println("5. Encontradas: " + ventaDAO.obtenerPorFiltros(null, null, null, null, null).size());
+            System.out.println("5. Encontradas: " + ventaDAO.obtenerPorFiltros(null, null, null, null, true).size());
         }catch(PersistenciaException pe){
             System.out.println("5. Error al obtener por filtro");
         }  

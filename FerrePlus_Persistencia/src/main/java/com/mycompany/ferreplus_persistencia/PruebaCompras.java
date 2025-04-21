@@ -36,28 +36,28 @@ public class PruebaCompras {
         
         //0. Compras de prueba
         List<Compra.DetalleCompra> detalles1 = Arrays.asList(
-                new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 2, 15.0, 30.0),
-                new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 1, 15.0, 15.0)
+                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 2, 15.0, 30.0),
+                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 1, 15.0, 15.0)
         );
         Compra compra1 = new Compra("COBSON1", LocalDate.now(), 45.0, "Distribuidora del Norte", detalles1);
         
         List<Compra.DetalleCompra> detalles2 = Arrays.asList(
-                new Compra.DetalleCompra(new ObjectId("6803305d2f6b9d23e6e6d754"), 5, 15.0, 75.0)
+                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 5, 15.0, 75.0) //este id lo tomé directo de la bd
         );
         Compra compra2 = new Compra("COBSON2", LocalDate.now(), 75.0, "Distribuidora del Norte", detalles2);
         
         //1. Agregar dos compras
-//        try{
-//            compraDAO.agregar(compra1);
-//            compraDAO.agregar(compra2);
-//            System.out.println("1. Compras agregadas!");
-//        }catch(PersistenciaException pe){
-//            System.out.println("1. Error al agregar");
-//        }
+        try{
+            compra1 = compraDAO.agregar(compra1);
+            compra2 = compraDAO.agregar(compra2);
+            System.out.println("1. Compras agregadas!");
+        }catch(PersistenciaException pe){
+            System.out.println("1. Error al agregar");
+        }
         
         //2. buscar compra por id
         try{
-            Compra compra = compraDAO.obtenerPorId("680442066ac1cb0f1d865599");
+            Compra compra = compraDAO.obtenerPorId(compra1.getId().toHexString());
             System.out.println("2. Encontrada compra: " + compra.getFolio());
         }catch(PersistenciaException pe){
             System.out.println("2. Error al obtener por id");
@@ -65,7 +65,7 @@ public class PruebaCompras {
         
         //3. buscar por folio
         try{
-            Compra compra = compraDAO.obtenerPorFolio("COBSON2");
+            Compra compra = compraDAO.obtenerPorFolio(compra2.getFolio());
             System.out.println("3. Encontrada compra: " + compra.getFolio());
         }catch(PersistenciaException pe){
             System.out.println("3. Error al obtener por folio");
@@ -87,7 +87,7 @@ public class PruebaCompras {
         
         //6. obtener detalles
         try{
-            System.out.println("6. Encontrada compra: " + compraDAO.obtenerDetalles("680442066ac1cb0f1d865599"));
+            System.out.println("6. Encontrados detalles: " + compraDAO.obtenerDetalles(compra1.getId().toHexString()));
         }catch(PersistenciaException pe){
             System.out.println("6. Error al obtener todas");
         }

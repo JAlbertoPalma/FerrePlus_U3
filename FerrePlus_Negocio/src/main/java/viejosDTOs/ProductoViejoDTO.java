@@ -2,18 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package entidades;
+package viejosDTOs;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import org.bson.types.ObjectId;
 
 /**
  *
  * @author Beto_
  */
-public class Producto implements Serializable{
-    private ObjectId id;
+public class ProductoViejoDTO {
+    private String id;
     private String SKU;
     private String nombre;
     private String categoria;
@@ -26,24 +24,10 @@ public class Producto implements Serializable{
     private Boolean estado;
     private String observaciones;
 
-    public Producto() {
-    }
-    
-    public Producto(String SKU, String nombre, String categoria, String unidadMedida, Double precioCompraReferencial, Double precioVenta, String proveedor, Integer stock, LocalDateTime fechaHoraAlta, Boolean estado, String observaciones) {
-        this.SKU = SKU;
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.unidadMedida = unidadMedida;
-        this.precioCompraReferencial = precioCompraReferencial;
-        this.precioVenta = precioVenta;
-        this.proveedor = proveedor;
-        this.stock = stock;
-        this.fechaHoraAlta = fechaHoraAlta;
-        this.estado = estado;
-        this.observaciones = observaciones;
+    public ProductoViejoDTO() {
     }
 
-    public Producto(ObjectId id, String SKU, String nombre, String categoria, String unidadMedida, Double precioCompraReferencial, Double precioVenta, String proveedor, Integer stock, LocalDateTime fechaHoraAlta, Boolean estado, String observaciones) {
+    public ProductoViejoDTO(String id, String SKU, String nombre, String categoria, String unidadMedida, Double precioCompraReferencial, Double precioVenta, String proveedor, Integer stock, LocalDateTime fechaHoraAlta, Boolean estado, String observaciones) {
         this.id = id;
         this.SKU = SKU;
         this.nombre = nombre;
@@ -58,11 +42,11 @@ public class Producto implements Serializable{
         this.observaciones = observaciones;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -156,6 +140,6 @@ public class Producto implements Serializable{
 
     @Override
     public String toString() {
-        return "Producto{" + "id=" + id + ", SKU=" + SKU + ", nombre=" + nombre + ", categoria=" + categoria + ", unidadMedida=" + unidadMedida + ", precioCompraReferencial=" + precioCompraReferencial + ", precioVenta=" + precioVenta + ", proveedor=" + proveedor + ", stock=" + stock + ", fechaHoraAlta=" + fechaHoraAlta + ", estado=" + estado + ", observaciones=" + observaciones + '}';
+        return "ProductoViejoDTO{" + "id=" + id + ", SKU=" + SKU + ", nombre=" + nombre + ", categoria=" + categoria + ", unidadMedida=" + unidadMedida + ", precioCompraReferencial=" + precioCompraReferencial + ", precioVenta=" + precioVenta + ", proveedor=" + proveedor + ", stock=" + stock + ", fechaHoraAlta=" + fechaHoraAlta + ", estado=" + estado + ", observaciones=" + observaciones + '}';
     }
 }

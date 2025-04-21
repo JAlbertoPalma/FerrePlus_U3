@@ -85,7 +85,7 @@ public class VentaDAO implements IVentaDAO{
             
             //2 Creamos una lista de documentos donde guardaremos los detalles de la venta
             List<Document> listaDetallesDocuments = new ArrayList<>();
-            if(venta.getDetalles() != null){ 
+            if(venta.getDetalles() != null){
                 for (Venta.DetalleVenta detalle : venta.getDetalles()) {
                     
                     //2.1 Sacamos el producto del detalle para trabajarlo
@@ -108,6 +108,8 @@ public class VentaDAO implements IVentaDAO{
                             .append("subtotal", detalle.getSubtotal());
                     listaDetallesDocuments.add(detalleDocument);
                 }
+            }else{
+                throw new PersistenciaException("No se puede crear una venta sin productos");
             }
             
             //3. Añadimos la lista de documentos de detalles a la venta

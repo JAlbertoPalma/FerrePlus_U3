@@ -112,6 +112,8 @@ public class CompraDAO implements ICompraDAO{
                             .append("subtotal", detalle.getSubtotal());
                     listaDetallesDocuments.add(detalleDocument);
                 }
+            }else{
+                throw new PersistenciaException("No se puede crear una compra sin productos");
             }
             
             //3. Añadimos la lista de documentos de detalles a la compra

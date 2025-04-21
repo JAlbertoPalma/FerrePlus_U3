@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import conexion.Conexion;
+import conversores.FechaCvr;
 import entidades.Producto;
 import excepciones.PersistenciaException;
 import java.util.ArrayList;
@@ -71,10 +72,12 @@ public class ProductoDAO implements IProductoDAO{
                     .append("SKU", producto.getSKU())
                     .append("nombre", producto.getNombre())
                     .append("categoria", producto.getCategoria())
+                    .append("unidadMedida", producto.getUnidadMedida())
                     .append("precio_Compra_Referencial", producto.getPrecioCompraReferencial())
                     .append("precio_venta", producto.getPrecioVenta())
                     .append("proveedor", producto.getProveedor())
                     .append("stock", producto.getStock())
+                    .append("fechaHoraAlta", FechaCvr.toDate(producto.getFechaHoraAlta()))
                     .append("estado", producto.getEstado())
                     .append("observaciones", producto.getObservaciones());
             
@@ -104,10 +107,12 @@ public class ProductoDAO implements IProductoDAO{
                     .append("SKU", producto.getSKU())
                     .append("nombre", producto.getNombre())
                     .append("categoria", producto.getCategoria())
+                    .append("unidadMedida", producto.getUnidadMedida())
                     .append("precio_Compra_Referencial", producto.getPrecioCompraReferencial())
                     .append("precio_venta", producto.getPrecioVenta())
                     .append("proveedor", producto.getProveedor())
                     .append("stock", producto.getStock())
+                    .append("fechaHoraAlta", FechaCvr.toDate(producto.getFechaHoraAlta()))
                     .append("estado", producto.getEstado())
                     .append("observaciones", producto.getObservaciones());
             
@@ -268,12 +273,14 @@ public class ProductoDAO implements IProductoDAO{
         producto.setSKU(document.getString("SKU"));
         producto.setNombre(document.getString("nombre"));
         producto.setCategoria(document.getString("categoria"));
+        producto.setUnidadMedida(document.getString("unidadMedida"));
         producto.setPrecioCompraReferencial(document.getDouble("precio_compra_referencial"));
         producto.setPrecioVenta(document.getDouble("precio_venta"));
         producto.setProveedor(document.getString("proveedor"));
         producto.setObservaciones(document.getString("observaciones"));
         producto.setStock(document.getInteger("stock"));
         producto.setEstado(document.getBoolean("estado"));
+        producto.setFechaHoraAlta(FechaCvr.toLocalDateTime(document.getDate("fechaHoraAlta")));
         return producto;
     }
     

@@ -44,6 +44,15 @@ public class Venta implements Serializable{
         this.idCaja = idCaja;
         this.detalles = detalles;
     }
+    
+    public Venta(String folio, LocalDateTime fechaHora, Double total, Boolean estado, ObjectId idCaja, List<DetalleVenta> detalles) {
+        this.folio = folio;
+        this.fechaHora = fechaHora;
+        this.total = total;
+        this.estado = estado;
+        this.idCaja = idCaja;
+        this.detalles = detalles;
+    }
 
     public Venta(ObjectId id, String folio, LocalDateTime fechaHora, Double total, Boolean estado, ObjectId idCaja, List<DetalleVenta> detalles) {
         this.id = id;

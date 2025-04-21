@@ -4,11 +4,10 @@
 
 package com.mycompany.ferreplus_persistencia;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import conexion.Conexion;
 import entidades.Producto;
 import excepciones.PersistenciaException;
+import java.time.LocalDateTime;
 import java.util.List;
 import modulo.inventario.IProductoDAO;
 import modulo.inventario.ProductoDAO;
@@ -31,11 +30,11 @@ public class PruebaProductos {
         
         Producto producto1 = new Producto(
         "001", "Clavos", "General", "Kilos", 13.0, 50.0, 
-        "Herreros Fregones OBSON", 50, true, "Nadap");
+        "Herreros Fregones OBSON", 50, LocalDateTime.now(), true, "Nadap");
         
         Producto producto2 = new Producto(
         "002", "Tornillos", "General", "Kilos", 10.0, 45.0, 
-        "Herreros Fregones OBSON", 40, true, "Nadaa");
+        "Herreros Fregones OBSON", 40, LocalDateTime.now(), true, "Nadaa");
         
         //1. Crear dos productos
         try{
