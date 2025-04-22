@@ -7,7 +7,11 @@ package viejosDTOs;
 import java.time.LocalDateTime;
 
 /**
- *
+ * /**
+ * Data Transfer Object (DTO) que representa la información completa de un producto,
+ * incluyendo su identificador único (`id`).
+ * Se utiliza para transferir datos de productos existentes entre las capas de la aplicación.
+ * 
  * @author Beto_
  */
 public class ProductoViejoDTO {

@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Data Transfer Object (DTO) para registrar una nueva compra.
+ * Contiene la información necesaria para crear una compra,
+ * incluyendo el folio, fecha, total, proveedor y la lista de detalles
+ * de los productos que se están comprando.
+ * 
  * @author Beto_
  */
 public class CompraNuevoDTO {

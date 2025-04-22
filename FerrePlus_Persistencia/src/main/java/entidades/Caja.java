@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa una sesión de caja en el sistema.
+ * Contiene información sobre la apertura, resumen de ventas y cierre de la caja,
+ * incluyendo montos inicial y final estimados, estado de la sesión y observaciones.
  * @author Beto_
  */
 public class Caja implements Serializable{

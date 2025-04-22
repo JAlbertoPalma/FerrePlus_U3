@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Data Transfer Object (DTO) que contiene la información completa de una compra,
+ * incluyendo su identificador único y la lista de detalles de los productos comprados.
+ * Se utiliza para transferir datos de compras existentes entre las capas de la aplicación.
+ * 
  * @author Beto_
  */
 public class CompraViejoDTO {

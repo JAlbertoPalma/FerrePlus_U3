@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Data Transfer Object (DTO) para registrar una nueva venta.
+ * Contiene la información necesaria para crear una venta,
+ * incluyendo el folio, fecha y hora, total, estado, la ID de la caja
+ * y la lista de detalles de los productos que se están vendiendo.
+ * 
  * @author Beto_
  */
 public class VentaNuevoDTO {

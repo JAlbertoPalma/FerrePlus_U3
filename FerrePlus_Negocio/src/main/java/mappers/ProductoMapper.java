@@ -13,11 +13,22 @@ import org.bson.types.ObjectId;
 import viejosDTOs.ProductoViejoDTO;
 
 /**
- *
+ * Clase utilitaria para la conversión entre la entidad {@link Producto}
+ * y sus respectivos Data Transfer Objects (DTOs): {@link ProductoViejoDTO}
+ * y {@link ProductoNuevoDTO}. Esta clase proporciona métodos estáticos
+ * para facilitar la transformación de datos entre las capas de la aplicación.
+ * 
  * @author Beto_
  */
 public class ProductoMapper {
-    // Convierte una entidad Producto a un ProductoViejoDTO
+    
+    /**
+     * Convierte una entidad {@link Producto} a un {@link ProductoViejoDTO}.
+     * Si la entidad Producto es nula, retorna nulo.
+     *
+     * @param producto La entidad Producto a convertir.
+     * @return Un nuevo ProductoViejoDTO con los datos de la entidad, o nulo si la entidad es nula.
+     */
     public static ProductoViejoDTO toViejoDTO(Producto producto) {
         if (producto == null) {
             return null;
@@ -39,7 +50,15 @@ public class ProductoMapper {
         );
     }
 
-    // Convierte un ProductoViejoDTO a una entidad Producto
+    /**
+     * Convierte un {@link ProductoViejoDTO} a una entidad {@link Producto}.
+     * Si el DTO es nulo, retorna nulo. Intenta convertir el ID del DTO
+     * a un {@link ObjectId}; si falla, imprime la traza de la excepción
+     * y el ID de la entidad Producto será nulo.
+     *
+     * @param dto El ProductoViejoDTO a convertir.
+     * @return Una nueva entidad Producto con los datos del DTO, o nulo si el DTO es nulo.
+     */
     public static Producto toEntity(ProductoViejoDTO dto) {
         if (dto == null) {
             return null;
@@ -69,7 +88,14 @@ public class ProductoMapper {
         );
     }
 
-    // Convierte un ProductoNuevoDTO a una entidad Producto
+    /**
+     * Convierte un {@link ProductoNuevoDTO} a una entidad {@link Producto}.
+     * Si el DTO es nulo, retorna nulo. La fecha y hora de alta se establece
+     * a la fecha y hora actual del sistema, y el estado se establece a true por defecto.
+     *
+     * @param dto El ProductoNuevoDTO a convertir.
+     * @return Una nueva entidad Producto con los datos del DTO, o nulo si el DTO es nulo.
+     */
     public static Producto toEntity(ProductoNuevoDTO dto) {
         if (dto == null) {
             return null;
@@ -89,7 +115,14 @@ public class ProductoMapper {
         );
     }
     
-    // Convierte una lista de entidades Producto a una lista de ProductoViejoDTO
+    /**
+     * Convierte una lista de entidades {@link Producto} a una lista de {@link ProductoViejoDTO}.
+     * Si la lista de productos es nula o vacía, retorna una lista vacía.
+     *
+     * @param productos La lista de entidades Producto a convertir.
+     * @return Una nueva lista de ProductoViejoDTOs con los datos de las entidades,
+     * o una lista vacía si la lista de productos es nula o vacía.
+     */
     public static List<ProductoViejoDTO> toViejoDTOList(List<Producto> productos) {
         List<ProductoViejoDTO> dtos = new ArrayList<>();
         if (productos != null && !productos.isEmpty()) {
@@ -100,7 +133,14 @@ public class ProductoMapper {
         return dtos;
     }
 
-    // Convierte una lista de ProductoViejoDTO a una lista de entidades Producto
+    /**
+     * Convierte una lista de {@link ProductoViejoDTO} a una lista de entidades {@link Producto}.
+     * Si la lista de DTOs es nula o vacía, retorna una lista vacía.
+     *
+     * @param dtos La lista de ProductoViejoDTOs a convertir.
+     * @return Una nueva lista de entidades Producto con los datos de los DTOs,
+     * o una lista vacía si la lista de DTOs es nula o vacía.
+     */
     public static List<Producto> toEntityList(List<ProductoViejoDTO> dtos) {
         List<Producto> productos = new ArrayList<>();
         if (dtos != null && !dtos.isEmpty()) {

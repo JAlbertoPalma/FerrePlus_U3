@@ -37,10 +37,19 @@ public class Conexion {
         return SingletonHelper.INSTANCE;
     }
     
+    /**
+     * Método de acceso para el cliente de Mongo
+     * @return El cliente de MongoDB
+     */
     public MongoClient getMongoClient() {
         return SingletonHelper.mongoClient;
     }
-
+    
+    /**
+     * Se obtiene la base de datos a manejar
+     * en este caso, la de FerrePlus
+     * @return La base de datos utilizada
+     */
     public MongoDatabase getDatabase() {
         return SingletonHelper.database;
     }

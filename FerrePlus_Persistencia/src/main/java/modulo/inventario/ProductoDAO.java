@@ -20,7 +20,10 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Implementación de la interfaz {@link IProductoDAO} para la gestión de productos
+ * utilizando la base de datos MongoDB. Esta clase sigue el patrón Singleton
+ * para asegurar una única instancia de acceso a los datos de los productos.
+ * 
  * @author Beto_
  */
 public class ProductoDAO implements IProductoDAO{
@@ -30,9 +33,11 @@ public class ProductoDAO implements IProductoDAO{
      */
     private static ProductoDAO instanceProductoDAO;
 
-    /**
+     /**
      * Constructor privado para evitar la instanciación directa desde fuera de la clase
      * (parte del Patrón Singleton).
+     *
+     * @throws PersistenciaException Si ocurre un error al establecer la conexión con la base de datos.
      */
     private ProductoDAO() throws PersistenciaException{
         try{
@@ -50,7 +55,7 @@ public class ProductoDAO implements IProductoDAO{
      * Si la instancia no existe, la crea.
      *
      * @return La instancia única de ProductoDAO
-     * @throws excepciones.PersistenciaException si ocurre un error creando
+     * @throws PersistenciaException si ocurre un error creando
      * la instancia de ProductoDAO
      */
     public static ProductoDAO getInstanceDAO() throws PersistenciaException {
@@ -60,6 +65,9 @@ public class ProductoDAO implements IProductoDAO{
         return instanceProductoDAO;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Producto agregar(Producto producto) throws PersistenciaException {
         //0. Validamos producto no nulo
@@ -93,7 +101,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al agregar el producto: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Producto actualizar(Producto producto) throws PersistenciaException {
         //0. Validamos producto no nulo
@@ -125,7 +136,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al actualizar el producto: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean eliminar(String id) throws PersistenciaException {
         //0. validamos id no nulo
@@ -154,7 +168,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al eliminar el producto: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Producto obtenerPorId(String id) throws PersistenciaException {
         //0. validamos id no nulo
@@ -180,7 +197,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al obtener el producto por Id: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Producto obtenerPorSKU(String sku) throws PersistenciaException {
         //0. validamos SKU no nulo
@@ -202,7 +222,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al obtener producto por SKU: " + sku);
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Producto> obtenerTodos() throws PersistenciaException {
         List<Producto> productos = new ArrayList<>();
@@ -216,7 +239,10 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al obtener todos los productos: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Producto> obtenerPorFiltros(String sku, String categoria, Boolean estado) throws PersistenciaException {
         //Lista de productos filtrados

@@ -26,7 +26,10 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Implementación de la interfaz {@link IVentaDAO} para la gestión de ventas
+ * utilizando la base de datos MongoDB. Esta clase sigue el patrón Singleton
+ * para asegurar una única instancia de acceso a los datos de las ventas.
+ * 
  * @author Beto_
  */
 public class VentaDAO implements IVentaDAO{
@@ -40,6 +43,9 @@ public class VentaDAO implements IVentaDAO{
     /**
      * Constructor privado para evitar la instanciación directa desde fuera de la clase
      * (parte del Patrón Singleton).
+     * 
+     * @throws PersistenciaException Si ocurre un error al establecer la conexión con la base de datos
+     * o al obtener la instancia de {@link ProductoDAO}.
      */
     private VentaDAO() throws PersistenciaException{
         try{
@@ -67,7 +73,10 @@ public class VentaDAO implements IVentaDAO{
         }
         return instanceVentaDAO;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Venta agregar(Venta venta) throws PersistenciaException {
         //0. Validamos venta no nula
@@ -129,7 +138,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al agregar la venta: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Venta cancelar(String id) throws PersistenciaException {
         if(id == null){
@@ -158,7 +170,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al cerrar la caja: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Venta obtenerPorId(String id) throws PersistenciaException {
         //0. Vlidar id nulo
@@ -186,7 +201,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al obtener la sesión de caja por Id: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Venta obtenerPorFolio(String folio) throws PersistenciaException {
         //0. Validar id nulo
@@ -208,7 +226,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al obtener la venta por folio: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Venta> obtenerTodas() throws PersistenciaException {
         List<Venta> ventas = new ArrayList<>();
@@ -222,7 +243,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al obtener todas las ventas" + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String proveedor, String nombreProducto, Boolean estado) throws PersistenciaException {
         //Lista de ventas filtradas
@@ -306,7 +330,10 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al obtener ventas por filtro. " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Venta.DetalleVenta> obtenerDetalles(String id) throws PersistenciaException {
         //0. validamos id no nulo
@@ -335,6 +362,12 @@ public class VentaDAO implements IVentaDAO{
         }
     }
     
+    /**
+     * Método auxiliar para transformar un documento de MongoDB a una entidad Venta.
+     *
+     * @param document El documento de MongoDB a transformar.
+     * @return La entidad Venta correspondiente, incluyendo sus detalles.
+     */
     private Venta toVenta(Document document) {
         Venta venta = new Venta();
         venta.setId(document.getObjectId("_id"));

@@ -25,7 +25,10 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Implementación de la interfaz {@link ICompraDAO} para la gestión de compras
+ * utilizando la base de datos MongoDB. Esta clase sigue el patrón Singleton
+ * para asegurar una única instancia de acceso a los datos de las compras.
+ * 
  * @author Beto_
  */
 public class CompraDAO implements ICompraDAO{
@@ -39,6 +42,9 @@ public class CompraDAO implements ICompraDAO{
     /**
      * Constructor privado para evitar la instanciación directa desde fuera de la clase
      * (parte del Patrón Singleton).
+     * 
+     * @throws PersistenciaException Si ocurre un error al establecer la conexión con la base de datos
+     * o al obtener la instancia de {@link ProductoDAO}.
      */
     private CompraDAO() throws PersistenciaException{
         try{
@@ -57,7 +63,7 @@ public class CompraDAO implements ICompraDAO{
      * Si la instancia no existe, la crea.
      *
      * @return La instancia única de CompraDAO
-     * @throws excepciones.PersistenciaException si ocurre un error creando
+     * @throws PersistenciaException si ocurre un error creando
      * la instancia de compraDAO
      */
     public static CompraDAO getInstanceDAO() throws PersistenciaException {
@@ -67,6 +73,9 @@ public class CompraDAO implements ICompraDAO{
         return instanceCompraDAO;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Compra agregar(Compra compra) throws PersistenciaException {
         //0. Validamos compra no nula
@@ -133,17 +142,26 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al agregar la compra: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Compra actualizar(Compra compra) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean eliminar(String id) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Compra obtenerPorId(String id) throws PersistenciaException {
         //0. Validar id nulo
@@ -169,7 +187,10 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al obtener la compra por Id: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Compra obtenerPorFolio(String folio) throws PersistenciaException {
         //0. Validar id nulo
@@ -191,7 +212,10 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al obtener la compra por folio: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Compra> obtenerTodas() throws PersistenciaException {
         List<Compra> compras = new ArrayList<>();
@@ -205,7 +229,10 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al obtener todas las compras" + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Compra> obtenerPorFiltros(LocalDate fechaInicio, LocalDate fechaFin, String proveedor, String nombreProducto) throws PersistenciaException {
         //Lista de compras filtradas
@@ -284,7 +311,10 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al obtener compras por filtro. " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Compra.DetalleCompra> obtenerDetalles(String id) throws PersistenciaException {
         //0. validamos id no nulo
@@ -313,6 +343,12 @@ public class CompraDAO implements ICompraDAO{
         }
     }
     
+    /**
+     * Método auxiliar para transformar un documento de MongoDB a una entidad Compra.
+     *
+     * @param document El documento de MongoDB a transformar.
+     * @return La entidad Compra correspondiente, incluyendo sus detalles.
+     */
     private Compra toCompra(Document document){
         Compra compra = new Compra();
         compra.setId(document.getObjectId("_id"));
@@ -336,5 +372,4 @@ public class CompraDAO implements ICompraDAO{
         compra.setDetalles(detallesCompraList);
         return compra;
     }
-    
 }

@@ -7,7 +7,10 @@ package nuevosDTOs;
 import java.time.LocalDateTime;
 
 /**
- *
+ * Data Transfer Object (DTO) para la creación de un nuevo producto.
+ * Contiene la información necesaria para registrar un producto en el sistema,
+ * sin incluir el identificador único generado por la base de datos
+ * 
  * @author Beto_
  */
 public class ProductoNuevoDTO {
@@ -22,7 +25,8 @@ public class ProductoNuevoDTO {
     private LocalDateTime fechaHoraAlta;
     private Boolean estado;
     private String observaciones;
-
+    
+    
     public ProductoNuevoDTO() {
     }
 

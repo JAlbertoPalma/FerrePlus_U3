@@ -7,7 +7,10 @@ package viejosDTOs;
 import java.time.LocalDateTime;
 
 /**
- *
+ * Data Transfer Object (DTO) que contiene la información completa de una caja,
+ * incluyendo su identificador único y las fechas y montos de apertura y cierre.
+ * Se utiliza para transferir datos de cajas existentes entre las capas de la aplicación.
+ * 
  * @author Beto_
  */
 public class CajaViejoDTO {

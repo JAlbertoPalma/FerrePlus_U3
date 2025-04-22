@@ -12,7 +12,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa una venta realizada en el sistema.
+ * Contiene información sobre el folio, fecha y hora de la venta, total, estado (activa/cancelada),
+ * el ID de la caja en la que se realizó la venta y una lista de los detalles de la venta
+ * (los productos vendidos).
  * @author Beto_
  */
 public class Venta implements Serializable{
@@ -125,6 +128,11 @@ public class Venta implements Serializable{
         return "Venta{" + "id=" + id + ", folio=" + folio + ", fechaHora=" + fechaHora + ", total=" + total + ", estado=" + estado + ", idCaja=" + idCaja + ", detalles=" + detalles + '}';
     }
     
+    /**
+     * Representa la información detallada de un producto dentro de una venta.
+     * Incluye el ID del producto vendido, la cantidad, el descuento aplicado
+     * y el subtotal correspondiente a ese detalle.
+     */
     public static class DetalleVenta implements Serializable{
         private ObjectId idProducto;
         private Integer cantidad;

@@ -11,7 +11,9 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Representa una compra realizada a un proveedor.
+ * Contiene información sobre el folio, fecha de la compra, total, proveedor
+ * y una lista de los detalles de la compra (los productos adquiridos).
  * @author Beto_
  */
 public class Compra implements Serializable{
@@ -104,6 +106,11 @@ public class Compra implements Serializable{
         return "Compra{" + "id=" + id + ", folio=" + folio + ", fecha=" + fecha + ", total=" + total + ", proveedor=" + proveedor + ", detalles=" + detalles + '}';
     }
     
+    /**
+     * Representa la información detallada de un producto dentro de una compra.
+     * Incluye el ID del producto, la cantidad comprada, el precio de compra unitario
+     * y el subtotal correspondiente a ese detalle.
+     */
     public static class DetalleCompra implements Serializable {
         private ObjectId idProducto;
         private Integer cantidad;

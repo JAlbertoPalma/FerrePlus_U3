@@ -17,7 +17,10 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
- *
+ * Implementación de la interfaz {@link ICajaDAO} para la gestión de sesiones de caja
+ * utilizando la base de datos MongoDB. Esta clase sigue el patrón Singleton
+ * para asegurar una única instancia de acceso a los datos de las sesiones de caja.
+ * 
  * @author Beto_
  */
 public class CajaDAO implements ICajaDAO{
@@ -30,6 +33,8 @@ public class CajaDAO implements ICajaDAO{
     /**
      * Constructor privado para evitar la instanciación directa desde fuera de la clase
      * (parte del Patrón Singleton).
+     * 
+     * @throws PersistenciaException Si ocurre un error al establecer la conexión con la base de datos.
      */
     private CajaDAO() throws PersistenciaException{
         try{
@@ -47,7 +52,7 @@ public class CajaDAO implements ICajaDAO{
      * Si la instancia no existe, la crea.
      *
      * @return La instancia única de CajaDAO
-     * @throws excepciones.PersistenciaException si ocurre un error creando
+     * @throws PersistenciaException si ocurre un error creando
      * la instancia de CajaDAO
      */
     public static CajaDAO getInstanceDAO() throws PersistenciaException {
@@ -56,7 +61,10 @@ public class CajaDAO implements ICajaDAO{
         }
         return instanceCajaDAO;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Caja abrir(Caja caja) throws PersistenciaException {
         //0. Validamos caja no nula
@@ -86,7 +94,10 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("Error al abrir la caja: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Caja cerrar(Caja caja) throws PersistenciaException {
         //0. Validamos cajas abiertas
@@ -129,6 +140,9 @@ public class CajaDAO implements ICajaDAO{
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean actualizarResumenVentas(ObjectId id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws PersistenciaException{
         try {
@@ -149,7 +163,10 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("Error al actualizar el resumen de ventas de la caja: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Caja obtenerPorId(String id) throws PersistenciaException {
         //0. Vlidar id nulo
@@ -177,7 +194,10 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("Error al obtener la sesión de caja por Id: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Caja obtenerSesionActiva() throws PersistenciaException {
         try{
@@ -194,7 +214,13 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("Error al obtener la sesión de caja activa: " + e.getMessage());
         }
     }
-    
+    /**
+     * Método auxiliar para transformar un documento de MongoDB a una entidad Caja.
+     *
+     * @param document El documento de MongoDB a transformar.
+     * @return La entidad Caja correspondiente.
+     * @throws PersistenciaException Si ocurre un error durante la transformación de fechas.
+     */
     private Caja toCaja(Document document) throws PersistenciaException {
         if (document == null) {
             return null;

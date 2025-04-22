@@ -5,7 +5,10 @@
 package nuevosDTOs;
 
 /**
- *
+ * Data Transfer Object (DTO) para la apertura de una nueva caja.
+ * Contiene la información necesaria para iniciar una sesión de caja,
+ * como el monto inicial. Otros detalles se gestionan al momento de la apertura.
+ * 
  * @author Beto_
  */
 public class CajaNuevoDTO {
