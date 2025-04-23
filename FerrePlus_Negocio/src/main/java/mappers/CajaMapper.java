@@ -7,9 +7,9 @@ package mappers;
 import entidades.Caja;
 import java.util.ArrayList;
 import java.util.List;
-import nuevosDTOs.CajaNuevoDTO;
+import BO.CajaNuevoDTO;
 import org.bson.types.ObjectId;
-import viejosDTOs.CajaViejoDTO;
+import DTO.CajaViejoDTO;
 
 /**
  * Clase utilitaria para la conversión entre la entidad {@link Caja}

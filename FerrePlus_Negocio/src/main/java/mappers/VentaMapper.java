@@ -7,9 +7,9 @@ package mappers;
 import entidades.Venta;
 import java.util.List;
 import java.util.stream.Collectors;
-import nuevosDTOs.VentaNuevoDTO;
+import BO.VentaNuevoDTO;
 import org.bson.types.ObjectId;
-import viejosDTOs.VentaViejoDTO;
+import DTO.VentaViejoDTO;
 
 /**
  * Clase utilitaria para la conversión entre la entidad {@link Venta}
