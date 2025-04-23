@@ -77,4 +77,12 @@ public interface IProductoDAO {
      * @throws PersistenciaException Si ocurre un error durante la persistencia.
      */
     public List<Producto> obtenerPorFiltros(String sku, String categoria, Boolean estado) throws PersistenciaException;
+    /**
+     * Obtiene un producto del sistema basado en su nombre.
+     *
+     * @param nombre El nombre del producto a buscar.
+     * @return El producto encontrado, o `null` si no existe.
+     * @throws PersistenciaException Si ocurre un error durante la persistencia.
+     */
+    public Producto obtenerPorNombre(String nombre) throws PersistenciaException;
 }

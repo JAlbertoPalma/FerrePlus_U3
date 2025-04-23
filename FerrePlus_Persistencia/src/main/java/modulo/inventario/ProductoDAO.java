@@ -222,6 +222,27 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("Error al obtener producto por SKU: " + sku);
         }
     }
+    @Override
+    public Producto obtenerPorNombre(String nombre) throws PersistenciaException {
+        //0. validamos SKU no nulo
+        if(nombre == null || nombre.length() <= 0){
+            throw new PersistenciaException("No se puede buscar un producto con sku nulo");
+        }
+        
+        try{
+            //1. Extraemos el documento con la coincidencia del SKU del parámetro
+            Document document = collection.find(Filters.eq("nombre", nombre)).first();
+            
+            //2. retornamos el producto encontrado, nulo si no
+            if(document != null){
+                return toProducto(document);
+            } else{
+                return null;
+            }
+        }catch(Exception e){
+            throw new PersistenciaException("Error al obtener producto por nombre: " + nombre);
+        }
+    }
     
     /**
      * {@inheritDoc}
