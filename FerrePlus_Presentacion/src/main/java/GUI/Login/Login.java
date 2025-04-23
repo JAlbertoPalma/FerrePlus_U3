@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.ferreplus_presentacion;
+package GUI.Login;
 
+import Control.ControlGUI;
 import modulo.inventario.*;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -13,7 +14,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Beto_
+ * @author joelr
  */
 public class Login extends javax.swing.JFrame {
 
@@ -45,7 +46,6 @@ public class Login extends javax.swing.JFrame {
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(850, 700));
         setSize(new java.awt.Dimension(600, 600));
         addWindowStateListener(new java.awt.event.WindowStateListener() {
             public void windowStateChanged(java.awt.event.WindowEvent evt) {
@@ -80,6 +80,11 @@ public class Login extends javax.swing.JFrame {
         jButtonSalir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonSalir.setText("Salir");
         jButtonSalir.setPreferredSize(new java.awt.Dimension(130, 45));
+        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalirActionPerformed(evt);
+            }
+        });
         pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 210, 120, 32));
 
         jButtonIngresar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -124,7 +129,11 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "Debe escribir un usuario");
         } else if (this.txtContrasena.getText().isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Debe escribir una contraseña");
+        }else{
+            ControlGUI.getInstancia().mostrarMenuPrincipal();
+            this.dispose();
         }
+        
     }//GEN-LAST:event_jButtonIngresarActionPerformed
 
     private void pnlFormularioComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnlFormularioComponentResized
@@ -138,6 +147,11 @@ public class Login extends javax.swing.JFrame {
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
+        this.dispose();
+        System.exit(0);
+    }//GEN-LAST:event_jButtonSalirActionPerformed
     // Escuchamos cuando se cambia el tamaño de la ventana
 
     public void componentResized(ComponentEvent e) {

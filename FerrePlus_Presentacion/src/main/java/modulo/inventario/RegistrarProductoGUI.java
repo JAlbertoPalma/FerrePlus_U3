@@ -30,7 +30,6 @@ public class RegistrarProductoGUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         pnlFormulario = new javax.swing.JPanel();
         lblSKU = new javax.swing.JLabel();
@@ -45,113 +44,78 @@ public class RegistrarProductoGUI extends javax.swing.JFrame {
         jComboBox2 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        lblSKU3 = new javax.swing.JLabel();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(760, 600));
+        setSize(new java.awt.Dimension(750, 600));
 
         pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
-        java.awt.GridBagLayout pnlFormularioLayout = new java.awt.GridBagLayout();
-        pnlFormularioLayout.columnWidths = new int[] {0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0, 20, 0};
-        pnlFormularioLayout.rowHeights = new int[] {0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0, 15, 0};
-        pnlFormularioLayout.columnWeights = new double[] {0.0};
-        pnlFormularioLayout.rowWeights = new double[] {0.0};
-        pnlFormulario.setLayout(pnlFormularioLayout);
+        pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblSKU.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblSKU.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSKU.setText("SKU:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 10, 20, 10);
-        pnlFormulario.add(lblSKU, gridBagConstraints);
+        pnlFormulario.add(lblSKU, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 90, -1));
 
         lblNombre.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNombre.setText("Nombre:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.insets = new java.awt.Insets(20, 10, 20, 10);
-        pnlFormulario.add(lblNombre, gridBagConstraints);
+        pnlFormulario.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, -1, -1));
 
         lblPrecio.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblPrecio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblPrecio.setText("Precio:");
         lblPrecio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 10, 20, 10);
-        pnlFormulario.add(lblPrecio, gridBagConstraints);
+        pnlFormulario.add(lblPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 150, 94, -1));
 
         lblSKU1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblSKU1.setText("Categoría");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 26;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 50, 0, 0);
-        pnlFormulario.add(lblSKU1, gridBagConstraints);
+        lblSKU1.setText("Categoría:");
+        pnlFormulario.add(lblSKU1, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 50, -1, -1));
 
         lblSKU2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblSKU2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSKU2.setText("Unidad de medida");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 26;
-        gridBagConstraints.gridy = 10;
-        gridBagConstraints.insets = new java.awt.Insets(0, 50, 0, 0);
-        pnlFormulario.add(lblSKU2, gridBagConstraints);
+        lblSKU2.setText("De medida:");
+        pnlFormulario.add(lblSKU2, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, -1, -1));
 
+        txtSKU.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtSKU.setPreferredSize(new java.awt.Dimension(200, 50));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
-        gridBagConstraints.gridy = 4;
-        pnlFormulario.add(txtSKU, gridBagConstraints);
+        pnlFormulario.add(txtSKU, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 60, 120, 22));
 
+        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtNombre.setPreferredSize(new java.awt.Dimension(200, 50));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
-        gridBagConstraints.gridy = 8;
-        pnlFormulario.add(txtNombre, gridBagConstraints);
+        pnlFormulario.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 110, 120, 22));
 
         txtPrecio.setPreferredSize(new java.awt.Dimension(200, 50));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
-        gridBagConstraints.gridy = 12;
-        pnlFormulario.add(txtPrecio, gridBagConstraints);
+        pnlFormulario.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 160, 120, 22));
 
         jComboBox1.setPreferredSize(new java.awt.Dimension(150, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 26;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 50, 0, 0);
-        pnlFormulario.add(jComboBox1, gridBagConstraints);
+        pnlFormulario.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 60, 110, 22));
 
         jComboBox2.setPreferredSize(new java.awt.Dimension(150, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 26;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.insets = new java.awt.Insets(0, 50, 0, 0);
-        pnlFormulario.add(jComboBox2, gridBagConstraints);
+        pnlFormulario.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 140, 110, 22));
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButton1.setText("Cancelar");
         jButton1.setPreferredSize(new java.awt.Dimension(130, 45));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 36;
-        pnlFormulario.add(jButton1, gridBagConstraints);
+        pnlFormulario.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, 100, 32));
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButton2.setText("Confirmar");
         jButton2.setPreferredSize(new java.awt.Dimension(130, 45));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 32;
-        gridBagConstraints.gridy = 36;
-        pnlFormulario.add(jButton2, gridBagConstraints);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        pnlFormulario.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 220, 111, 32));
+
+        lblSKU3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblSKU3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSKU3.setText("Unidad");
+        pnlFormulario.add(lblSKU3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 120, 120, -1));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
@@ -171,6 +135,10 @@ public class RegistrarProductoGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -217,6 +185,7 @@ public class RegistrarProductoGUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblSKU;
     private javax.swing.JLabel lblSKU1;
     private javax.swing.JLabel lblSKU2;
+    private javax.swing.JLabel lblSKU3;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel pnlFormulario;
     private javax.swing.JPanel pnlTitulo;
