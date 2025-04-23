@@ -6,13 +6,15 @@ package Control;
 
 import BO.ProductoBO;
 import DTO.ProductoDTO;
-import GUI.Login.Login;
+import GUI.Login.frmLogin;
+import GUI.Login.frmMenuPrincipal;
 import GUI.Login.frmMenuPrincipal;
 import Interfaces.IProductoBO;
 import excepciones.NegocioException;
 import java.util.List;
 import javax.swing.JOptionPane;
-import modulo.inventario.RegistrarProductoGUI;
+import modulo.inventario.frmMenuInventario;
+import modulo.inventario.frmRegistrarProducto;
 
 /**
  * Clase central que gestiona la navegación entre las interfaces gráficas del
@@ -24,16 +26,17 @@ import modulo.inventario.RegistrarProductoGUI;
  * @author joelr
  */
 public class ControlGUI {
-
+    
     private static ControlGUI instancia;
-    private Login login;
+    private frmLogin login;
     private frmMenuPrincipal menuPrincipal;
-    private RegistrarProductoGUI registrarProducto;
+    private frmRegistrarProducto registrarProducto;
+    private frmMenuInventario menuInventario;
     private IProductoBO producto = new ProductoBO();
-
+    
     public ControlGUI() {
     }
-
+    
     public static ControlGUI getInstancia() {
         if (instancia == null) {
             instancia = new ControlGUI();
@@ -46,7 +49,7 @@ public class ControlGUI {
      */
     public void mostrarLogin() {
         if (this.login == null) {
-            this.login = new Login();
+            this.login = new frmLogin();
             login.setLocationRelativeTo(null);
         }
         this.login.setVisible(true);
@@ -67,72 +70,110 @@ public class ControlGUI {
     Metodo para mostrar el frm Registrar Producto.
      */
     public void mostrarRegistrarProducto() {
-        this.registrarProducto = new RegistrarProductoGUI();
+        this.registrarProducto = new frmRegistrarProducto();
         this.registrarProducto.setLocationRelativeTo(null);
         this.registrarProducto.setVisible(true);
     }
 
+    public void mostrarMenuProducto() {
+        this.menuInventario = new frmMenuInventario();
+        this.menuInventario.setLocationRelativeTo(null);
+        this.menuInventario.setVisible(true);
+    }
+    
     public ProductoDTO crearProductoDTO(String SKU, String nombre, String categoria, String unidadMedida, String precioCompraReferencial, String precioVenta, String proveedor, String stock, String observaciones) {
-        ProductoDTO dto = new ProductoDTO(SKU, nombre, categoria, unidadMedida, Double.parseDouble(precioCompraReferencial), Double.parseDouble(precioVenta), proveedor, Integer.parseInt(stock), observaciones);
+        Double precioCompra;
+        Integer stockIni;
+        if (precioCompraReferencial.equalsIgnoreCase("")) {
+         precioCompra = null;   
+        }else{
+            precioCompra= Double.parseDouble(precioCompraReferencial);
+        }
+        if (stock.equalsIgnoreCase("")) {
+            stockIni=null;
+        }else{
+            stockIni=Integer.parseInt(stock);
+        }
+        if (observaciones.equalsIgnoreCase("")) {
+            observaciones="Sin Observaciones";
+        }
+        ProductoDTO dto = new ProductoDTO(SKU, nombre, categoria, unidadMedida, precioCompra, Double.parseDouble(precioVenta), proveedor, stockIni, observaciones);
         return dto;
     }
-
+    
     public ProductoDTO registrarProducto(ProductoDTO producto) throws NegocioException {
         if (producto == null) {
             throw new NegocioException("El producto esta vacio");
         }
         return this.producto.registrarProducto(producto);
     }
-
+    
     public List<ProductoDTO> obtenerProductosFiltro(String sku, String nombre) throws NegocioException {
-
+        
         return this.producto.obtenerProductosFiltro(sku, nombre, true);
     }
-
+    
     public ProductoDTO obtenerProductoPorNombre(String nombre) throws NegocioException {
         return this.producto.obtenerProductoNombre(nombre);
     }
-
+    
     public ProductoDTO obtenerProductoPorSKU(String sku) throws NegocioException {
         return this.producto.obtenerProductoSKU(sku);
     }
 
-    public boolean ValidarRegistroProducto(String sku, String nombre, String precio) throws NegocioException {
+    /**
+     * Metodo para las validaciones de Producto.
+     *
+     * @param sku
+     * @param nombre
+     * @param precioVenta
+     * @return true si paso las validaciones, false si lo contrario.
+     * @throws NegocioException
+     */
+    public boolean ValidarRegistroProducto(String sku, String nombre, String precioVenta, String precioCompra, String stock) throws NegocioException {
         boolean seguir = false; // Define si el proceso de registro continua.
         //Validacion Campos necesarios vacios
-        if (sku.equalsIgnoreCase("") || nombre.equalsIgnoreCase("")
-                || precio.equalsIgnoreCase("")) {
+        if (nombre.equalsIgnoreCase("") 
+                || precioVenta.equalsIgnoreCase("")) {
             JOptionPane.showMessageDialog(null, "Necesita llenar los campos para registrar");
             throw new NegocioException("Le falta llenar un campo obligatorio");
             // Validación Nombre debe llevar letras y no numeros.
         } else if (nombre.matches(".*\\d.*")) {
             JOptionPane.showMessageDialog(null, "Debe introducir solo texto en el campo de nombre");
-            throw new NegocioException("Hay numero en el campo nombre");
+            throw new NegocioException("Hay numeros en el campo nombre");
             // Validación precio solo puede llevar numeros.
-        } else if (precio.matches(".*[a-zA-Z].*")) {
-            JOptionPane.showMessageDialog(null, "El campo precio solo puede llevar numeros");
-            throw new NegocioException("precio no lleva numeros");
+        } else if (precioVenta.matches(".*[a-zA-Z].*") || precioCompra.matches(".*[a-zA-Z].*") || stock.matches(".*[a-zA-Z].*")) {
+            JOptionPane.showMessageDialog(null, "Los campos precioVenta,precioCompra y stock solo pueden llevar numeros");
+            throw new NegocioException("Los compra,venta y stock no llevan letras");
             //Validación de producto ya existente.
-        } else if(this.ValidacionProductoExistente(sku, nombre)==true){
-            JOptionPane.showMessageDialog(null, "El nombre del producto o SKU del producto ya esta registrado en el sistema");
-        }else{
+        } else if (this.ValidacionProductoExistente(sku, nombre) == true) {
+            JOptionPane.showMessageDialog(null, "El nombre o SKU del producto ya esta registrado en el sistema");
+        } else {
             seguir = true;
         }
         return seguir;
     }
-
+    
     public boolean ValidacionProductoExistente(String SKU, String nombre) throws NegocioException {
         // Validación Registro duplicado.
+        boolean existe=false;
         try {
             if (this.obtenerProductoPorNombre(nombre) == null || this.obtenerProductoPorSKU(SKU) == null) {
-                return false;
+                existe=false;
             } else {
-                return true;
-            }
-
+                if (this.obtenerProductoPorSKU(SKU).getSKU().equalsIgnoreCase("")) {
+                    existe = false;
+                }else{
+                    existe = true;
+                }
+                
+                
+            } return existe;
+            
         } catch (NegocioException ne) {
             throw new NegocioException("Error al validar producto");
         }
-
+        
     }
+    
 }
