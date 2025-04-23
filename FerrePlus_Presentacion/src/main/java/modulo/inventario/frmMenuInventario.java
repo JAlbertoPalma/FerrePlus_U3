@@ -5,9 +5,14 @@
 package modulo.inventario;
 
 import Control.ControlGUI;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 /**
  *
@@ -20,7 +25,8 @@ public class frmMenuInventario extends javax.swing.JFrame {
      */
     public frmMenuInventario() {
         initComponents();
-        this.setExtendedState(6);
+        this.setExtendedState(frmMenuInventario.MAXIMIZED_BOTH);
+        this.AcomodarContenido();
     }
 
     /**
@@ -32,9 +38,8 @@ public class frmMenuInventario extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlFormulario = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        pnlFondo = new javax.swing.JPanel();
+        pnlMenu = new javax.swing.JPanel();
         jButtonRegistrar = new javax.swing.JButton();
         jButtonActualizar = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
@@ -43,19 +48,13 @@ public class frmMenuInventario extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
-        pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlFondo.setBackground(new java.awt.Color(255, 204, 153));
+        pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButton1.setText("Cancelar");
-        jButton1.setPreferredSize(new java.awt.Dimension(130, 45));
-        pnlFormulario.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 513, 100, 32));
+        pnlMenu.setBackground(new java.awt.Color(255, 204, 153));
+        pnlMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButton2.setText("Confirmar");
-        jButton2.setPreferredSize(new java.awt.Dimension(130, 45));
-        pnlFormulario.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(852, 513, 111, 32));
-
+        jButtonRegistrar.setBackground(new java.awt.Color(255, 204, 153));
         jButtonRegistrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonRegistrar.setText("Registrar Producto");
         jButtonRegistrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -64,13 +63,15 @@ public class frmMenuInventario extends javax.swing.JFrame {
                 jButtonRegistrarActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 40, 230, 40));
+        pnlMenu.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 280, 80));
 
+        jButtonActualizar.setBackground(new java.awt.Color(255, 204, 153));
         jButtonActualizar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonActualizar.setText("Actualizar Producto");
         jButtonActualizar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 90, 230, 40));
+        pnlMenu.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 280, 80));
 
+        jButtonVolver.setBackground(new java.awt.Color(255, 204, 153));
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVolver.setText("Volver");
         jButtonVolver.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -79,9 +80,11 @@ public class frmMenuInventario extends javax.swing.JFrame {
                 jButtonVolverActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 190, 130, 40));
+        pnlMenu.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 130, 40));
 
-        getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
+        pnlFondo.add(pnlMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 0, 340, 630));
+
+        getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
         pnlTitulo.setBackground(new java.awt.Color(255, 153, 102));
         pnlTitulo.setDoubleBuffered(false);
@@ -109,6 +112,31 @@ public class frmMenuInventario extends javax.swing.JFrame {
         ControlGUI.getInstancia().mostrarRegistrarProducto();
         this.dispose();
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
+    private void AcomodarContenido() {
+        JPanel panel = this.pnlMenu; 
+        this.pnlMenu.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
+        gbc.insets = new Insets(2, 2, 2, 2); // Margen alrededor del componente
+        gbc.anchor = GridBagConstraints.CENTER; // Centrado en la celda
+        gbc.weightx = 1.0; // Espacio extra para centrar horizontalmente
+
+        // Columna 0
+//        gbc.gridx = 0;
+        
+        this.pnlMenu.add(this.jButtonRegistrar,gbc);
+        this.jButtonRegistrar.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        this.pnlMenu.add(this.jButtonActualizar,gbc);
+        this.jButtonActualizar.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        this.pnlMenu.add(this.jButtonVolver,gbc);
+         this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
+        
+        this.add(this.pnlMenu, BorderLayout.CENTER);
+        
+
+    }
 
     /**
      * @param args the command line arguments
@@ -147,15 +175,13 @@ public class frmMenuInventario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonActualizar;
     private javax.swing.JButton jButtonRegistrar;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JLabel lblTitulo;
-    private javax.swing.JPanel pnlFormulario;
+    private javax.swing.JPanel pnlFondo;
+    private javax.swing.JPanel pnlMenu;
     private javax.swing.JPanel pnlTitulo;
     // End of variables declaration//GEN-END:variables
-    
-    
+
 }

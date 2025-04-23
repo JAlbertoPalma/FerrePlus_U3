@@ -4,25 +4,31 @@
  */
 package GUI.Login;
 
-import Control.ControlGUI;
 import modulo.inventario.*;
+import Control.ControlGUI;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ComponentEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
  * @author joelr
  */
 public class frmMenuPrincipal extends javax.swing.JFrame {
+
     /**
      * Creates new form RegistrarProductoGUI
      */
     public frmMenuPrincipal() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setExtendedState(frmMenuPrincipal.MAXIMIZED_BOTH);
+        this.AcomodarContenido();
     }
 
     /**
@@ -35,30 +41,43 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlFormulario = new javax.swing.JPanel();
-        jButtonSalir = new javax.swing.JButton();
         jButtonInventario1 = new javax.swing.JButton();
         jButtonCompras = new javax.swing.JButton();
         jButtonVentas = new javax.swing.JButton();
         jButtonCajas = new javax.swing.JButton();
+        jButtonSalir = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(850, 700));
-        setSize(new java.awt.Dimension(850, 700));
-        addWindowStateListener(new java.awt.event.WindowStateListener() {
-            public void windowStateChanged(java.awt.event.WindowEvent evt) {
-                formWindowStateChanged(evt);
-            }
-        });
 
         pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
-        pnlFormulario.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                pnlFormularioComponentResized(evt);
+        pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButtonInventario1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonInventario1.setText("Inventario");
+        jButtonInventario1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonInventario1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInventario1ActionPerformed(evt);
             }
         });
-        pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlFormulario.add(jButtonInventario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 130, 40));
+
+        jButtonCompras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonCompras.setText("Compras");
+        jButtonCompras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlFormulario.add(jButtonCompras, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 130, 40));
+
+        jButtonVentas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonVentas.setText("Ventas");
+        jButtonVentas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlFormulario.add(jButtonVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 130, 130, 40));
+
+        jButtonCajas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonCajas.setText("Cajas");
+        jButtonCajas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlFormulario.add(jButtonCajas, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, 130, 40));
 
         jButtonSalir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonSalir.setText("Salir");
@@ -68,64 +87,120 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
                 jButtonSalirActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 270, 130, 40));
-
-        jButtonInventario1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonInventario1.setText("Inventario");
-        jButtonInventario1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonInventario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, 130, 40));
-
-        jButtonCompras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonCompras.setText("Compras");
-        jButtonCompras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonCompras, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 90, 130, 40));
-
-        jButtonVentas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonVentas.setText("Ventas");
-        jButtonVentas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 140, 130, 40));
-
-        jButtonCajas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonCajas.setText("Cajas");
-        jButtonCajas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonCajas, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, 130, 40));
+        pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 260, 130, 40));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
         pnlTitulo.setBackground(new java.awt.Color(102, 51, 0));
         pnlTitulo.setDoubleBuffered(false);
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
-        pnlTitulo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlTitulo.setLayout(new java.awt.GridBagLayout());
 
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Menu Principal");
-        pnlTitulo.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(339, 32, -1, -1));
+        lblTitulo.setText("FERRE-PLUS");
+        pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
         pnlTitulo.getAccessibleContext().setAccessibleDescription("");
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pnlFormularioComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnlFormularioComponentResized
-
-    }//GEN-LAST:event_pnlFormularioComponentResized
-
-    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
-      
-    }//GEN-LAST:event_formWindowStateChanged
+    private void jButtonInventario1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInventario1ActionPerformed
+        ControlGUI.getInstancia().mostrarMenuProducto();
+        this.dispose();
+    }//GEN-LAST:event_jButtonInventario1ActionPerformed
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
-       ControlGUI.getInstancia().mostrarLogin();
-       this.dispose();
+        ControlGUI.getInstancia().mostrarLogin();
+        this.dispose();
     }//GEN-LAST:event_jButtonSalirActionPerformed
+    private void AcomodarContenido() {
+        JPanel panel = this.pnlFormulario; 
+        this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
+        gbc.insets = new Insets(2, 2, 2, 2); // Margen alrededor del componente
+        gbc.anchor = GridBagConstraints.CENTER; // Centrado en la celda
+        gbc.weightx = 1.0; // Espacio extra para centrar horizontalmente
 
+        // Columna 0
+//        gbc.gridx = 0;
+        
+        this.pnlFormulario.add(this.jButtonInventario1,gbc);
+        this.jButtonInventario1.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonCompras,gbc);
+        this.jButtonCompras.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonVentas,gbc);
+        this.jButtonVentas.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonCajas,gbc);
+        this.jButtonCajas.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonSalir,gbc);
+        this.jButtonSalir.setPreferredSize(new Dimension(200, 50));
+          gbc.gridy++;
+          gbc.gridy++;
+        this.add(this.pnlFormulario, BorderLayout.CENTER);
+    }
 
-    ;
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new frmMenuPrincipal().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCajas;

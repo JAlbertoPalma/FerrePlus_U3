@@ -4,26 +4,31 @@
  */
 package GUI.Login;
 
-import Control.ControlGUI;
 import modulo.inventario.*;
+import Control.ControlGUI;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ComponentEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
  * @author joelr
  */
-public class Login extends javax.swing.JFrame {
+public class frmLogin extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public Login() {
+    public frmLogin() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setExtendedState(frmLogin.MAXIMIZED_BOTH);
+        this.AcomodarContenido();
     }
 
     /**
@@ -38,33 +43,22 @@ public class Login extends javax.swing.JFrame {
         pnlFormulario = new javax.swing.JPanel();
         lblUsuario = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
-        txtContrasena = new javax.swing.JTextField();
-        jButtonSalir = new javax.swing.JButton();
-        jButtonIngresar = new javax.swing.JButton();
         lblContrasena = new javax.swing.JLabel();
+        txtContrasena = new javax.swing.JTextField();
+        jButtonIngresar = new javax.swing.JButton();
+        jButtonSalir = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setSize(new java.awt.Dimension(600, 600));
-        addWindowStateListener(new java.awt.event.WindowStateListener() {
-            public void windowStateChanged(java.awt.event.WindowEvent evt) {
-                formWindowStateChanged(evt);
-            }
-        });
 
         pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
-        pnlFormulario.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                pnlFormularioComponentResized(evt);
-            }
-        });
         pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblUsuario.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblUsuario.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblUsuario.setText("Usuario");
-        pnlFormulario.add(lblUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 30, 120, -1));
+        pnlFormulario.add(lblUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 120, -1));
 
         txtUsuario.setPreferredSize(new java.awt.Dimension(200, 50));
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
@@ -72,20 +66,15 @@ public class Login extends javax.swing.JFrame {
                 txtUsuarioActionPerformed(evt);
             }
         });
-        pnlFormulario.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, 120, 22));
+        pnlFormulario.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 70, 120, 22));
+
+        lblContrasena.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblContrasena.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblContrasena.setText("Contraseña");
+        pnlFormulario.add(lblContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 100, 160, -1));
 
         txtContrasena.setPreferredSize(new java.awt.Dimension(200, 50));
-        pnlFormulario.add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 140, 120, 22));
-
-        jButtonSalir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButtonSalir.setText("Salir");
-        jButtonSalir.setPreferredSize(new java.awt.Dimension(130, 45));
-        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSalirActionPerformed(evt);
-            }
-        });
-        pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 210, 120, 32));
+        pnlFormulario.add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 140, 120, 22));
 
         jButtonIngresar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonIngresar.setText("Ingresar");
@@ -95,32 +84,40 @@ public class Login extends javax.swing.JFrame {
                 jButtonIngresarActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 170, 120, 32));
+        pnlFormulario.add(jButtonIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 170, 120, 32));
 
-        lblContrasena.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblContrasena.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblContrasena.setText("Contraseña");
-        pnlFormulario.add(lblContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 100, 160, -1));
+        jButtonSalir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButtonSalir.setText("Salir");
+        jButtonSalir.setPreferredSize(new java.awt.Dimension(130, 45));
+        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalirActionPerformed(evt);
+            }
+        });
+        pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 210, 120, 32));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
         pnlTitulo.setBackground(new java.awt.Color(102, 51, 0));
         pnlTitulo.setDoubleBuffered(false);
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
-        pnlTitulo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlTitulo.setLayout(new java.awt.GridBagLayout());
 
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("FERRE-PLUS");
-        pnlTitulo.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(339, 32, -1, -1));
+        pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
         pnlTitulo.getAccessibleContext().setAccessibleDescription("");
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUsuarioActionPerformed
 
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         if (this.txtUsuario.getText().isEmpty() && this.txtContrasena.getText().isEmpty()) {
@@ -133,46 +130,41 @@ public class Login extends javax.swing.JFrame {
             ControlGUI.getInstancia().mostrarMenuPrincipal();
             this.dispose();
         }
-        
+
     }//GEN-LAST:event_jButtonIngresarActionPerformed
-
-    private void pnlFormularioComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnlFormularioComponentResized
-//   this.componentResized(evt);
-    }//GEN-LAST:event_pnlFormularioComponentResized
-
-    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
-      
-    }//GEN-LAST:event_formWindowStateChanged
-
-    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtUsuarioActionPerformed
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_jButtonSalirActionPerformed
-    // Escuchamos cuando se cambia el tamaño de la ventana
+    private void AcomodarContenido() {
+        JPanel panel = this.pnlFormulario; 
+        this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
+        gbc.insets = new Insets(2, 2, 2, 2); // Margen alrededor del componente
+        gbc.anchor = GridBagConstraints.CENTER; // Centrado en la celda
+        gbc.weightx = 1.0; // Espacio extra para centrar horizontalmente
 
-    public void componentResized(ComponentEvent e) {
-        // Redimensionamos el panel base
-        this.lblUsuario.setLocation(this.getHeight()/2, this.getWidth()/2);
-
-//        this.pnlTitulo.setBounds(0, 0, this.pnlTitulo.getWidth(), this.pnlTitulo.getHeight());
-//        this.pnlFormulario.setBounds(0, 0, this.pnlFormulario.getWidth(), this.pnlFormulario.getHeight());
-
-        // Aquí puedes ajustar el tamaño/posición de los componentes
-        // Por ejemplo, el botón se mantiene centrado
-//                int newX = (this.pnlFormulario.getWidth() - this.pnlFormulario.getWidth()) / 2;
-//                int newY = (this.pnlFormulario.getHeight() - this.pnlFormulario.getHeight()) / 2;
-//                int newX2 = (this.pnlTitulo.getWidth() - this.pnlTitulo.getWidth()) / 2;
-//                int newY2 = (this.pnlTitulo.getHeight() - this.pnlTitulo.getHeight()) / 2;
-//                this.lblUsuario.setLocation(newX, newY);
-//                this.lblContrasena.setLocation(newX, newY);
-//                this.lblUsuario.setLocation(newX2, newY2);
+        // Columna 0
+//        gbc.gridx = 0;
+        
+        this.pnlFormulario.add(this.lblUsuario,gbc);
+        gbc.gridy++;
+        this.pnlFormulario.add(this.txtUsuario,gbc);
+        gbc.gridy++;
+        this.pnlFormulario.add(this.lblContrasena,gbc);
+        gbc.gridy++;
+        this.pnlFormulario.add(this.txtContrasena,gbc);
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonIngresar,gbc);
+         this.jButtonIngresar.setPreferredSize(new Dimension(200, 50));
+          gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonSalir,gbc);
+         this.jButtonSalir.setPreferredSize(new Dimension(200, 50));
+          gbc.gridy++;
+        this.add(this.pnlFormulario, BorderLayout.CENTER);
     }
-
-    ;
 
     /**
      * @param args the command line arguments
@@ -191,21 +183,23 @@ public class Login extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
+                new frmLogin().setVisible(true);
             }
         });
     }
