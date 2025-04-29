@@ -69,6 +69,11 @@ public class frmMenuInventario extends javax.swing.JFrame {
         jButtonActualizar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonActualizar.setText("Actualizar Producto");
         jButtonActualizar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActualizarActionPerformed(evt);
+            }
+        });
         pnlMenu.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 280, 80));
 
         jButtonVolver.setBackground(new java.awt.Color(255, 204, 153));
@@ -112,6 +117,11 @@ public class frmMenuInventario extends javax.swing.JFrame {
         ControlGUI.getInstancia().mostrarRegistrarProducto();
         this.dispose();
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
+
+    private void jButtonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActualizarActionPerformed
+        ControlGUI.getInstancia().mostrarActualizarProducto();
+        this.dispose();
+    }//GEN-LAST:event_jButtonActualizarActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlMenu; 
         this.pnlMenu.setLayout(new GridBagLayout()); // Permite centrar componentes dentro

@@ -13,6 +13,7 @@ import Interfaces.IProductoBO;
 import excepciones.NegocioException;
 import java.util.List;
 import javax.swing.JOptionPane;
+import modulo.inventario.frmActualizarProducto;
 import modulo.inventario.frmMenuInventario;
 import modulo.inventario.frmRegistrarProducto;
 
@@ -26,17 +27,22 @@ import modulo.inventario.frmRegistrarProducto;
  * @author joelr
  */
 public class ControlGUI {
-    
+
+    // Instancia
     private static ControlGUI instancia;
+    // Login
     private frmLogin login;
     private frmMenuPrincipal menuPrincipal;
-    private frmRegistrarProducto registrarProducto;
+    //Inventario
     private frmMenuInventario menuInventario;
+    private frmRegistrarProducto registrarProducto;
+    private frmActualizarProducto actualizarProducto;
+
     private IProductoBO producto = new ProductoBO();
-    
+
     public ControlGUI() {
     }
-    
+
     public static ControlGUI getInstancia() {
         if (instancia == null) {
             instancia = new ControlGUI();
@@ -66,6 +72,12 @@ public class ControlGUI {
         this.menuPrincipal.setVisible(true);
     }
 
+    public void mostrarMenuProducto() {
+        this.menuInventario = new frmMenuInventario();
+        this.menuInventario.setLocationRelativeTo(null);
+        this.menuInventario.setVisible(true);
+    }
+
     /*
     Metodo para mostrar el frm Registrar Producto.
      */
@@ -75,50 +87,54 @@ public class ControlGUI {
         this.registrarProducto.setVisible(true);
     }
 
-    public void mostrarMenuProducto() {
-        this.menuInventario = new frmMenuInventario();
-        this.menuInventario.setLocationRelativeTo(null);
-        this.menuInventario.setVisible(true);
+    public void mostrarActualizarProducto() {
+        this.actualizarProducto = new frmActualizarProducto();
+        this.actualizarProducto.setLocationRelativeTo(null);
+        this.actualizarProducto.setVisible(true);
     }
-    
+
     public ProductoDTO crearProductoDTO(String SKU, String nombre, String categoria, String unidadMedida, String precioCompraReferencial, String precioVenta, String proveedor, String stock, String observaciones) {
         Double precioCompra;
         Integer stockIni;
         if (precioCompraReferencial.equalsIgnoreCase("")) {
-         precioCompra = null;   
-        }else{
-            precioCompra= Double.parseDouble(precioCompraReferencial);
+            precioCompra = null;
+        } else {
+            precioCompra = Double.parseDouble(precioCompraReferencial);
         }
         if (stock.equalsIgnoreCase("")) {
-            stockIni=null;
-        }else{
-            stockIni=Integer.parseInt(stock);
+            stockIni = null;
+        } else {
+            stockIni = Integer.parseInt(stock);
         }
         if (observaciones.equalsIgnoreCase("")) {
-            observaciones="Sin Observaciones";
+            observaciones = "Sin Observaciones";
         }
         ProductoDTO dto = new ProductoDTO(SKU, nombre, categoria, unidadMedida, precioCompra, Double.parseDouble(precioVenta), proveedor, stockIni, observaciones);
         return dto;
     }
-    
+
     public ProductoDTO registrarProducto(ProductoDTO producto) throws NegocioException {
         if (producto == null) {
             throw new NegocioException("El producto esta vacio");
         }
         return this.producto.registrarProducto(producto);
     }
-    
+
     public List<ProductoDTO> obtenerProductosFiltro(String sku, String nombre) throws NegocioException {
-        
+
         return this.producto.obtenerProductosFiltro(sku, nombre, true);
     }
-    
+
     public ProductoDTO obtenerProductoPorNombre(String nombre) throws NegocioException {
         return this.producto.obtenerProductoNombre(nombre);
     }
-    
+
     public ProductoDTO obtenerProductoPorSKU(String sku) throws NegocioException {
         return this.producto.obtenerProductoSKU(sku);
+    }
+    
+    public List<ProductoDTO>ObtenerProductos(String sku, String categoria, boolean estado) throws NegocioException{
+        return this.producto.obtenerProductosFiltro(sku, categoria, estado);
     }
 
     /**
@@ -133,7 +149,7 @@ public class ControlGUI {
     public boolean ValidarRegistroProducto(String sku, String nombre, String precioVenta, String precioCompra, String stock) throws NegocioException {
         boolean seguir = false; // Define si el proceso de registro continua.
         //Validacion Campos necesarios vacios
-        if (nombre.equalsIgnoreCase("") 
+        if (nombre.equalsIgnoreCase("")
                 || precioVenta.equalsIgnoreCase("")) {
             JOptionPane.showMessageDialog(null, "Necesita llenar los campos para registrar");
             throw new NegocioException("Le falta llenar un campo obligatorio");
@@ -153,27 +169,27 @@ public class ControlGUI {
         }
         return seguir;
     }
-    
+
     public boolean ValidacionProductoExistente(String SKU, String nombre) throws NegocioException {
         // Validación Registro duplicado.
-        boolean existe=false;
+        boolean existe = false;
         try {
             if (this.obtenerProductoPorNombre(nombre) == null || this.obtenerProductoPorSKU(SKU) == null) {
-                existe=false;
+                existe = false;
             } else {
                 if (this.obtenerProductoPorSKU(SKU).getSKU().equalsIgnoreCase("")) {
                     existe = false;
-                }else{
+                } else {
                     existe = true;
                 }
-                
-                
-            } return existe;
-            
+
+            }
+            return existe;
+
         } catch (NegocioException ne) {
             throw new NegocioException("Error al validar producto");
         }
-        
+
     }
-    
+
 }
