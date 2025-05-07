@@ -49,7 +49,7 @@ public class PruebaCaja {
         
         //3. Actualizar resumen de ventas
         try{
-            cajaDAO.actualizarResumenVentas(caja.getId(), 100, 2, 1);
+            cajaDAO.actualizarResumenVentas(caja.getId().toHexString(), 100, 2, 1);
             caja.setTotalVentas(caja.getTotalVentas() + 100);
             caja.setCantidadDeProductos(caja.getCantidadDeProductos() + 2);
             caja.setNumeroDeVentas(caja.getNumeroDeVentas() + 1);

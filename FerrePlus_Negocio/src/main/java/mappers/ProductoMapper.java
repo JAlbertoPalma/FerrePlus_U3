@@ -36,7 +36,7 @@ public class ProductoMapper {
         return new ProductoDTO(
                 //Similar a un if, si es true se ejecuta el "?" si no, el ":" omg
                 producto.getId() != null ? producto.getId().toHexString() : null,
-                producto.getSKU(),
+                producto.getSku(),
                 producto.getNombre(),
                 producto.getCategoria(),
                 producto.getUnidadMedida(),

@@ -36,13 +36,13 @@ public class PruebaCompras {
         
         //0. Compras de prueba
         List<Compra.DetalleCompra> detalles1 = Arrays.asList(
-                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 2, 15.0, 30.0),
-                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 1, 15.0, 15.0)
+                new Compra.DetalleCompra(new ObjectId("681b17f0c447241f57f4374f"), 2, 15.0, 30.0),
+                new Compra.DetalleCompra(new ObjectId("681b17f0c447241f57f4374f"), 1, 15.0, 15.0)
         );
         Compra compra1 = new Compra("COBSON1", LocalDate.now(), 45.0, "Distribuidora del Norte", detalles1);
         
         List<Compra.DetalleCompra> detalles2 = Arrays.asList(
-                new Compra.DetalleCompra(new ObjectId("68061c1929db653fb7861669"), 5, 15.0, 75.0) //este id lo tomé directo de la bd
+                new Compra.DetalleCompra(new ObjectId("681b17f0c447241f57f4374f"), 5, 15.0, 75.0) //este id lo tomé directo de la bd
         );
         Compra compra2 = new Compra("COBSON2", LocalDate.now(), 75.0, "Distribuidora del Norte", detalles2);
         

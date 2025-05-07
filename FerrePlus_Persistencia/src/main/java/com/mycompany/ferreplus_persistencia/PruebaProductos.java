@@ -42,7 +42,7 @@ public class PruebaProductos {
             productoDAO.agregar(producto2);
             System.out.println("1. Productos agregados");
         }catch(PersistenciaException pe){
-            System.out.println("1. Uhh algo salió mal");
+            System.out.println("1. Uhh algo salió mal: " + pe.getMessage());
         }
         
         //2. Actualizar dos productos
@@ -53,7 +53,7 @@ public class PruebaProductos {
             productoDAO.actualizar(producto2);
             System.out.println("2. Productos actualizados");
         }catch(PersistenciaException pe){
-            System.out.println("2. Uhh algo salió mal");
+            System.out.println("2. Uhh algo salió mal: " + pe.getMessage());
         }
         
         //3. Buscar por id

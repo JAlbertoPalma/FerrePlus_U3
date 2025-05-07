@@ -14,7 +14,7 @@ import org.bson.types.ObjectId;
  */
 public class Producto implements Serializable{
     private ObjectId id;
-    private String SKU;
+    private String sku;
     private String nombre;
     private String categoria;
     private String unidadMedida;
@@ -30,7 +30,7 @@ public class Producto implements Serializable{
     }
     
     public Producto(String SKU, String nombre, String categoria, String unidadMedida, Double precioCompraReferencial, Double precioVenta, String proveedor, Integer stock, LocalDateTime fechaHoraAlta, Boolean estado, String observaciones) {
-        this.SKU = SKU;
+        this.sku = SKU;
         this.nombre = nombre;
         this.categoria = categoria;
         this.unidadMedida = unidadMedida;
@@ -45,7 +45,7 @@ public class Producto implements Serializable{
 
     public Producto(ObjectId id, String SKU, String nombre, String categoria, String unidadMedida, Double precioCompraReferencial, Double precioVenta, String proveedor, Integer stock, LocalDateTime fechaHoraAlta, Boolean estado, String observaciones) {
         this.id = id;
-        this.SKU = SKU;
+        this.sku = SKU;
         this.nombre = nombre;
         this.categoria = categoria;
         this.unidadMedida = unidadMedida;
@@ -66,12 +66,12 @@ public class Producto implements Serializable{
         this.id = id;
     }
 
-    public String getSKU() {
-        return SKU;
+    public String getSku() {
+        return sku;
     }
 
-    public void setSKU(String SKU) {
-        this.SKU = SKU;
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public String getNombre() {
@@ -156,6 +156,6 @@ public class Producto implements Serializable{
 
     @Override
     public String toString() {
-        return "Producto{" + "id=" + id + ", SKU=" + SKU + ", nombre=" + nombre + ", categoria=" + categoria + ", unidadMedida=" + unidadMedida + ", precioCompraReferencial=" + precioCompraReferencial + ", precioVenta=" + precioVenta + ", proveedor=" + proveedor + ", stock=" + stock + ", fechaHoraAlta=" + fechaHoraAlta + ", estado=" + estado + ", observaciones=" + observaciones + '}';
+        return "Producto{" + "id=" + id + ", SKU=" + sku + ", nombre=" + nombre + ", categoria=" + categoria + ", unidadMedida=" + unidadMedida + ", precioCompraReferencial=" + precioCompraReferencial + ", precioVenta=" + precioVenta + ", proveedor=" + proveedor + ", stock=" + stock + ", fechaHoraAlta=" + fechaHoraAlta + ", estado=" + estado + ", observaciones=" + observaciones + '}';
     }
 }

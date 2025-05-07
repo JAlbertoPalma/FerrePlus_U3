@@ -8,6 +8,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import conexion.Conexion;
 import conversores.FechaCvr;
 import entidades.Producto;
@@ -27,7 +28,7 @@ import org.bson.types.ObjectId;
  * @author Beto_
  */
 public class ProductoDAO implements IProductoDAO{
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Producto> collection;
     /**
      * Instancia única de la clase ProductoDAO (Patrón Singleton).
      */
@@ -44,7 +45,7 @@ public class ProductoDAO implements IProductoDAO{
             Conexion conexion = Conexion.getInstance();
             MongoClient mongoClient = conexion.getMongoClient();
             MongoDatabase database = conexion.getDatabase();
-            this.collection = database.getCollection("productos");
+            this.collection = database.getCollection("productos", Producto.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo ProductoDAO: " + e.getMessage());
         }
@@ -75,29 +76,12 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("No se puede agregar un producto nulo");
         }
         try{
-            //1. Creamos el documento del producto a agregar
-            Document document = new Document()
-                    .append("SKU", producto.getSKU())
-                    .append("nombre", producto.getNombre())
-                    .append("categoria", producto.getCategoria())
-                    .append("unidadMedida", producto.getUnidadMedida())
-                    .append("precio_Compra_Referencial", producto.getPrecioCompraReferencial())
-                    .append("precio_venta", producto.getPrecioVenta())
-                    .append("proveedor", producto.getProveedor())
-                    .append("stock", producto.getStock())
-                    .append("fechaHoraAlta", FechaCvr.toDate(producto.getFechaHoraAlta()))
-                    .append("estado", producto.getEstado())
-                    .append("observaciones", producto.getObservaciones());
+            //1. Insertamos el producto directamente
+            collection.insertOne(producto);
             
-            //2. Insertamos el documento
-            collection.insertOne(document);
-            
-            //3. Sacamos el id la inserción del documento y se lo ponemos al producto
-            producto.setId(document.getObjectId("_id"));
-            
-            //4. regresamos el producto con el id creado
+            //2. regresamos el producto con el id creado
             return producto;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al agregar el producto: " + e.getMessage());
         }
     }
@@ -112,27 +96,13 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("No se puede actualizar un producto nulo");
         }
         
-        try{
-            //1. Creamos el documento con los atributos del parámetro
-            Document document = new Document()
-                    .append("SKU", producto.getSKU())
-                    .append("nombre", producto.getNombre())
-                    .append("categoria", producto.getCategoria())
-                    .append("unidadMedida", producto.getUnidadMedida())
-                    .append("precio_Compra_Referencial", producto.getPrecioCompraReferencial())
-                    .append("precio_venta", producto.getPrecioVenta())
-                    .append("proveedor", producto.getProveedor())
-                    .append("stock", producto.getStock())
-                    .append("fechaHoraAlta", FechaCvr.toDate(producto.getFechaHoraAlta()))
-                    .append("estado", producto.getEstado())
-                    .append("observaciones", producto.getObservaciones());
+        try {
+            //1. Reemplazamos el documento completo con el producto
+            collection.replaceOne(Filters.eq("_id", producto.getId()), producto);
             
-            //2. Dentro de la colección reemplazamos con el id extraído el doc del producto a actualizar
-            collection.replaceOne(Filters.eq("_id", producto.getId()), document);
-            
-            //3. regresamos el mismo producto
+            //2. regresamos el mismo producto
             return producto;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al actualizar el producto: " + e.getMessage());
         }
     }
@@ -147,24 +117,17 @@ public class ProductoDAO implements IProductoDAO{
             throw new PersistenciaException("No se puede eliminar un producto con id nulo");
         }
         
-        try{
+        try {
             //1. Creamos el objectId con el id del parametro
             ObjectId objectId = new ObjectId(id);
-            
-            //2. Extraemos el documento con el id con la equivalencia del id, obteniendo el primer registro
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
-            
-            //3. Validamos documento encontrado
-            if(document == null){
-                throw new PersistenciaException("No se encontraron registros con ese id");
-            }
-            
-            //4. Eliminamos y regresamos resultado con filas eliminadas mayor a cero
-            return collection.deleteOne(document).getDeletedCount() > 0;
-            
-        }catch(IllegalArgumentException iae){
+
+            //2. Eliminamos y regresamos resultado con filas eliminadas mayor a cero
+            DeleteResult result = collection.deleteOne(Filters.eq("_id", objectId));
+            return result.getDeletedCount() > 0;
+
+        } catch (IllegalArgumentException iae) {
             throw new PersistenciaException("Id a eliminar inválido: " + id);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al eliminar el producto: " + e.getMessage());
         }
     }
@@ -184,10 +147,10 @@ public class ProductoDAO implements IProductoDAO{
             ObjectId objectId = new ObjectId(id);
             
             //2. Extraemos el documento con el id con la equivalencia del id, obteniendo el primer registro
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Producto producto = collection.find(Filters.eq("_id", objectId)).first();
             
-            if(document != null){
-                return toProducto(document);
+            if(producto != null){
+                return producto;
             } else{
                 return null;
             }
@@ -210,11 +173,11 @@ public class ProductoDAO implements IProductoDAO{
         
         try{
             //1. Extraemos el documento con la coincidencia del SKU del parámetro
-            Document document = collection.find(Filters.eq("SKU", sku)).first();
+            Producto producto = collection.find(Filters.eq("sku", sku)).first();
             
             //2. retornamos el producto encontrado, nulo si no
-            if(document != null){
-                return toProducto(document);
+            if(producto != null){
+                return producto;
             } else{
                 return null;
             }
@@ -231,11 +194,11 @@ public class ProductoDAO implements IProductoDAO{
         
         try{
             //1. Extraemos el documento con la coincidencia del SKU del parámetro
-            Document document = collection.find(Filters.eq("nombre", nombre)).first();
+            Producto producto = collection.find(Filters.eq("nombre", nombre)).first();
             
             //2. retornamos el producto encontrado, nulo si no
-            if(document != null){
-                return toProducto(document);
+            if(producto != null){
+                return producto;
             } else{
                 return null;
             }
@@ -251,8 +214,8 @@ public class ProductoDAO implements IProductoDAO{
     public List<Producto> obtenerTodos() throws PersistenciaException {
         List<Producto> productos = new ArrayList<>();
         try{
-            collection.find().forEach(document -> {
-                productos.add(toProducto(document));
+            collection.find().forEach(producto -> {
+                productos.add(producto);
             });
             
             return productos;
@@ -300,8 +263,8 @@ public class ProductoDAO implements IProductoDAO{
         }
         
         //3. Aplicamos los filtros, añadiendolos a la lista de productos
-        collection.find(filtroTotal).forEach(document -> {
-            productos.add(toProducto(document));
+        collection.find(filtroTotal).forEach(producto -> {
+            productos.add(producto);
         });
         
         //4. regresamos los productos filtrados
@@ -317,7 +280,7 @@ public class ProductoDAO implements IProductoDAO{
     private Producto toProducto(Document document){
         Producto producto = new Producto();
         producto.setId(document.getObjectId("_id"));
-        producto.setSKU(document.getString("SKU"));
+        producto.setSku(document.getString("SKU"));
         producto.setNombre(document.getString("nombre"));
         producto.setCategoria(document.getString("categoria"));
         producto.setUnidadMedida(document.getString("unidadMedida"));

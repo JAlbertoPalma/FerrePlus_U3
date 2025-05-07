@@ -36,15 +36,15 @@ public class PruebaVentas {
         
         //0. ventas de prueba
         List<Venta.DetalleVenta> detalles1 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 2, 10.0, 90.0), //directo de la bd
-                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 1, 0.0, 50.0) //directo de la bd
+                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 2, 10.0, 90.0), //directo de la bd
+                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 1, 0.0, 50.0) //directo de la bd
         );
-        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("68060fd3184e5e29873b6788"), detalles1); //directo de la bd
+        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("681b186b455b7b7979becb90"), detalles1); //directo de la bd
         
         List<Venta.DetalleVenta> detalles2 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("68061c1929db653fb7861669"), 1, 20.0, 5.0) //directo de la bd
+                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 1, 20.0, 5.0) //directo de la bd
         );
-        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("68060fd3184e5e29873b6788"), detalles2); //directo de la bd
+        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("681b186b455b7b7979becb90"), detalles2); //directo de la bd
         
         //1. Agregar dos compras
         try{

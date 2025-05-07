@@ -24,7 +24,7 @@ import org.bson.types.ObjectId;
  * @author Beto_
  */
 public class CajaDAO implements ICajaDAO{
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Caja> collection;
     /**
      * Instancia única de la clase CompraDAO (Patrón Singleton).
      */
@@ -41,7 +41,7 @@ public class CajaDAO implements ICajaDAO{
             Conexion conexion = Conexion.getInstance();
             MongoClient mongoClient = conexion.getMongoClient();
             MongoDatabase database = conexion.getDatabase();
-            this.collection = database.getCollection("sesionesCaja");
+            this.collection = database.getCollection("sesionesCaja", Caja.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo CajaDAO: " + e.getMessage());
         }
@@ -71,26 +71,14 @@ public class CajaDAO implements ICajaDAO{
         if(caja == null){
             throw new PersistenciaException("No se puede abrir una caja vacía");
         }
-        try{
-            //1. Creamos el documento de la caja para guardar en la colección
-            Document document = new Document()
-                    .append("fechaHoraApertura", FechaCvr.toDate(caja.getFechaHoraApertura()))
-                    .append("montoInicial", caja.getMontoInicial())
-                    .append("estadoSesion", caja.getEstadoSesion())
-                    .append("totalVentas", caja.getTotalVentas())
-                    .append("cantidadDeProductos", caja.getCantidadDeProductos())
-                    .append("numeroDeVentas", caja.getNumeroDeVentas());
+        
+        try {
+            //1. Insertamos la caja directamente
+            collection.insertOne(caja);
             
-            //2. Insertamos el documento
-            collection.insertOne(document);
-            
-            //3. Extraemos el id para inscrustarlo en la caja del parametro
-            ObjectId id = document.getObjectId("_id");
-            caja.setId(id);
-            
-            //4. regresamos la caja con el id
+            //2. regresamos la caja con el id creado
             return caja;
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al abrir la caja: " + e.getMessage());
         }
     }
@@ -115,27 +103,23 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("No se puede cerrar una caja cerrada");
         }
         
-        try{
-            //0. Validamos caja existente
-            if(obtenerPorId(caja.getId().toHexString()) == null){
+        try {
+            //0. Validamos caja existente, necesario?
+            if (obtenerPorId(caja.getId().toHexString()) == null) {
                 throw new PersistenciaException("No se encontró la caja en los registros");
             }
-            
-            //1. Combinamos los valores de cierre
-            // Evolucionando con su cierre, estando completa y sellada
-            collection.updateOne(
-                Filters.eq("_id", caja.getId()),
-                Updates.combine(
-                        Updates.set("fechaHoraCierre", FechaCvr.toDate(caja.getFechaHoraCierre())),
-                        Updates.set("montoFinalEstimado", caja.getMontoFinalEstimado()),
-                        Updates.set("observacionesCierre", caja.getObservacionesCierre()),
-                        Updates.set("estadoSesion", false)
-                )
-            );
+
+            //1. Actualizamos la caja directamente usando el objeto Caja
+            collection.updateOne(Filters.eq("_id", caja.getId()), Updates.combine(
+                    Updates.set("fechaHoraCierre", caja.getFechaHoraCierre()),
+                    Updates.set("montoFinalEstimado", caja.getMontoFinalEstimado()),
+                    Updates.set("observacionesCierre", caja.getObservacionesCierre()),
+                    Updates.set("estadoSesion", false)
+            ));
             
             //2. Regresamos la caja con los cambios aplicados
-        return obtenerPorId(caja.getId().toHexString());
-        }catch(Exception e){
+            return obtenerPorId(caja.getId().toHexString());
+        } catch (Exception e) {
             throw new PersistenciaException("Error al cerrar la caja: " + e.getMessage());
         }
     }
@@ -144,7 +128,12 @@ public class CajaDAO implements ICajaDAO{
      * {@inheritDoc}
      */
     @Override
-    public boolean actualizarResumenVentas(ObjectId id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws PersistenciaException{
+    public boolean actualizarResumenVentas(String id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws PersistenciaException{
+        //0. Validamos caja existente
+        if (obtenerPorId(id) == null) {
+            throw new PersistenciaException("No se encontró la caja en los registros");
+        }
+        
         try {
             /**
              * Devolvemos el resultado de la combinación
@@ -179,11 +168,11 @@ public class CajaDAO implements ICajaDAO{
             Object objectId = new ObjectId(id);
             
             //2. Obtenemos el documento de la sesión de caja con el id
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Caja caja = collection.find(Filters.eq("_id", objectId)).first();
             
             //3. Retornamos la sesión de caja encontrada, nulo si no
-            if(document != null){
-                return toCaja(document);
+            if(caja != null){
+                return caja;
             }else{
                 return null;
             }
@@ -202,11 +191,11 @@ public class CajaDAO implements ICajaDAO{
     public Caja obtenerSesionActiva() throws PersistenciaException {
         try{
             //1. Realizamos la busqueda por la sesión activa
-            Document document = collection.find(Filters.eq("estadoSesion", true)).first();
+            Caja caja = collection.find(Filters.eq("estadoSesion", true)).first();
             
             //2. Retornamos la sesión de caja encontrada, nulo si no
-            if(document != null){
-                return toCaja(document);
+            if(caja != null){
+                return caja;
             }else{
                 return null;
             }
@@ -214,6 +203,7 @@ public class CajaDAO implements ICajaDAO{
             throw new PersistenciaException("Error al obtener la sesión de caja activa: " + e.getMessage());
         }
     }
+    
     /**
      * Método auxiliar para transformar un documento de MongoDB a una entidad Caja.
      *

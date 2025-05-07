@@ -13,7 +13,13 @@ import com.mongodb.ServerApi;
 import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bson.Document;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
  *
@@ -82,24 +88,53 @@ public class Conexion {
         private static MongoDatabase database= null;
         
         static { //Deeum no sabía que se podía esto :0
+            //0. Desactivamos los logs de mongo para que no salga en el output
+            Logger.getLogger("org.mongo.driver").setLevel(Level.SEVERE);
+            
+            //1. Configuramos el ServerApi que se ocupa para los settings
             ServerApi serverApi = ServerApi.builder()
                     .version(ServerApiVersion.V1)
                     .build();
             
+            //2. Configuramos el CodecRegistry para habilitar el soporte de POJOs
+            PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
+            CodecRegistry pojoCodecRegistry = fromProviders(pojoCodecProvider);
+            
+            //3. Configuramos los ajustes del cliente MongoDB
             MongoClientSettings settings = MongoClientSettings.builder()
                     .applyConnectionString(new ConnectionString(connectionString))
                     .serverApi(serverApi)
                     .build();
-            
+             
             try{
+                //4. Asignamos los ajustes al MongoClientestático de la clase
                 mongoClient = MongoClients.create(settings);
-                MongoDatabase adminDatabase = mongoClient.getDatabase("admin");
-                adminDatabase.runCommand(new Document("ping", 1));
+                
+                //5. Obtenemos el CodecRegistry del MongoClient
+                CodecRegistry defaultCodecRegistry = mongoClient.getCodecRegistry();
+                
+                //6. Combinamos los CodecRegistry
+                CodecRegistry codecRegistry = fromRegistries(defaultCodecRegistry, pojoCodecRegistry);
+                
+                //7. Reconstruimos el settings con el CodecRegistry combinado
+                settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connectionString))
+                .serverApi(serverApi)
+                .codecRegistry(codecRegistry)
+                .build();
+                
+                //8. Recreamos el MongoClient con los settings actualizados
+                mongoClient = MongoClients.create(settings);
+                
+                //9. Recreamos el MongoClient con los settings actualizados
+                //Pings la base de datos para confrimar que la conexión esta bien
+                database = mongoClient.getDatabase(nombreDatabase);
+                database.runCommand(new Document("ping", 1));
                 System.out.println("Conexión establecida exitosamente");
                 database = mongoClient.getDatabase(nombreDatabase);
                 System.out.println("Usando: " + nombreDatabase);
             }catch(MongoException me){
-                System.out.println("Error al conectar MongoBD Atlas");
+                System.out.println("Error al conectar MongoBD Atlas: " + me.getMessage());
             }
         } 
     }

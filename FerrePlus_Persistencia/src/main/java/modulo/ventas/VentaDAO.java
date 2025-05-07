@@ -10,6 +10,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import conexion.Conexion;
 import conversores.FechaCvr;
 import entidades.Producto;
@@ -33,7 +34,7 @@ import org.bson.types.ObjectId;
  * @author Beto_
  */
 public class VentaDAO implements IVentaDAO{
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Venta> collection;
     private IProductoDAO productoDAO;
     /**
      * Instancia única de la clase VentaDAO (Patrón Singleton).
@@ -52,7 +53,7 @@ public class VentaDAO implements IVentaDAO{
             Conexion conexion = Conexion.getInstance();
             MongoClient mongoClient = conexion.getMongoClient();
             MongoDatabase database = conexion.getDatabase();
-            this.collection = database.getCollection("ventas");
+            this.collection = database.getCollection("ventas", Venta.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo VentaDAO: " + e.getMessage());
@@ -84,53 +85,24 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("No se puede agregar una venta nula");
         }
         try{
-            //1. Creamos le documento de la venta a agregar
-            Document document = new Document()
-                    .append("folio", venta.getFolio())
-                    .append("fecha", FechaCvr.toDate(venta.getFechaHora()))
-                    .append("total", venta.getTotal())
-                    .append("estado", venta.getEstado())
-                    .append("idCaja", venta.getIdCaja());
-            
-            //2 Creamos una lista de documentos donde guardaremos los detalles de la venta
-            List<Document> listaDetallesDocuments = new ArrayList<>();
-            if(venta.getDetalles() != null){
+            //1. Insertar la venta directamente
+            collection.insertOne(venta);
+
+            //2. Actualizar el stock de los productos vendidos
+            if (venta.getDetalles() != null) {
                 for (Venta.DetalleVenta detalle : venta.getDetalles()) {
-                    
-                    //2.1 Sacamos el producto del detalle para trabajarlo
                     Producto producto = productoDAO.obtenerPorId(detalle.getIdProducto().toHexString());
-                    
-                    //2.2 Validamos el id del producto
-                    if(producto == null){
+                    if (producto == null) {
                         throw new PersistenciaException("Un producto del detalle de la venta no existe");
                     }
-                    
-                    //2.4 Actualizamos el stock, disminuyendo por la cantidad vendida
+                    //3. Actualiza el stock 
                     producto.setStock(producto.getStock() - detalle.getCantidad());
                     productoDAO.actualizar(producto);
-                    
-                    //2.5 Creamos un documento con la información del detalle y la añadimos a la lista
-                    Document detalleDocument = new Document()
-                            .append("idProducto", detalle.getIdProducto())
-                            .append("cantidad", detalle.getCantidad())
-                            .append("descuento", detalle.getDescuento())
-                            .append("subtotal", detalle.getSubtotal());
-                    listaDetallesDocuments.add(detalleDocument);
                 }
-            }else{
+            } else {
                 throw new PersistenciaException("No se puede crear una venta sin productos");
             }
-            
-            //3. Añadimos la lista de documentos de detalles a la venta
-            document.append("detalles", listaDetallesDocuments);
-            
-            //4. Insertamos el documento
-            collection.insertOne(document);
-            
-            //5. Extraemos el id de la inserción del documento y se lo ponemos a la venta
-            venta.setId(document.getObjectId("_id"));
-            
-            //6. Regresamos la venta ya con el id
+            //4. Retornamos la venta, mongo le inserta el id en automático
             return venta;
         }catch(PersistenciaException pe){
             throw new PersistenciaException("Error al agregar detalles de venta: " + pe.getMessage());
@@ -154,15 +126,24 @@ public class VentaDAO implements IVentaDAO{
                 throw new PersistenciaException("No se encontró la venta en los registros");
             }
             
+            //0. Validamos caja existente
+            if(venta.getEstado() == false){
+                throw new PersistenciaException("La venta ya se encuentra cancelada");
+            }
+            
             //1. Combinamos el estado de la venta, cambiandolo a false, osea cancelado
-            collection.updateOne(
+            UpdateResult result = collection.updateOne(
                 Filters.eq("_id", venta.getId()),
                 Updates.set("estado", false)
             );
             
-            //2. Regresamos la caja con el cambio
-            venta.setEstado(false);
-            return venta;
+            //2. Si no se detectaron cambios
+            if (result.getModifiedCount() == 0) {
+                throw new PersistenciaException("No se pudo cancelar la venta con ID: " + id);
+            }
+            
+            //3. Regresamos la caja con el cambio
+            return obtenerPorId(id);
             
         }catch(PersistenciaException e){
             throw new PersistenciaException(e.getMessage());
@@ -185,12 +166,12 @@ public class VentaDAO implements IVentaDAO{
             //1. Creamos el objectId con el id del parametro
             Object objectId = new ObjectId(id);
             
-            //2. Obtenemos el documento de la sesión de caja con el id
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            //2. Obtenemos el documento de la venta con el id
+            Venta venta = collection.find(Filters.eq("_id", objectId)).first();
             
-            //3. Retornamos la sesión de caja encontrada, nulo si no
-            if(document != null){
-                return toVenta(document);
+            //3. Retornamos la venta encontrada, nulo si no
+            if(venta != null){
+                return venta;
             }else{
                 return null;
             }
@@ -214,11 +195,11 @@ public class VentaDAO implements IVentaDAO{
         try{
             
             //1. Obtenemos el documento de venta obtenido por el id
-            Document document = collection.find(Filters.eq("folio", folio)).first();
+            Venta venta = collection.find(Filters.eq("folio", folio)).first();
 
             //2. Retornamos la venta encontrada, nulo si no
-            if(document != null){
-                return toVenta(document);
+            if(venta != null){
+                return venta;
             }else{
                 return null;
             }
@@ -234,8 +215,9 @@ public class VentaDAO implements IVentaDAO{
     public List<Venta> obtenerTodas() throws PersistenciaException {
         List<Venta> ventas = new ArrayList<>();
         try{
-            collection.find().forEach(document -> {
-            ventas.add(toVenta(document));
+            //Añade cada venta a la lista de ventas
+            collection.find().forEach(venta -> {
+            ventas.add(venta);
         });
         
             return ventas;
@@ -318,8 +300,8 @@ public class VentaDAO implements IVentaDAO{
             try(var cursor = collection.aggregate(pipeline).iterator()){
                 while(cursor.hasNext()){
                     //Por cada coincidencia se van añadiendo a las ventas filtradas
-                    Document doc = cursor.next();
-                    ventas.add(toVenta(doc));
+                    Venta venta = cursor.next();
+                    ventas.add(venta);
                 }
                 //Regresamos las ventas filtradas
                 return ventas;
@@ -346,15 +328,15 @@ public class VentaDAO implements IVentaDAO{
             ObjectId objectId = new ObjectId(id);
             
             //2. Extraemos el documento con el id con la equivalencia del id, obteniendo el primer registro
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Venta venta = collection.find(Filters.eq("_id", objectId)).first();
             
             //3. Validamos documento encontrado
-            if(document == null){
+            if(venta == null){
                 throw new PersistenciaException("No se encontraron registros con ese id");
             }
             
             //4. Retornamos la lista de detalles
-            return toVenta(document).getDetalles();
+            return venta.getDetalles();
         }catch(IllegalArgumentException iae){
             throw new PersistenciaException("Id inválido: " + id);
         }catch(Exception e){

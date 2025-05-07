@@ -45,7 +45,7 @@ public interface ICajaDAO {
      * @return `true` si la actualización fue exitosa, `false` en caso contrario.
      * @throws PersistenciaException Si ocurre un error durante la persistencia.
      */
-    public boolean actualizarResumenVentas(ObjectId id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws PersistenciaException;
+    public boolean actualizarResumenVentas(String id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws PersistenciaException;
     
     /**
      * Obtiene una sesión de caja del sistema basada en su ID.

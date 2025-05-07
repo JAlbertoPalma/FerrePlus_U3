@@ -32,7 +32,7 @@ import org.bson.types.ObjectId;
  * @author Beto_
  */
 public class CompraDAO implements ICompraDAO{
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Compra> collection;
     private IProductoDAO productoDAO;
     /**
      * Instancia única de la clase CompraDAO (Patrón Singleton).
@@ -51,7 +51,7 @@ public class CompraDAO implements ICompraDAO{
             Conexion conexion = Conexion.getInstance();
             MongoClient mongoClient = conexion.getMongoClient();
             MongoDatabase database = conexion.getDatabase();
-            this.collection = database.getCollection("compras");
+            this.collection = database.getCollection("compras", Compra.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo CompraDAO: " + e.getMessage());
@@ -79,66 +79,37 @@ public class CompraDAO implements ICompraDAO{
     @Override
     public Compra agregar(Compra compra) throws PersistenciaException {
         //0. Validamos compra no nula
-        if(compra == null){
+        if (compra == null) {
             throw new PersistenciaException("No se puede agregar una compra nula");
         }
-        try{
-            //1. Creamos le documento de la compra a agregar
-            Document document = new Document()
-                    .append("folio", compra.getFolio())
-                    .append("fecha", FechaCvr.toDate(compra.getFecha()))
-                    .append("total", compra.getTotal())
-                    .append("proveedor", compra.getProveedor());
-            
-            //2 Creamos una lista de documentos donde guardaremos los detalles de la compra
-            List<Document> listaDetallesDocuments = new ArrayList<>();
-            if(compra.getDetalles() != null){ 
+        try {
+            //1. Insertar directamente el objeto Compra
+            collection.insertOne(compra);
+
+            //2. Actualizar productos y detalles
+            if (compra.getDetalles() != null) {
                 for (Compra.DetalleCompra detalle : compra.getDetalles()) {
-                    
-                    //2.1 Sacamos el producto del detalle para trabajarlo
                     Producto producto = productoDAO.obtenerPorId(detalle.getIdProducto().toHexString());
-                    
-                    //2.2 Validamos el id del producto
-                    if(producto == null){
+                    if (producto == null) {
                         throw new PersistenciaException("Un producto del detalle de la compra no existe");
                     }
                     
-                    //2.3 Actualizamos el precio referencial con el precio de compra
-                    if(!detalle.getPrecioDeCompra().equals(producto.getPrecioCompraReferencial())){
+                    //3. Si el precio de compra es diferente al que ya está, lo cambia del producto
+                    if (!detalle.getPrecioDeCompra().equals(producto.getPrecioCompraReferencial())) {
                         producto.setPrecioCompraReferencial(detalle.getPrecioDeCompra());
                         productoDAO.actualizar(producto);
                     }
                     
-                    //2.4 Actualizamos el stock, aumentando por la cantidad comprada
+                    //4. Actualiza el stock
                     producto.setStock(producto.getStock() + detalle.getCantidad());
                     productoDAO.actualizar(producto);
-                    
-                    //2.5 Creamos un documento con la información del detalle y la añadimos a la lista
-                    Document detalleDocument = new Document()
-                            .append("idProducto", detalle.getIdProducto())
-                            .append("cantidad", detalle.getCantidad())
-                            .append("precioDeCompra", detalle.getPrecioDeCompra())
-                            .append("subtotal", detalle.getSubtotal());
-                    listaDetallesDocuments.add(detalleDocument);
                 }
-            }else{
+            } else {
                 throw new PersistenciaException("No se puede crear una compra sin productos");
             }
-            
-            //3. Añadimos la lista de documentos de detalles a la compra
-            document.append("detalles", listaDetallesDocuments);
-            
-            //4. Insertamos el documento
-            collection.insertOne(document);
-            
-            //5. Extraemos le id de la inserción del documento y se lo ponemos a la compra
-            compra.setId(document.getObjectId("_id"));
-            
-            //6. Regresamos la compra ya con el id
+            //4. Retornamos la comrpa, mongo le inserta el id en automático
             return compra;
-        }catch(PersistenciaException pe){
-            throw new PersistenciaException("Error al agregar detalles de compra: " + pe.getMessage());
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al agregar la compra: " + e.getMessage());
         }
     }
@@ -173,11 +144,11 @@ public class CompraDAO implements ICompraDAO{
             ObjectId objectId = new ObjectId(id);
 
             //2. Obtenemos el documento de compra obtenido por el id
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Compra compra = collection.find(Filters.eq("_id", objectId)).first();
 
             //3. Retornamos la compra encontrada, nulo si no
-            if(document != null){
-                return toCompra(document);
+            if(compra != null){
+                return compra;
             }else{
                 return null;
             }
@@ -200,11 +171,11 @@ public class CompraDAO implements ICompraDAO{
         try{
             
             //1. Obtenemos el documento de compra obtenido por el id
-            Document document = collection.find(Filters.eq("folio", folio)).first();
+            Compra compra = collection.find(Filters.eq("folio", folio)).first();
 
             //2. Retornamos la compra encontrada, nulo si no
-            if(document != null){
-                return toCompra(document);
+            if(compra != null){
+                return compra;
             }else{
                 return null;
             }
@@ -220,8 +191,8 @@ public class CompraDAO implements ICompraDAO{
     public List<Compra> obtenerTodas() throws PersistenciaException {
         List<Compra> compras = new ArrayList<>();
         try{
-            collection.find().forEach(document -> {
-            compras.add(toCompra(document));
+            collection.find().forEach(compra -> {
+            compras.add(compra);
         });
         
             return compras;
@@ -299,8 +270,8 @@ public class CompraDAO implements ICompraDAO{
             try(var cursor = collection.aggregate(pipeline).iterator()){
                 while(cursor.hasNext()){
                     //Por cada coincidencia se van añadiendo a las compras filtradas
-                    Document doc = cursor.next();
-                    compras.add(toCompra(doc));
+                    Compra compra = cursor.next();
+                    compras.add(compra);
                 }
                 //Regresamos las compras filtradas
                 return compras;
@@ -327,15 +298,15 @@ public class CompraDAO implements ICompraDAO{
             ObjectId objectId = new ObjectId(id);
             
             //2. Extraemos el documento con el id con la equivalencia del id, obteniendo el primer registro
-            Document document = collection.find(Filters.eq("_id", objectId)).first();
+            Compra compra = collection.find(Filters.eq("_id", objectId)).first();
             
             //3. Validamos documento encontrado
-            if(document == null){
+            if(compra == null){
                 throw new PersistenciaException("No se encontraron registros con ese id");
             }
             
             //4. Retornamos la lista de detalles
-            return toCompra(document).getDetalles();
+            return compra.getDetalles();
         }catch(IllegalArgumentException iae){
             throw new PersistenciaException("Id inválido: " + id);
         }catch(Exception e){
