@@ -4,6 +4,7 @@
  */
 package com.mycompany.ferreplus_persistencia;
 
+import entidades.DetalleVenta;
 import entidades.Venta;
 import excepciones.PersistenciaException;
 import java.time.LocalDateTime;
@@ -35,16 +36,16 @@ public class PruebaVentas {
         }
         
         //0. ventas de prueba
-        List<Venta.DetalleVenta> detalles1 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 2, 10.0, 90.0), //directo de la bd
-                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 1, 0.0, 50.0) //directo de la bd
+        List<DetalleVenta> detalles1 = Arrays.asList(
+                new DetalleVenta(new ObjectId("681c720c0674fd6be46c013f"), 2, 10.0, 90.0), //directo de la bd
+                new DetalleVenta(new ObjectId("681c720c0674fd6be46c013f"), 1, 0.0, 50.0) //directo de la bd
         );
-        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("681b186b455b7b7979becb90"), detalles1); //directo de la bd
+        Venta venta1 = new Venta("VOBSON1", LocalDateTime.now(), 140.0, new ObjectId("681c7271618fd87bdcee6ad1"), detalles1); //directo de la bd
         
-        List<Venta.DetalleVenta> detalles2 = Arrays.asList(
-                new Venta.DetalleVenta(new ObjectId("681b17f0c447241f57f4374f"), 1, 20.0, 5.0) //directo de la bd
+        List<DetalleVenta> detalles2 = Arrays.asList(
+                new DetalleVenta(new ObjectId("681c720c0674fd6be46c013f"), 1, 20.0, 5.0) //directo de la bd
         );
-        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("681b186b455b7b7979becb90"), detalles2); //directo de la bd
+        Venta venta2 = new Venta("VOBSON2", LocalDateTime.now(), 5.0, new ObjectId("681c7271618fd87bdcee6ad1"), detalles2); //directo de la bd
         
         //1. Agregar dos compras
         try{

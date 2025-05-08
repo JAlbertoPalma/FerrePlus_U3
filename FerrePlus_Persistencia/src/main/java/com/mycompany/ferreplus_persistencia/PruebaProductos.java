@@ -111,8 +111,5 @@ public class PruebaProductos {
         }catch(PersistenciaException pe){
             System.out.println("7. Uhh algo salió mal");
         }
-        
-        //cerramos conexion
-        Conexion.getInstance().cerrarConexion();
     }
 }

@@ -13,6 +13,7 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import conexion.Conexion;
 import conversores.FechaCvr;
+import entidades.DetalleVenta;
 import entidades.Producto;
 import entidades.Venta;
 import excepciones.PersistenciaException;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import modulo.inventario.IProductoDAO;
 import modulo.inventario.ProductoDAO;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -50,9 +50,10 @@ public class VentaDAO implements IVentaDAO{
      */
     private VentaDAO() throws PersistenciaException{
         try{
-            Conexion conexion = Conexion.getInstance();
-            MongoClient mongoClient = conexion.getMongoClient();
-            MongoDatabase database = conexion.getDatabase();
+//            Conexion conexion = Conexion.getInstance();
+//            MongoClient mongoClient = conexion.getMongoClient();
+//            MongoDatabase database = conexion.getDatabase();
+            MongoDatabase database = Conexion.getDatabase();
             this.collection = database.getCollection("ventas", Venta.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
@@ -90,7 +91,7 @@ public class VentaDAO implements IVentaDAO{
 
             //2. Actualizar el stock de los productos vendidos
             if (venta.getDetalles() != null) {
-                for (Venta.DetalleVenta detalle : venta.getDetalles()) {
+                for (DetalleVenta detalle : venta.getDetalles()) {
                     Producto producto = productoDAO.obtenerPorId(detalle.getIdProducto().toHexString());
                     if (producto == null) {
                         throw new PersistenciaException("Un producto del detalle de la venta no existe");
@@ -317,7 +318,7 @@ public class VentaDAO implements IVentaDAO{
      * {@inheritDoc}
      */
     @Override
-    public List<Venta.DetalleVenta> obtenerDetalles(String id) throws PersistenciaException {
+    public List<DetalleVenta> obtenerDetalles(String id) throws PersistenciaException {
         //0. validamos id no nulo
         if(id == null || id.length() <= 0){
             throw new PersistenciaException("No se puede obtener detalles de un id nulo");
@@ -344,34 +345,34 @@ public class VentaDAO implements IVentaDAO{
         }
     }
     
-    /**
-     * Método auxiliar para transformar un documento de MongoDB a una entidad Venta.
-     *
-     * @param document El documento de MongoDB a transformar.
-     * @return La entidad Venta correspondiente, incluyendo sus detalles.
-     */
-    private Venta toVenta(Document document) {
-        Venta venta = new Venta();
-        venta.setId(document.getObjectId("_id"));
-        venta.setFolio(document.getString("folio"));
-        venta.setFechaHora(FechaCvr.toLocalDateTime(document.getDate("fechaHora")));
-        venta.setTotal(document.getDouble("total"));
-        venta.setEstado(document.getBoolean("estado"));
-        venta.setIdCaja(document.getObjectId("idCaja"));
-
-        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
-        List<Venta.DetalleVenta> detallesVentaList = new ArrayList<>();
-        if (detallesDocumentList != null) {
-            for (Document detalleDoc : detallesDocumentList) {
-                Venta.DetalleVenta detalle = new Venta.DetalleVenta();
-                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
-                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
-                detalle.setDescuento(detalleDoc.getDouble("descuento"));
-                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
-                detallesVentaList.add(detalle);
-            }
-        }
-        venta.setDetalles(detallesVentaList);
-        return venta;
-    }
+//    /**
+//     * Método auxiliar para transformar un documento de MongoDB a una entidad Venta.
+//     *
+//     * @param document El documento de MongoDB a transformar.
+//     * @return La entidad Venta correspondiente, incluyendo sus detalles.
+//     */
+//    private Venta toVenta(Document document) {
+//        Venta venta = new Venta();
+//        venta.setId(document.getObjectId("_id"));
+//        venta.setFolio(document.getString("folio"));
+//        venta.setFechaHora(FechaCvr.toLocalDateTime(document.getDate("fechaHora")));
+//        venta.setTotal(document.getDouble("total"));
+//        venta.setEstado(document.getBoolean("estado"));
+//        venta.setIdCaja(document.getObjectId("idCaja"));
+//
+//        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
+//        List<Venta.DetalleVenta> detallesVentaList = new ArrayList<>();
+//        if (detallesDocumentList != null) {
+//            for (Document detalleDoc : detallesDocumentList) {
+//                Venta.DetalleVenta detalle = new Venta.DetalleVenta();
+//                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
+//                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
+//                detalle.setDescuento(detalleDoc.getDouble("descuento"));
+//                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
+//                detallesVentaList.add(detalle);
+//            }
+//        }
+//        venta.setDetalles(detallesVentaList);
+//        return venta;
+//    }
 }

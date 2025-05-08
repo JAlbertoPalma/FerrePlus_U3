@@ -4,8 +4,8 @@
  */
 package modulo.ventas;
 
+import entidades.DetalleVenta;
 import entidades.Venta;
-import entidades.Venta.DetalleVenta;
 import excepciones.PersistenciaException;
 import java.time.LocalDateTime;
 import java.util.List;

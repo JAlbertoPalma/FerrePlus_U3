@@ -42,9 +42,10 @@ public class ProductoDAO implements IProductoDAO{
      */
     private ProductoDAO() throws PersistenciaException{
         try{
-            Conexion conexion = Conexion.getInstance();
-            MongoClient mongoClient = conexion.getMongoClient();
-            MongoDatabase database = conexion.getDatabase();
+//            Conexion conexion = Conexion.getInstance();
+//            MongoClient mongoClient = conexion.getMongoClient();
+//            MongoDatabase database = conexion.getDatabase();
+            MongoDatabase database = Conexion.getDatabase();
             this.collection = database.getCollection("productos", Producto.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo ProductoDAO: " + e.getMessage());

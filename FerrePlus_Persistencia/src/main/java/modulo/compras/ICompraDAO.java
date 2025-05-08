@@ -5,7 +5,7 @@
 package modulo.compras;
 
 import entidades.Compra;
-import entidades.Compra.DetalleCompra;
+import entidades.DetalleCompra;
 import excepciones.PersistenciaException;
 import java.time.LocalDate;
 import java.util.List;
@@ -90,5 +90,5 @@ public interface ICompraDAO {
      * @throws PersistenciaException Si ocurre un error durante la persistencia
      * o si no se encuentra la compra.
      */
-    public List<Compra.DetalleCompra> obtenerDetalles(String id) throws PersistenciaException;
+    public List<DetalleCompra> obtenerDetalles(String id) throws PersistenciaException;
 }

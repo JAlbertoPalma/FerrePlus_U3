@@ -12,6 +12,7 @@ import com.mongodb.client.model.Filters;
 import conexion.Conexion;
 import conversores.FechaCvr;
 import entidades.Compra;
+import entidades.DetalleCompra;
 import entidades.Producto;
 import excepciones.PersistenciaException;
 import java.time.LocalDate;
@@ -48,9 +49,10 @@ public class CompraDAO implements ICompraDAO{
      */
     private CompraDAO() throws PersistenciaException{
         try{
-            Conexion conexion = Conexion.getInstance();
-            MongoClient mongoClient = conexion.getMongoClient();
-            MongoDatabase database = conexion.getDatabase();
+//            Conexion conexion = Conexion.getInstance();
+//            MongoClient mongoClient = conexion.getMongoClient();
+//            MongoDatabase database = conexion.getDatabase();
+            MongoDatabase database = Conexion.getDatabase();
             this.collection = database.getCollection("compras", Compra.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
@@ -88,7 +90,7 @@ public class CompraDAO implements ICompraDAO{
 
             //2. Actualizar productos y detalles
             if (compra.getDetalles() != null) {
-                for (Compra.DetalleCompra detalle : compra.getDetalles()) {
+                for (DetalleCompra detalle : compra.getDetalles()) {
                     Producto producto = productoDAO.obtenerPorId(detalle.getIdProducto().toHexString());
                     if (producto == null) {
                         throw new PersistenciaException("Un producto del detalle de la compra no existe");
@@ -287,7 +289,7 @@ public class CompraDAO implements ICompraDAO{
      * {@inheritDoc}
      */
     @Override
-    public List<Compra.DetalleCompra> obtenerDetalles(String id) throws PersistenciaException {
+    public List<DetalleCompra> obtenerDetalles(String id) throws PersistenciaException {
         //0. validamos id no nulo
         if(id == null || id.length() <= 0){
             throw new PersistenciaException("No se puede obtener detalles de un id nulo");
@@ -314,33 +316,33 @@ public class CompraDAO implements ICompraDAO{
         }
     }
     
-    /**
-     * Método auxiliar para transformar un documento de MongoDB a una entidad Compra.
-     *
-     * @param document El documento de MongoDB a transformar.
-     * @return La entidad Compra correspondiente, incluyendo sus detalles.
-     */
-    private Compra toCompra(Document document){
-        Compra compra = new Compra();
-        compra.setId(document.getObjectId("_id"));
-        compra.setFolio(document.getString("folio"));
-        compra.setFecha(FechaCvr.toLocalDate(document.getDate("fecha")));
-        compra.setTotal(document.getDouble("total"));
-        compra.setProveedor(document.getString("proveedor"));
-
-        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
-        List<Compra.DetalleCompra> detallesCompraList = new ArrayList<>();
-        if (detallesDocumentList != null) {
-            for (Document detalleDoc : detallesDocumentList) {
-                Compra.DetalleCompra detalle = new Compra.DetalleCompra();
-                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
-                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
-                detalle.setPrecioDeCompra(detalleDoc.getDouble("precioDeCompra"));
-                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
-                detallesCompraList.add(detalle);
-            }
-        }
-        compra.setDetalles(detallesCompraList);
-        return compra;
-    }
+//    /**
+//     * Método auxiliar para transformar un documento de MongoDB a una entidad Compra.
+//     *
+//     * @param document El documento de MongoDB a transformar.
+//     * @return La entidad Compra correspondiente, incluyendo sus detalles.
+//     */
+//    private Compra toCompra(Document document){
+//        Compra compra = new Compra();
+//        compra.setId(document.getObjectId("_id"));
+//        compra.setFolio(document.getString("folio"));
+//        compra.setFecha(FechaCvr.toLocalDate(document.getDate("fecha")));
+//        compra.setTotal(document.getDouble("total"));
+//        compra.setProveedor(document.getString("proveedor"));
+//
+//        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
+//        List<Compra.DetalleCompra> detallesCompraList = new ArrayList<>();
+//        if (detallesDocumentList != null) {
+//            for (Document detalleDoc : detallesDocumentList) {
+//                Compra.DetalleCompra detalle = new Compra.DetalleCompra();
+//                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
+//                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
+//                detalle.setPrecioDeCompra(detalleDoc.getDouble("precioDeCompra"));
+//                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
+//                detallesCompraList.add(detalle);
+//            }
+//        }
+//        compra.setDetalles(detallesCompraList);
+//        return compra;
+//    }
 }

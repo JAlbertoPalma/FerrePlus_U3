@@ -38,9 +38,10 @@ public class CajaDAO implements ICajaDAO{
      */
     private CajaDAO() throws PersistenciaException{
         try{
-            Conexion conexion = Conexion.getInstance();
-            MongoClient mongoClient = conexion.getMongoClient();
-            MongoDatabase database = conexion.getDatabase();
+//            Conexion conexion = Conexion.getInstance();
+//            MongoClient mongoClient = conexion.getMongoClient();
+//            MongoDatabase database = conexion.getDatabase();
+            MongoDatabase database = Conexion.getDatabase();
             this.collection = database.getCollection("sesionesCaja", Caja.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo CajaDAO: " + e.getMessage());
@@ -202,30 +203,5 @@ public class CajaDAO implements ICajaDAO{
         }catch(Exception e){
             throw new PersistenciaException("Error al obtener la sesión de caja activa: " + e.getMessage());
         }
-    }
-    
-    /**
-     * Método auxiliar para transformar un documento de MongoDB a una entidad Caja.
-     *
-     * @param document El documento de MongoDB a transformar.
-     * @return La entidad Caja correspondiente.
-     * @throws PersistenciaException Si ocurre un error durante la transformación de fechas.
-     */
-    private Caja toCaja(Document document) throws PersistenciaException {
-        if (document == null) {
-            return null;
-        }
-        Caja caja = new Caja();
-        caja.setId(document.getObjectId("_id"));
-        caja.setFechaHoraCierre(FechaCvr.toLocalDateTime(document.getDate("fechaHoraApertura")));
-        caja.setMontoInicial(document.getDouble("montoInicial"));
-        caja.setEstadoSesion(document.getBoolean("estadoSesion"));
-        caja.setTotalVentas(document.getDouble("totalVentas"));
-        caja.setCantidadDeProductos(document.getInteger("cantidadDeProductos"));
-        caja.setNumeroDeVentas(document.getInteger("numeroDeVentas"));
-        caja.setFechaHoraCierre(FechaCvr.toLocalDateTime(document.getDate("fechaHoraCierre")));
-        caja.setMontoFinalEstimado(document.getDouble("montoFinalEstimado"));
-        caja.setObservacionesCierre(document.getString("observacionesCierre"));
-        return caja;
     }
 }
