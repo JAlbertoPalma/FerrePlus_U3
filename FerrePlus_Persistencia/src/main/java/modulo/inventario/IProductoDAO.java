@@ -67,14 +67,12 @@ public interface IProductoDAO {
     public List<Producto> obtenerTodos() throws PersistenciaException;
     
     /**
-     * Obtiene una lista de productos del sistema que coinciden con los filtros proporcionados.
-     * Los filtros de SKU y categoría realizan una búsqueda parcial e insensible a mayúsculas/minúsculas.
      *
-     * @param sku       El SKU para filtrar (puede ser parcial o nulo).
-     * @param categoria La categoría para filtrar (puede ser parcial o nula).
-     * @param estado    El estado del producto para filtrar (puede ser nulo).
-     * @return Una lista de productos que cumplen con los filtros.
-     * @throws PersistenciaException Si ocurre un error durante la persistencia.
+     * @param sku       the value of sku
+     * @param categoria the value of categoria
+     * @param estado the value of estado
+     * @return 
+     * @throws PersistenciaException
      */
     public List<Producto> obtenerPorFiltros(String sku, String categoria, Boolean estado) throws PersistenciaException;
     /**
