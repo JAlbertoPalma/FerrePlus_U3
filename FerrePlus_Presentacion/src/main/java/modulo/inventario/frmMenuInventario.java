@@ -5,12 +5,15 @@
 package modulo.inventario;
 
 import Control.ControlGUI;
+import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -41,7 +44,7 @@ public class frmMenuInventario extends javax.swing.JFrame {
         pnlFondo = new javax.swing.JPanel();
         pnlMenu = new javax.swing.JPanel();
         jButtonRegistrar = new javax.swing.JButton();
-        jButtonActualizar = new javax.swing.JButton();
+        jButtonVer = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
@@ -65,16 +68,16 @@ public class frmMenuInventario extends javax.swing.JFrame {
         });
         pnlMenu.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 280, 80));
 
-        jButtonActualizar.setBackground(new java.awt.Color(255, 204, 153));
-        jButtonActualizar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonActualizar.setText("Actualizar Producto");
-        jButtonActualizar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonActualizar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonVer.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonVer.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonVer.setText("Ver Productos");
+        jButtonVer.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonVer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActualizarActionPerformed(evt);
+                jButtonVerActionPerformed(evt);
             }
         });
-        pnlMenu.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 280, 80));
+        pnlMenu.add(jButtonVer, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 280, 80));
 
         jButtonVolver.setBackground(new java.awt.Color(255, 204, 153));
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -118,10 +121,14 @@ public class frmMenuInventario extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
-    private void jButtonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActualizarActionPerformed
-        ControlGUI.getInstancia().mostrarActualizarProducto();
+    private void jButtonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerActionPerformed
+        try {
+            ControlGUI.getInstancia().mostrarProductosRegistrados();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmMenuInventario.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
-    }//GEN-LAST:event_jButtonActualizarActionPerformed
+    }//GEN-LAST:event_jButtonVerActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlMenu; 
         this.pnlMenu.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -137,8 +144,8 @@ public class frmMenuInventario extends javax.swing.JFrame {
         this.pnlMenu.add(this.jButtonRegistrar,gbc);
         this.jButtonRegistrar.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
-        this.pnlMenu.add(this.jButtonActualizar,gbc);
-        this.jButtonActualizar.setPreferredSize(new Dimension(200, 50));
+        this.pnlMenu.add(this.jButtonVer,gbc);
+        this.jButtonVer.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         this.pnlMenu.add(this.jButtonVolver,gbc);
          this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
@@ -185,8 +192,8 @@ public class frmMenuInventario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonActualizar;
     private javax.swing.JButton jButtonRegistrar;
+    private javax.swing.JButton jButtonVer;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel pnlFondo;
