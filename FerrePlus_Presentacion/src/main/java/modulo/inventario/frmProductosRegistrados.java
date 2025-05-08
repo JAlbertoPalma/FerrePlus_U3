@@ -5,15 +5,26 @@
 package modulo.inventario;
 
 import Control.ControlGUI;
+import DTO.ProductoDTO;
+import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -21,13 +32,20 @@ import javax.swing.JScrollPane;
  */
 public class frmProductosRegistrados extends javax.swing.JFrame {
 
+    GridBagConstraints gbc = new GridBagConstraints();
+    int aux = 0;
+    int fila = 0;
+
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public frmProductosRegistrados() {
+    public frmProductosRegistrados() throws NegocioException {
         initComponents();
         this.setExtendedState(frmProductosRegistrados.MAXIMIZED_BOTH);
+        this.inicial();
         this.AcomodarContenido();
+
+        this.combobox();
     }
 
     /**
@@ -41,22 +59,29 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
 
         pnlFondo = new javax.swing.JPanel();
         jButtonVolver = new javax.swing.JButton();
-        lblNombre = new javax.swing.JLabel();
+        lblsku = new javax.swing.JLabel();
         jScrollPaneProductos = new javax.swing.JScrollPane();
         jTableProductos = new javax.swing.JTable();
-        txtNombre = new javax.swing.JTextField();
-        lblPrecio = new javax.swing.JLabel();
-        txtPrecioVenta = new javax.swing.JTextField();
-        lblStock = new javax.swing.JLabel();
-        txtStock = new javax.swing.JTextField();
+        txtSKU = new javax.swing.JTextField();
+        lblCategoria = new javax.swing.JLabel();
+        txtCategoria = new javax.swing.JTextField();
         lblEstado = new javax.swing.JLabel();
         jComboBoxEstado = new javax.swing.JComboBox<>();
+        jButtonEliminar = new javax.swing.JButton();
+        jButtonFiltrar = new javax.swing.JButton();
+        jButtonBuscar = new javax.swing.JButton();
+        jButtonActualizar = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pnlFondo.setBackground(new java.awt.Color(255, 204, 153));
+        pnlFondo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlFondoMouseClicked(evt);
+            }
+        });
         pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonVolver.setBackground(new java.awt.Color(255, 204, 153));
@@ -68,12 +93,12 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
                 jButtonVolverActionPerformed(evt);
             }
         });
-        pnlFondo.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
+        pnlFondo.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 580, 130, 40));
 
-        lblNombre.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNombre.setText("Nombre:");
-        pnlFondo.add(lblNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 480, -1, -1));
+        lblsku.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblsku.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblsku.setText("SKU:");
+        pnlFondo.add(lblsku, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 480, 110, -1));
 
         jTableProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -83,51 +108,114 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "SKU", "Nombre", "Categoria", "UnidadMedida", "PrecioVenta", "PrecioCompra", "Stock", "Proveedor", "Estado"
+                "SKU", "Nombre", "Categoria", "Medida", "PrecVenta", "PrecCompra", "Stock", "Proveedor", "Estado"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableProductos.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTableProductosFocusLost(evt);
+            }
+        });
+        jTableProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableProductosMouseClicked(evt);
+            }
         });
         jScrollPaneProductos.setViewportView(jTableProductos);
+        if (jTableProductos.getColumnModel().getColumnCount() > 0) {
+            jTableProductos.getColumnModel().getColumn(0).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(1).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(2).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(3).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(4).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(5).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(6).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(7).setResizable(false);
+            jTableProductos.getColumnModel().getColumn(8).setResizable(false);
+        }
 
         pnlFondo.add(jScrollPaneProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 890, -1));
 
-        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre.setPreferredSize(new java.awt.Dimension(200, 50));
-        pnlFondo.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 490, 190, 22));
+        txtSKU.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtSKU.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFondo.add(txtSKU, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 490, 190, 22));
 
-        lblPrecio.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblPrecio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblPrecio.setText("Precio Venta:");
-        lblPrecio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        pnlFondo.add(lblPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 520, 140, -1));
+        lblCategoria.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblCategoria.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCategoria.setText("Categoria:");
+        lblCategoria.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        pnlFondo.add(lblCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 520, 140, -1));
 
-        txtPrecioVenta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtPrecioVenta.setPreferredSize(new java.awt.Dimension(200, 50));
-        pnlFondo.add(txtPrecioVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, 120, 22));
-
-        lblStock.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblStock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblStock.setText("Stock:");
-        pnlFondo.add(lblStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 560, 70, -1));
-
-        txtStock.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtStock.setPreferredSize(new java.awt.Dimension(200, 50));
-        pnlFondo.add(txtStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, 120, 22));
+        txtCategoria.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCategoria.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFondo.add(txtCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, 120, 22));
 
         lblEstado.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblEstado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEstado.setText("Estado:");
-        pnlFondo.add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 590, 80, -1));
+        pnlFondo.add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 590, 100, -1));
 
         jComboBoxEstado.setPreferredSize(new java.awt.Dimension(150, 40));
         pnlFondo.add(jComboBoxEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 600, 120, 22));
+
+        jButtonEliminar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonEliminar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonEliminar.setText("Eliminar");
+        jButtonEliminar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 630, 130, 40));
+
+        jButtonFiltrar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonFiltrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonFiltrar.setText("Filtrar");
+        jButtonFiltrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonFiltrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFiltrarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonFiltrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
+
+        jButtonBuscar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonBuscar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonBuscar.setText("Buscar");
+        jButtonBuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+
+        jButtonActualizar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonActualizar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonActualizar.setText("Actualizar");
+        jButtonActualizar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActualizarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -149,50 +237,289 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        ControlGUI.getInstancia().mostrarMenuPrincipal();
-        this.dispose();
+        if (aux == 1) {
+
+            this.jButtonBuscar.setVisible(true);
+            this.jButtonActualizar.setVisible(true);
+            this.jButtonEliminar.setVisible(true);
+            try {
+                this.inicial();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            aux = 0;
+        } else {
+            ControlGUI.getInstancia().mostrarMenuPrincipal();
+            this.dispose();
+        }
+
     }//GEN-LAST:event_jButtonVolverActionPerformed
-    private void AcomodarContenido() {
+
+    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
+        if (aux == 0) {
+
+            this.jButtonFiltrar.setText("Eliminar");
+            this.jButtonEliminar.setVisible(true);
+            String id = Integer.toString(fila);
+            System.out.println(id);
+            try {
+                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
+                System.out.println(nombre);
+                ControlGUI.getInstancia().EliminarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+                JOptionPane.showMessageDialog(rootPane, "Registro Eliminado con exito");
+                this.inicial();
+            } catch (NegocioException | PersistenciaException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
+    }//GEN-LAST:event_jButtonEliminarActionPerformed
+
+    private void jButtonFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFiltrarActionPerformed
+        this.jButtonFiltrar.setVisible(true);
+        boolean aux = false;
+        if (this.jComboBoxEstado.getItemAt(this.jComboBoxEstado.getSelectedIndex()).equalsIgnoreCase("Habilitado")) {
+            aux = true;
+        } else {
+            aux = false;
+        }
+        try {
+            this.jTableProductos.setModel(this.LlenarTablaFiltro(this.txtSKU.getText(), this.txtCategoria.getText(), aux));
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonFiltrarActionPerformed
+
+    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
+        if (aux == 1) {
+
+        } else {
+            this.buscar();
+        }
+
+    }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    private void jButtonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActualizarActionPerformed
+        if (aux == 0) {
+            try {
+                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
+                ControlGUI.getInstancia().mostrarActualizarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+                this.dispose();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }//GEN-LAST:event_jButtonActualizarActionPerformed
+
+    private void jTableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProductosMouseClicked
+
+        fila = this.jTableProductos.getSelectedRow();
+        this.jButtonEliminar.setVisible(true);
+        this.jButtonActualizar.setVisible(true);
+    }//GEN-LAST:event_jTableProductosMouseClicked
+
+    private void jTableProductosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableProductosFocusLost
+
+    }//GEN-LAST:event_jTableProductosFocusLost
+
+    private void pnlFondoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFondoMouseClicked
+        if (fila >= 0) {
+            this.jButtonActualizar.setVisible(false);
+            this.jButtonEliminar.setVisible(false);
+
+        }
+    }//GEN-LAST:event_pnlFondoMouseClicked
+    private void AcomodarContenido() throws NegocioException {
+
         this.pnlFondo.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
-        GridBagConstraints gbc = new GridBagConstraints();
+
         gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
-        gbc.insets = new Insets(2, 2, 2, 2); // Margen alrededor del componente
-//        gbc.fill = GridBagConstraints.HORIZONTAL; // Centrado en la celda
+        gbc.insets = new Insets(5, 5, 5, 5); // Margen alrededor del componente
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Centrado en la celda
         gbc.weightx = 1.0; // Espacio extra para centrar horizontalmente
-        
-        // Columna 0
-        gbc.gridx = 0;   
-        gbc.gridy = 1;
-        this.pnlFondo.add(this.lblNombre, gbc);
+
+        // Columna 1
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+
+        this.pnlFondo.add(this.jButtonBuscar, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.txtNombre,gbc);
-        gbc.gridy++;   
-        this.pnlFondo.add(this.lblPrecio, gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.txtPrecioVenta,gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.lblStock, gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.txtStock,gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.lblEstado, gbc);
-        gbc.gridy++;
-          this.pnlFondo.add(this.jComboBoxEstado,gbc);
+        this.pnlFondo.add(this.jButtonFiltrar, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonVolver, gbc);
         gbc.gridy++;
-        
-        
+        this.pnlFondo.add(this.jButtonActualizar, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonEliminar, gbc);
+        gbc.gridy++;
+
 //         Columna 2
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Alarga la tabla con el tamaño.
-        this.pnlFondo.add(this.jScrollPaneProductos, gbc);
+        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
+        this.jTableProductos.setModel(this.LlenarTabla());
+        JTableHeader header = new JTableHeader(this.jTableProductos.getColumnModel());
+        this.pnlFondo.add(header, gbc);
         gbc.gridy++;
+        this.pnlFondo.add(this.jTableProductos, gbc);
+        this.jTableProductos.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+
     }
 
-    public void llenarTabla() {
+    public int contarPaginas(int nPaginas) {
+        int totalPaginas = (int) Math.ceil((double) nPaginas / 8);
+        return totalPaginas;
+    }
 
+    // Metodo para llenar la tabla de Productos.
+    public DefaultTableModel LlenarTabla() throws NegocioException {
+
+        // Esto es para despues, con los botones siguiente y atras
+        int index = 1;
+        int aux = 1;
+        int min = 1;
+        int max = 0;
+        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        //Tabla
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < ControlGUI.getInstancia().ObtenerProductos().size(); i++) {
+            ProductoDTO producto = ControlGUI.getInstancia().ObtenerProductos().get(i);
+            System.out.println(producto.getSKU());
+            System.out.println(producto.getPrecioCompraReferencial());
+            model.addRow(new Object[]{
+                producto.getSKU(),
+                producto.getNombre(),
+                producto.getCategoria(),
+                producto.getUnidadMedida(),
+                producto.getPrecioVenta(),
+                producto.getPrecioCompraReferencial(),
+                producto.getStock(),
+                producto.getProveedor(),
+                producto.getEstado()
+            });
+        }
+        return model;
+    }
+
+    // Metodo para llenar la tabla de Productos.
+    public DefaultTableModel LlenarTablaFiltro(String sku, String categoria, boolean estado) throws NegocioException {
+        // Esto es para despues, con los botones siguiente y atras
+//        int index = 1;
+//        int aux = 1;
+//        int min = 1;
+//        int max = 0;
+//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        //Tabla
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        List<ProductoDTO> productos = ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria,estado);
+        if (productos.isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto");
+        }else{
+        for (int i = 0; i < productos.size(); i++) {
+            ProductoDTO producto = productos.get(i);
+            System.out.println(producto.getSKU());
+            System.out.println(producto.getPrecioCompraReferencial());
+            model.addRow(new Object[]{
+                producto.getSKU(),
+                producto.getNombre(),
+                producto.getCategoria(),
+                producto.getUnidadMedida(),
+                producto.getPrecioVenta(),
+                producto.getPrecioCompraReferencial(),
+                producto.getStock(),
+                producto.getProveedor(),
+                producto.getEstado()
+            });
+        }
+        }
+
+        return model;
+
+    }
+
+//    public void tabla() throws NegocioException {
+//        // Modelo de la tabla
+//        String[] columnas = {"SKU", "Nombre", "Categoria", "UnidadMedida", "PrecioVenta", "PrecioCompra", "Stock", "Proveedor", "Stock"};
+//        DefaultTableModel modelo = new DefaultTableModel(columnas, 0); // 0 filas al inicio
+//        JTable tabla = new JTable(modelo);
+//        for (int i = 0; i < ControlGUI.getInstancia().ObtenerProductos().size(); i++) {
+//            ProductoDTO producto = ControlGUI.getInstancia().ObtenerProductos().get(i);
+//            modelo.addRow(new Object[]{
+//                producto.getSKU(),
+//                producto.getNombre(),
+//                producto.getCategoria(),
+//                producto.getUnidadMedida(),
+//                producto.getPrecioVenta(),
+//                producto.getPrecioCompraReferencial(),
+//                producto.getStock(),
+//                producto.getProveedor(),
+//                producto.getEstado()
+//            });
+//
+//        }
+//        // Scroll pane con la tabla
+//        JScrollPane scrollPane = new JScrollPane(tabla);
+//        this.jTableProductos = tabla;
+//        scrollPane.setPreferredSize(new Dimension(750, 350));
+//        this.jScrollPaneProductos = scrollPane;
+//
+//    }
+    public void combobox() {
+        this.jComboBoxEstado.addItem("Habilitado");
+        this.jComboBoxEstado.addItem("Deshabilitado");
+    }
+
+    public void inicial() throws NegocioException {
+        this.lblsku.setVisible(false);
+        this.lblCategoria.setVisible(false);
+        this.lblEstado.setVisible(false);
+        this.jScrollPaneProductos.setVisible(false);
+        this.txtSKU.setVisible(false);
+        this.txtCategoria.setVisible(false);
+        this.jComboBoxEstado.setVisible(false);
+        this.jButtonFiltrar.setVisible(false);
+        this.jButtonActualizar.setVisible(false);
+        this.jButtonEliminar.setVisible(false);
+
+        this.jTableProductos.setModel(this.LlenarTabla());
+    }
+
+    public void buscar() {
+        this.aux = 1;
+        this.lblsku.setVisible(true);
+        this.lblCategoria.setVisible(true);
+        this.lblEstado.setVisible(true);
+        this.txtSKU.setVisible(true);
+        this.txtCategoria.setVisible(true);
+        this.jComboBoxEstado.setVisible(true);
+        this.jButtonBuscar.setVisible(false);
+        this.jButtonActualizar.setVisible(false);
+        this.jButtonEliminar.setVisible(false);
+        this.jButtonFiltrar.setVisible(true);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        this.pnlFondo.add(this.lblsku, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.txtSKU, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.lblCategoria, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.txtCategoria, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.lblEstado, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jComboBoxEstado, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonFiltrar, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonVolver, gbc);
     }
 
     /**
@@ -228,26 +555,32 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmProductosRegistrados().setVisible(true);
+                try {
+                    new frmProductosRegistrados().setVisible(true);
+                } catch (NegocioException ex) {
+                    Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonActualizar;
+    private javax.swing.JButton jButtonBuscar;
+    private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonFiltrar;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxEstado;
     private javax.swing.JScrollPane jScrollPaneProductos;
     private javax.swing.JTable jTableProductos;
+    private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblEstado;
-    private javax.swing.JLabel lblNombre;
-    private javax.swing.JLabel lblPrecio;
-    private javax.swing.JLabel lblStock;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JLabel lblsku;
     private javax.swing.JPanel pnlFondo;
     private javax.swing.JPanel pnlTitulo;
-    private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtPrecioVenta;
-    private javax.swing.JTextField txtStock;
+    private javax.swing.JTextField txtCategoria;
+    private javax.swing.JTextField txtSKU;
     // End of variables declaration//GEN-END:variables
 
 }

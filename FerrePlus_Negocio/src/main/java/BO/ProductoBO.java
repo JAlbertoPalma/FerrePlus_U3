@@ -21,7 +21,7 @@ import modulo.inventario.IProductoDAO;
  *
  * @author Beto_
  */
-public class ProductoBO implements IProductoBO{
+public class ProductoBO implements IProductoBO {
 
     private IProductoDAO productoDAO;
 
@@ -43,8 +43,9 @@ public class ProductoBO implements IProductoBO{
             throw new NegocioException("No se pudo registrar el producto");
         }
     }
+
     @Override
-    public ProductoDTO actualizarProducto(ProductoDTO producto)throws NegocioException {
+    public ProductoDTO actualizarProducto(ProductoDTO producto) throws NegocioException {
         Producto productoARegistrar = ProductoMapper.toEntity(producto);
         try {
             Producto productoRegistrado = productoDAO.actualizar(productoARegistrar);
@@ -54,7 +55,18 @@ public class ProductoBO implements IProductoBO{
         }
     }
     @Override
-    public ProductoDTO obtenerProductoID(String id)throws NegocioException {
+    public boolean eliminarProducto(String id) throws NegocioException, PersistenciaException {
+        try{
+            this.productoDAO.eliminar(id);
+        }catch(PersistenciaException pe){
+            throw new NegocioException("Error al eliminar producto");
+        }
+        
+        return false;
+    }
+  
+    @Override
+    public ProductoDTO obtenerProductoID(String id) throws NegocioException {
         try {
             Producto productoRegistrado = productoDAO.obtenerPorId(id);
             return ProductoMapper.toDTO(productoRegistrado);
@@ -62,8 +74,9 @@ public class ProductoBO implements IProductoBO{
             throw new NegocioException("No se encontro el producto");
         }
     }
-     @Override
-    public ProductoDTO obtenerProductoNombre(String nombre)throws NegocioException {
+
+    @Override
+    public ProductoDTO obtenerProductoNombre(String nombre) throws NegocioException {
         try {
             Producto productoRegistrado = productoDAO.obtenerPorNombre(nombre);
             return ProductoMapper.toDTO(productoRegistrado);
@@ -71,8 +84,9 @@ public class ProductoBO implements IProductoBO{
             throw new NegocioException("No se encontro el producto");
         }
     }
-      @Override
-    public ProductoDTO obtenerProductoSKU(String sku)throws NegocioException {
+
+    @Override
+    public ProductoDTO obtenerProductoSKU(String sku) throws NegocioException {
         try {
             Producto productoRegistrado = productoDAO.obtenerPorSKU(sku);
             return ProductoMapper.toDTO(productoRegistrado);
@@ -80,14 +94,25 @@ public class ProductoBO implements IProductoBO{
             throw new NegocioException("No se encontro el producto");
         }
     }
-     @Override
-    public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria, boolean estado)throws NegocioException {
+
+    @Override
+    public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria, boolean estado) throws NegocioException {
         try {
-            List<Producto> productosRegistrado = productoDAO.obtenerPorFiltros(sku, categoria, estado);
-            return ProductoMapper.toDTOList(productosRegistrado);
+            List<Producto> productosRegistrados = productoDAO.obtenerPorFiltros(sku, categoria, estado);
+            return ProductoMapper.toDTOList(productosRegistrados);
         } catch (PersistenciaException ne) {
-            throw new NegocioException("No se encontro el producto");
+            throw new NegocioException("No se encontraron los productos");
         }
     }
-    
+
+    @Override
+    public List<ProductoDTO> obtenerProductos() throws NegocioException {
+        try {
+            List<Producto> productosRegistrados = productoDAO.obtenerTodos();
+            return ProductoMapper.toDTOList(productosRegistrados);
+        } catch (PersistenciaException ne) {
+            throw new NegocioException("No se encontraron los productos");
+        }
+    }
+
 }

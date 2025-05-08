@@ -226,7 +226,11 @@ public class ProductoDAO implements IProductoDAO{
     }
     
     /**
-     * {@inheritDoc}
+     * @param sku the value of sku
+     * @param categoria the value of categoria
+     * @param estado the value of estado
+     * @return 
+     * @throws PersistenciaException
      */
     @Override
     public List<Producto> obtenerPorFiltros(String sku, String categoria, Boolean estado) throws PersistenciaException {

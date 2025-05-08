@@ -25,6 +25,8 @@ import javax.swing.JPanel;
  */
 public class frmRegistrarProducto extends javax.swing.JFrame {
 
+    String id;
+
     /**
      * Creates new form RegistrarProductoGUI
      */
@@ -33,6 +35,18 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
         this.setExtendedState(frmRegistrarProducto.MAXIMIZED_BOTH);
         this.combobox();
         this.AcomodarContenido();
+          this.lblTitulo.setText("Registrar Producto");
+          this.jButtonRegistrar.setText("Registrar");
+    }
+
+    public frmRegistrarProducto(String id) {
+        initComponents();
+        this.setExtendedState(frmRegistrarProducto.MAXIMIZED_BOTH);
+        this.combobox();
+        this.AcomodarContenido();
+        this.id = id;
+        this.lblTitulo.setText("Actualizar Producto");
+        this.jButtonRegistrar.setText("Actualizar");
     }
 
     /**
@@ -194,17 +208,40 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
-        try {
-            this.registro();
-            JOptionPane.showMessageDialog(rootPane, "Se registro el producto con exito");
-        } catch (NegocioException ex) {
-            Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
+        if (id == null) {
+            try {
+                this.registro();
+                JOptionPane.showMessageDialog(rootPane, "Se registro el producto con exito");
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                this.actualizar();
+                JOptionPane.showMessageDialog(rootPane, "Se actualizo el producto con exito");
+                this.dispose();
+                 ControlGUI.getInstancia().mostrarProductosRegistrados();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
+
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        ControlGUI.getInstancia().mostrarMenuProducto();
+        if (id == null) {
+            ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
+            try {
+                ControlGUI.getInstancia().mostrarProductosRegistrados();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            this.dispose();
+        }
+        
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void registro() throws NegocioException {
@@ -225,12 +262,33 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
         }
 
     }
-    public void combobox(){
+
+    private void actualizar() throws NegocioException {
+        if (ControlGUI.getInstancia().ValidarRegistroProducto(this.txtSKU.getText(),
+                this.txtNombre.getText(),
+                this.txtPrecioVenta.getText(),
+                this.txtPrecioCompra.getText(),
+                this.txtStock.getText()) == true) {
+            ControlGUI.getInstancia().ActualizarProducto(ControlGUI.getInstancia().crearProductoDTO(this.txtSKU.getText(),
+                    this.txtNombre.getText(),
+                    this.jComboBoxCategoria.getItemAt(this.jComboBoxCategoria.getSelectedIndex()),
+                    this.jComboBoxUnidad.getItemAt(this.jComboBoxUnidad.getSelectedIndex()),
+                    this.txtPrecioCompra.getText(),
+                    this.txtPrecioVenta.getText(),
+                    this.txtProveedor.getText(),
+                    this.txtStock.getText(),
+                    this.txtObservaciones.getText()));
+        }
+
+    }
+
+    public void combobox() {
         this.jComboBoxCategoria.addItem("General");
         this.jComboBoxUnidad.addItem("KG");
         this.jComboBoxUnidad.addItem("Litros");
         this.jComboBoxUnidad.addItem("Gramos");
     }
+
     /**
      * Metodo para el ajuste de los componentes cuando la pantalla cambie de
      * tamaño.

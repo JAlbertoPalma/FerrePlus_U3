@@ -11,10 +11,12 @@ import GUI.Login.frmMenuPrincipal;
 import GUI.Login.frmMenuPrincipal;
 import Interfaces.IProductoBO;
 import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import modulo.inventario.frmActualizarProducto;
 import modulo.inventario.frmMenuInventario;
+import modulo.inventario.frmProductosRegistrados;
 import modulo.inventario.frmRegistrarProducto;
 
 /**
@@ -37,6 +39,7 @@ public class ControlGUI {
     private frmMenuInventario menuInventario;
     private frmRegistrarProducto registrarProducto;
     private frmActualizarProducto actualizarProducto;
+    private frmProductosRegistrados productosRegistrados;
 
     private IProductoBO producto = new ProductoBO();
 
@@ -86,11 +89,24 @@ public class ControlGUI {
         this.registrarProducto.setLocationRelativeTo(null);
         this.registrarProducto.setVisible(true);
     }
+    /*
+    Metodo para mostrar el frm Registrar Producto.
+     */
+    public void mostrarActualizarProducto(String id) {
+        this.registrarProducto = new frmRegistrarProducto(id);
+        this.registrarProducto.setLocationRelativeTo(null);
+        this.registrarProducto.setVisible(true);
+    }
 
     public void mostrarActualizarProducto() {
         this.actualizarProducto = new frmActualizarProducto();
         this.actualizarProducto.setLocationRelativeTo(null);
         this.actualizarProducto.setVisible(true);
+    }
+    public void mostrarProductosRegistrados() throws NegocioException{
+        this.productosRegistrados = new frmProductosRegistrados();
+        this.productosRegistrados.setLocationRelativeTo(null);
+        this.productosRegistrados.setVisible(true);
     }
 
     public ProductoDTO crearProductoDTO(String SKU, String nombre, String categoria, String unidadMedida, String precioCompraReferencial, String precioVenta, String proveedor, String stock, String observaciones) {
@@ -120,9 +136,9 @@ public class ControlGUI {
         return this.producto.registrarProducto(producto);
     }
 
-    public List<ProductoDTO> obtenerProductosFiltro(String sku, String nombre) throws NegocioException {
+    public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria,boolean estado) throws NegocioException {
 
-        return this.producto.obtenerProductosFiltro(sku, nombre, true);
+        return this.producto.obtenerProductosFiltro(sku, categoria, estado);
     }
 
     public ProductoDTO obtenerProductoPorNombre(String nombre) throws NegocioException {
@@ -133,8 +149,26 @@ public class ControlGUI {
         return this.producto.obtenerProductoSKU(sku);
     }
     
-    public List<ProductoDTO>ObtenerProductos(String sku, String categoria, boolean estado) throws NegocioException{
-        return this.producto.obtenerProductosFiltro(sku, categoria, estado);
+    public List<ProductoDTO>ObtenerProductos() throws NegocioException{
+        return this.producto.obtenerProductos();
+    }
+    
+    public boolean EliminarProducto(String id) throws NegocioException, PersistenciaException{
+        try{
+             this.producto.eliminarProducto(id);
+             return true;
+        }catch(NegocioException ne){
+            throw new NegocioException("Error al eliminar");
+        }
+       
+    }
+    public boolean ActualizarProducto(ProductoDTO producto)throws NegocioException{
+        try{
+             this.producto.actualizarProducto(producto);
+             return true;
+        }catch(NegocioException ne){
+            throw new NegocioException("Error al actualizar");
+        }
     }
 
     /**
