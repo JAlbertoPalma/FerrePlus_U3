@@ -6,6 +6,7 @@ package Interfaces;
 
 import DTO.ProductoDTO;
 import excepciones.NegocioException;
+import excepciones.PersistenciaException;
 import java.util.List;
 
 /**
@@ -20,4 +21,6 @@ public interface IProductoBO {
      public ProductoDTO obtenerProductoNombre(String nombre)throws NegocioException;
      public ProductoDTO obtenerProductoSKU(String sku)throws NegocioException;
      public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria, boolean estado)throws NegocioException;
+     public List<ProductoDTO> obtenerProductos()throws NegocioException;
+     public boolean eliminarProducto(String id) throws NegocioException, PersistenciaException;
 }
