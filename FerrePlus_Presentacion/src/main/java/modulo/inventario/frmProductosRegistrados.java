@@ -344,6 +344,18 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         // Columna 1
         gbc.gridx = 1;
         gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
+        this.jTableProductos.setModel(this.LlenarTabla());
+        JTableHeader header = new JTableHeader(this.jTableProductos.getColumnModel());
+        this.pnlFondo.add(header, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jTableProductos, gbc);
+        this.jTableProductos.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+
+//         Columna 2
+        gbc.gridx = 2;
+        gbc.gridy = 0;
 
         this.pnlFondo.add(this.jButtonBuscar, gbc);
         gbc.gridy++;
@@ -354,18 +366,6 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.pnlFondo.add(this.jButtonActualizar, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonEliminar, gbc);
-        gbc.gridy++;
-
-//         Columna 2
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
-        this.jTableProductos.setModel(this.LlenarTabla());
-        JTableHeader header = new JTableHeader(this.jTableProductos.getColumnModel());
-        this.pnlFondo.add(header, gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.jTableProductos, gbc);
-        this.jTableProductos.setPreferredSize(new Dimension(750, 750));
         gbc.gridy++;
 
     }
@@ -417,26 +417,26 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         //Tabla
         DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
-        List<ProductoDTO> productos = ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria,estado);
+        List<ProductoDTO> productos = ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado);
         if (productos.isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto");
-        }else{
-        for (int i = 0; i < productos.size(); i++) {
-            ProductoDTO producto = productos.get(i);
-            System.out.println(producto.getSKU());
-            System.out.println(producto.getPrecioCompraReferencial());
-            model.addRow(new Object[]{
-                producto.getSKU(),
-                producto.getNombre(),
-                producto.getCategoria(),
-                producto.getUnidadMedida(),
-                producto.getPrecioVenta(),
-                producto.getPrecioCompraReferencial(),
-                producto.getStock(),
-                producto.getProveedor(),
-                producto.getEstado()
-            });
-        }
+        } else {
+            for (int i = 0; i < productos.size(); i++) {
+                ProductoDTO producto = productos.get(i);
+                System.out.println(producto.getSKU());
+                System.out.println(producto.getPrecioCompraReferencial());
+                model.addRow(new Object[]{
+                    producto.getSKU(),
+                    producto.getNombre(),
+                    producto.getCategoria(),
+                    producto.getUnidadMedida(),
+                    producto.getPrecioVenta(),
+                    producto.getPrecioCompraReferencial(),
+                    producto.getStock(),
+                    producto.getProveedor(),
+                    producto.getEstado()
+                });
+            }
         }
 
         return model;
@@ -503,7 +503,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.jButtonEliminar.setVisible(false);
         this.jButtonFiltrar.setVisible(true);
 
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 0;
         this.pnlFondo.add(this.lblsku, gbc);
         gbc.gridy++;
