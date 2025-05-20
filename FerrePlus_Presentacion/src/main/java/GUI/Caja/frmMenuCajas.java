@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package GUI.Compras;
+package GUI.Caja;
 
+import GUI.Compras.*;
 import GUI.Login.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
@@ -21,14 +22,14 @@ import javax.swing.JPanel;
  *
  * @author joelr
  */
-public class frmMenuCompras extends javax.swing.JFrame {
+public class frmMenuCajas extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public frmMenuCompras() {
+    public frmMenuCajas() {
         initComponents();
-        this.setExtendedState(frmMenuCompras.MAXIMIZED_BOTH);
+        this.setExtendedState(frmMenuCajas.MAXIMIZED_BOTH);
         this.AcomodarContenido();
     }
 
@@ -42,31 +43,31 @@ public class frmMenuCompras extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlFormulario = new javax.swing.JPanel();
-        jButtonRegistrar = new javax.swing.JButton();
-        jButtonConsultar = new javax.swing.JButton();
+        jButtonApertura = new javax.swing.JButton();
+        jButtonCierre = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        pnlFormulario.setBackground(new java.awt.Color(255, 204, 204));
+        pnlFormulario.setBackground(new java.awt.Color(255, 204, 255));
         pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButtonRegistrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonRegistrar.setText("Registrar Compras");
-        jButtonRegistrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonRegistrar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonApertura.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonApertura.setText("Apertura De Cajas");
+        jButtonApertura.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonApertura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonRegistrarActionPerformed(evt);
+                jButtonAperturaActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 160, 40));
+        pnlFormulario.add(jButtonApertura, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 160, 40));
 
-        jButtonConsultar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonConsultar.setText("Consultar Compras");
-        jButtonConsultar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 160, 40));
+        jButtonCierre.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonCierre.setText("Cierre de Cajas");
+        jButtonCierre.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlFormulario.add(jButtonCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 160, 40));
 
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVolver.setText("Volver");
@@ -80,7 +81,7 @@ public class frmMenuCompras extends javax.swing.JFrame {
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
-        pnlTitulo.setBackground(new java.awt.Color(102, 51, 0));
+        pnlTitulo.setBackground(new java.awt.Color(204, 0, 204));
         pnlTitulo.setDoubleBuffered(false);
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
         pnlTitulo.setLayout(new java.awt.GridBagLayout());
@@ -88,7 +89,7 @@ public class frmMenuCompras extends javax.swing.JFrame {
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Menu Compras");
+        lblTitulo.setText("Menu Cajas");
         pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -97,10 +98,10 @@ public class frmMenuCompras extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
+    private void jButtonAperturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAperturaActionPerformed
         ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
-    }//GEN-LAST:event_jButtonRegistrarActionPerformed
+    }//GEN-LAST:event_jButtonAperturaActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
         ControlGUI.getInstancia().mostrarLogin();
@@ -118,12 +119,12 @@ public class frmMenuCompras extends javax.swing.JFrame {
         // Columna 0
 //        gbc.gridx = 0;
         
-        this.pnlFormulario.add(this.jButtonRegistrar,gbc);
-        this.jButtonRegistrar.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.jButtonApertura,gbc);
+        this.jButtonApertura.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.jButtonConsultar,gbc);
-        this.jButtonConsultar.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.jButtonCierre,gbc);
+        this.jButtonCierre.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         this.pnlFormulario.add(this.jButtonVolver,gbc);
         this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
@@ -149,14 +150,46 @@ public class frmMenuCompras extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCompras.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCompras.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCompras.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCompras.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -193,14 +226,14 @@ public class frmMenuCompras extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmMenuCompras().setVisible(true);
+                new frmMenuCajas().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonConsultar;
-    private javax.swing.JButton jButtonRegistrar;
+    private javax.swing.JButton jButtonApertura;
+    private javax.swing.JButton jButtonCierre;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel pnlFormulario;

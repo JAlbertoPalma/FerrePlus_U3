@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Beto_
+ * @author joelr
  */
 public class frmActualizarProducto extends javax.swing.JFrame {
 

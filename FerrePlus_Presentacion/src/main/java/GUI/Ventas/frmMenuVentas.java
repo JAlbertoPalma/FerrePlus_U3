@@ -2,33 +2,34 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package modulo.inventario;
+package GUI.Ventas;
 
+import GUI.Compras.*;
+import GUI.Login.*;
+import modulo.inventario.*;
 import Control.ControlGUI;
-import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
  *
  * @author joelr
  */
-public class frmMenuInventario extends javax.swing.JFrame {
+public class frmMenuVentas extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public frmMenuInventario() {
+    public frmMenuVentas() {
         initComponents();
-        this.setExtendedState(frmMenuInventario.MAXIMIZED_BOTH);
+        this.setExtendedState(frmMenuVentas.MAXIMIZED_BOTH);
         this.AcomodarContenido();
     }
 
@@ -41,41 +42,32 @@ public class frmMenuInventario extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlFondo = new javax.swing.JPanel();
-        pnlMenu = new javax.swing.JPanel();
+        pnlFormulario = new javax.swing.JPanel();
         jButtonRegistrar = new javax.swing.JButton();
-        jButtonVer = new javax.swing.JButton();
+        jButtonConsultar = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        pnlFondo.setBackground(new java.awt.Color(255, 204, 153));
-        pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        pnlMenu.setBackground(new java.awt.Color(255, 204, 153));
-        pnlMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlFormulario.setBackground(new java.awt.Color(204, 255, 204));
+        pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonRegistrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonRegistrar.setText("Registrar Producto");
+        jButtonRegistrar.setText("Registrar Ventas");
         jButtonRegistrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRegistrarActionPerformed(evt);
             }
         });
-        pnlMenu.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 280, 80));
+        pnlFormulario.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 160, 40));
 
-        jButtonVer.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonVer.setText("Ver Productos");
-        jButtonVer.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonVer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonVerActionPerformed(evt);
-            }
-        });
-        pnlMenu.add(jButtonVer, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 280, 80));
+        jButtonConsultar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonConsultar.setText("Consultar Ventas");
+        jButtonConsultar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        pnlFormulario.add(jButtonConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 160, 40));
 
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVolver.setText("Volver");
@@ -85,13 +77,11 @@ public class frmMenuInventario extends javax.swing.JFrame {
                 jButtonVolverActionPerformed(evt);
             }
         });
-        pnlMenu.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 210, 130, 40));
+        pnlFormulario.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 260, 150, 40));
 
-        pnlFondo.add(pnlMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 0, 340, 630));
+        getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
-
-        pnlTitulo.setBackground(new java.awt.Color(255, 153, 102));
+        pnlTitulo.setBackground(new java.awt.Color(0, 102, 51));
         pnlTitulo.setDoubleBuffered(false);
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
         pnlTitulo.setLayout(new java.awt.GridBagLayout());
@@ -99,7 +89,7 @@ public class frmMenuInventario extends javax.swing.JFrame {
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Menu Inventario");
+        lblTitulo.setText("Menu Ventas");
         pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -108,27 +98,18 @@ public class frmMenuInventario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        ControlGUI.getInstancia().mostrarMenuPrincipal();
-        this.dispose();
-    }//GEN-LAST:event_jButtonVolverActionPerformed
-
     private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
-        ControlGUI.getInstancia().mostrarRegistrarProducto();
+        ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
-    private void jButtonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerActionPerformed
-        try {
-            ControlGUI.getInstancia().mostrarProductosRegistrados();
-        } catch (NegocioException ex) {
-            Logger.getLogger(frmMenuInventario.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+        ControlGUI.getInstancia().mostrarLogin();
         this.dispose();
-    }//GEN-LAST:event_jButtonVerActionPerformed
+    }//GEN-LAST:event_jButtonVolverActionPerformed
     private void AcomodarContenido() {
-        JPanel panel = this.pnlMenu; 
-        this.pnlMenu.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
+        JPanel panel = this.pnlFormulario; 
+        this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
         gbc.insets = new Insets(2, 2, 2, 2); // Margen alrededor del componente
@@ -138,18 +119,18 @@ public class frmMenuInventario extends javax.swing.JFrame {
         // Columna 0
 //        gbc.gridx = 0;
         
-        this.pnlMenu.add(this.jButtonRegistrar,gbc);
+        this.pnlFormulario.add(this.jButtonRegistrar,gbc);
         this.jButtonRegistrar.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
-        this.pnlMenu.add(this.jButtonVer,gbc);
-        this.jButtonVer.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
-        this.pnlMenu.add(this.jButtonVolver,gbc);
-         this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
-        
-        this.add(this.pnlMenu, BorderLayout.CENTER);
-        
-
+        this.pnlFormulario.add(this.jButtonConsultar,gbc);
+        this.jButtonConsultar.setPreferredSize(new Dimension(200, 50));
+        gbc.gridy++;
+        this.pnlFormulario.add(this.jButtonVolver,gbc);
+        this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
+          gbc.gridy++;
+          gbc.gridy++;
+        this.add(this.pnlFormulario, BorderLayout.CENTER);
     }
 
     /**
@@ -169,32 +150,93 @@ public class frmMenuInventario extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmMenuInventario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmMenuInventario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmMenuInventario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmMenuInventario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmMenuInventario().setVisible(true);
+                new frmMenuVentas().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonConsultar;
     private javax.swing.JButton jButtonRegistrar;
-    private javax.swing.JButton jButtonVer;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JLabel lblTitulo;
-    private javax.swing.JPanel pnlFondo;
-    private javax.swing.JPanel pnlMenu;
+    private javax.swing.JPanel pnlFormulario;
     private javax.swing.JPanel pnlTitulo;
     // End of variables declaration//GEN-END:variables
 

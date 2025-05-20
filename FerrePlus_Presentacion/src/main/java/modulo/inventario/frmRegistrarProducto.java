@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Beto_
+ * @author joelr
  */
 public class frmRegistrarProducto extends javax.swing.JFrame {
 

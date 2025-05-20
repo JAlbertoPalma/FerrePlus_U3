@@ -64,18 +64,19 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         txtNombreProducto = new javax.swing.JTextField();
         lblFechaInicio = new javax.swing.JLabel();
         jButtonEliminar = new javax.swing.JButton();
-        jButtonConfirmar = new javax.swing.JButton();
         datePickerInicio = new com.github.lgooddatepicker.components.DatePicker();
         lblFechaFin = new javax.swing.JLabel();
         datePickerFin = new com.github.lgooddatepicker.components.DatePicker();
         lblProveedor = new javax.swing.JLabel();
         txtProveedor = new javax.swing.JTextField();
+        jButtonConfirmar = new javax.swing.JButton();
+        jButtonAgregar = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        pnlFondo.setBackground(new java.awt.Color(255, 204, 153));
+        pnlFondo.setBackground(new java.awt.Color(255, 204, 204));
         pnlFondo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnlFondoMouseClicked(evt);
@@ -83,10 +84,9 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         });
         pnlFondo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButtonVolver.setBackground(new java.awt.Color(255, 204, 153));
-        jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVolver.setText("Volver");
         jButtonVolver.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonVolverActionPerformed(evt);
@@ -160,7 +160,6 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         pnlFondo.add(lblFechaInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 560, 170, -1));
 
         jButtonEliminar.setText("Eliminar");
-        jButtonEliminar.setBackground(new java.awt.Color(255, 204, 153));
         jButtonEliminar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonEliminar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -169,17 +168,6 @@ public class frmConsultarCompras extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(jButtonEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
-
-        jButtonConfirmar.setBackground(new java.awt.Color(255, 204, 153));
-        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonConfirmar.setText("Confirmar");
-        jButtonConfirmar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonConfirmarActionPerformed(evt);
-            }
-        });
-        pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
         pnlFondo.add(datePickerInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, -1, -1));
 
         lblFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -198,6 +186,26 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         txtProveedor.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFondo.add(txtProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 520, 190, 22));
 
+        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonConfirmar.setText("Confirmar");
+        jButtonConfirmar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConfirmarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
+
+        jButtonAgregar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAgregar.setText("Agregar Producto");
+        jButtonAgregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAgregarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
         pnlTitulo.setBackground(new java.awt.Color(102, 51, 0));
@@ -205,10 +213,10 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
         pnlTitulo.setLayout(new java.awt.GridBagLayout());
 
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("Consultar Compras");
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Registrar Compra");
         pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -245,11 +253,6 @@ public class frmConsultarCompras extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
-    private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-
-
-    }//GEN-LAST:event_jButtonConfirmarActionPerformed
-
     private void jTableComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableComprasMouseClicked
 
         fila = this.jTableCompras.getSelectedRow();
@@ -266,6 +269,14 @@ public class frmConsultarCompras extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_pnlFondoMouseClicked
+
+    private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonConfirmarActionPerformed
+
+    private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
+
+    }//GEN-LAST:event_jButtonAgregarActionPerformed
     private void AcomodarContenido() throws NegocioException {
 
         this.pnlFondo.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -305,6 +316,8 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         this.pnlFondo.add(this.lblFechaFin, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.datePickerFin, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAgregar,gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonConfirmar, gbc);
         gbc.gridy++;
@@ -410,6 +423,7 @@ public class frmConsultarCompras extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.github.lgooddatepicker.components.DatePicker datePickerFin;
     private com.github.lgooddatepicker.components.DatePicker datePickerInicio;
+    private javax.swing.JButton jButtonAgregar;
     private javax.swing.JButton jButtonConfirmar;
     private javax.swing.JButton jButtonEliminar;
     private javax.swing.JButton jButtonVolver;
