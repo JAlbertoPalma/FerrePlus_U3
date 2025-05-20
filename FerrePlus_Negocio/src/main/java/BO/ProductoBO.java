@@ -22,7 +22,6 @@ import modulo.inventario.IProductoDAO;
  * @author Beto_
  */
 public class ProductoBO implements IProductoBO {
-
     private IProductoDAO productoDAO;
 
     public ProductoBO() {

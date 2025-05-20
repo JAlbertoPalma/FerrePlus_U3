@@ -248,7 +248,7 @@ public class ProductoDAO implements IProductoDAO{
             // CASE_INSENSITIVE para no distinguir entre minusculas y mayusculas
             // ".*" para simular el LIKE de mysql, osea con que contenga el sku hay coincidencia
             Pattern patternSKU = Pattern.compile(".*" + sku + ".*", Pattern.CASE_INSENSITIVE);
-            filtros.add(Filters.regex("SKU", patternSKU));
+            filtros.add(Filters.regex("sku", patternSKU));
         }
         
         if(categoria != null && !categoria.isEmpty()){

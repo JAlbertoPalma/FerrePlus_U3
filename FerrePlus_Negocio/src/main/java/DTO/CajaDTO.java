@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 
  * @author Beto_
  */
-public class CajaViejoDTO {
+public class CajaDTO {
     //apertura caja
     private String id;
     private LocalDateTime fechaHoraApertura;
@@ -30,10 +30,10 @@ public class CajaViejoDTO {
     private Double montoFinalEstimado;
     private String observacionesCierre;
 
-    public CajaViejoDTO() {
+    public CajaDTO() {
     }
 
-    public CajaViejoDTO(String id, LocalDateTime fechaHoraApertura, Double montoInicial, Boolean estadoSesion, Double totalVentas, Integer cantidadDeProductos, Integer numeroDeVentas) {
+    public CajaDTO(String id, LocalDateTime fechaHoraApertura, Double montoInicial, Boolean estadoSesion, Double totalVentas, Integer cantidadDeProductos, Integer numeroDeVentas) {
         this.id = id;
         this.fechaHoraApertura = fechaHoraApertura;
         this.montoInicial = montoInicial;
@@ -43,7 +43,7 @@ public class CajaViejoDTO {
         this.numeroDeVentas = numeroDeVentas;
     }
 
-    public CajaViejoDTO(String id, LocalDateTime fechaHoraApertura, Double montoInicial, Boolean estadoSesion, Double totalVentas, Integer cantidadDeProductos, Integer numeroDeVentas, LocalDateTime fechaHoraCierre, Double montoFinalEstimado, String observacionesCierre) {
+    public CajaDTO(String id, LocalDateTime fechaHoraApertura, Double montoInicial, Boolean estadoSesion, Double totalVentas, Integer cantidadDeProductos, Integer numeroDeVentas, LocalDateTime fechaHoraCierre, Double montoFinalEstimado, String observacionesCierre) {
         this.id = id;
         this.fechaHoraApertura = fechaHoraApertura;
         this.montoInicial = montoInicial;
