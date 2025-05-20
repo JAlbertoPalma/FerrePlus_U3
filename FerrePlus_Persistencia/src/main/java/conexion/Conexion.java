@@ -25,144 +25,82 @@ import org.bson.codecs.pojo.PojoCodecProvider;
  *
  * @author Beto_
  */
-public class Conexion {    
-    private static MongoClient mongoClient = null;
+public class Conexion {  
+    private static volatile Conexion instance;
+    private MongoClient mongoClient;
     private static final String URL = "mongodb+srv://jesuspalma247910:jNEKUmP0oP6Cbfma@cluster0.py6kelp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
     private static final String DATABASE_NAME = "FerrePlus";
-    
-    /**
-     * Evitamos instanciar la conexión con
-     * un constructor privado
-     */
-    private Conexion(){
+
+    private Conexion() {
+        //1. Configuramos el CodecRegistry para habilitar el soporte de POJOs
+        PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
+        CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+        CodecRegistry codecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
+
+        //2. Configuramos los ajustes del cliente MongoDB
+        MongoClientSettings clientSettings = MongoClientSettings.builder()
+                .applyConnectionString(new com.mongodb.ConnectionString(URL))
+                .codecRegistry(codecRegistry)
+                .build();
+
+        //3. Creamos el MongoClient
+        this.mongoClient = MongoClients.create(clientSettings);
+
+        //4. Imprimimos la base de datos utilizada
+        System.out.println("Base de datos utilizada: " + DATABASE_NAME);
     }
-    
-    public static MongoDatabase getDatabase(){
-        if(mongoClient == null){
-            //1. Configuramos el CodecRegistry para habilitar el soporte de POJOs
-            PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
-                    CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
-                    CodecRegistry codecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
-            
-            //2. Configuramos los ajustes del cliente MongoDB
-            MongoClientSettings clientSettings = MongoClientSettings.builder()
-                    .applyConnectionString(new com.mongodb.ConnectionString(URL))
-                    .codecRegistry(codecRegistry)
-                    .build();
-            
-            //3. Asignamos los ajustes al MongoClientestático de la clase
-            mongoClient = MongoClients.create(clientSettings);
-            
-            //4. Retornamos la base de datos con la configuración codecs
-            System.out.println("Base de datos utilizada: " + DATABASE_NAME);
-            return mongoClient.getDatabase(DATABASE_NAME).withCodecRegistry(codecRegistry);
-            
+
+    public static Conexion getInstance() {
+        if (instance == null) {
+            synchronized (Conexion.class) {
+                if (instance == null) {
+                    instance = new Conexion();
+                }
+            }
         }
-        return mongoClient.getDatabase(DATABASE_NAME);
+        return instance;
+    }
+
+    public MongoDatabase getDatabase() {
+        return this.mongoClient.getDatabase(DATABASE_NAME);
+    }
+
+    public MongoClient getMongoClient() {
+        return this.mongoClient;
     }
     
-//    /**
-//     * Método de acceso a la base de datos
-//     * desde la clase estática SingletonHelper
-//     * @return La conexión MongoBD
-//     */
-//    public static Conexion getInstance(){
-//        return SingletonHelper.INSTANCE;
-//    }
+//    private static MongoClient mongoClient = null;
+//    private static final String URL = "mongodb+srv://jesuspalma247910:jNEKUmP0oP6Cbfma@cluster0.py6kelp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+//    private static final String DATABASE_NAME = "FerrePlus";
 //    
 //    /**
-//     * Método de acceso para el cliente de Mongo
-//     * @return El cliente de MongoDB
+//     * Evitamos instanciar la conexión con
+//     * un constructor privado
 //     */
-//    public MongoClient getMongoClient() {
-//        return SingletonHelper.mongoClient;
+//    private Conexion(){
 //    }
 //    
-//    /**
-//     * Se obtiene la base de datos a manejar
-//     * en este caso, la de FerrePlus
-//     * @return La base de datos utilizada
-//     */
-//    public MongoDatabase getDatabase() {
-//        return SingletonHelper.database;
-//    }
-//    
-//    /**
-//     * Cierra la conexión MongoDB y tanto el
-//     * cliente como la base de datos pasan a 
-//     * ser nulos
-//     */
-//    public void cerrarConexion() {
-//        if (SingletonHelper.mongoClient != null) {
-//            SingletonHelper.mongoClient.close();
-//            SingletonHelper.mongoClient = null;
-//            SingletonHelper.database = null;
-//            System.out.println("Conexión cerrada");
-//        }
-//    }
-//    
-//    /**
-//     * Clase statica anidada cuya función es ser auxiliar para obtener la base de datos
-//     * Implementando el patrón singleton "Initialization-on-demand holder idiom"
-//     * Para el sistema actual no es necesaria, sin embargo se espera que este sistema se extienda
-//     * y su limitación no sea solo una caja, por lo que debe ser segura para hilos (Threath safe)
-//     */
-//    private static class SingletonHelper{
-//        private static final Conexion INSTANCE = new Conexion();
-//        private static final String connectionString = "mongodb+srv://jesuspalma247910:jNEKUmP0oP6Cbfma@cluster0.py6kelp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-//        private static final String nombreDatabase = "FerrePlus";
-//        private static MongoClient mongoClient = null;
-//        private static MongoDatabase database= null;
-//        
-//        static { //Deeum no sabía que se podía esto :0
-//            //0. Desactivamos los logs de mongo para que no salga en el output
-//            Logger.getLogger("org.mongo.driver").setLevel(Level.SEVERE);
-//            
-//            //1. Configuramos el ServerApi que se ocupa para los settings
-//            ServerApi serverApi = ServerApi.builder()
-//                    .version(ServerApiVersion.V1)
-//                    .build();
-//            
-//            //2. Configuramos el CodecRegistry para habilitar el soporte de POJOs
+//    public static MongoDatabase getDatabase(){
+//        if(mongoClient == null){
+//            //1. Configuramos el CodecRegistry para habilitar el soporte de POJOs
 //            PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
-//            CodecRegistry pojoCodecRegistry = fromProviders(pojoCodecProvider);
+//                    CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+//                    CodecRegistry codecRegistry = fromRegistries(defaultCodecRegistry, fromProviders(pojoCodecProvider));
 //            
-//            //3. Configuramos los ajustes del cliente MongoDB
-//            MongoClientSettings settings = MongoClientSettings.builder()
-//                    .applyConnectionString(new ConnectionString(connectionString))
-//                    .serverApi(serverApi)
+//            //2. Configuramos los ajustes del cliente MongoDB
+//            MongoClientSettings clientSettings = MongoClientSettings.builder()
+//                    .applyConnectionString(new com.mongodb.ConnectionString(URL))
+//                    .codecRegistry(codecRegistry)
 //                    .build();
-//             
-//            try{
-//                //4. Asignamos los ajustes al MongoClientestático de la clase
-//                mongoClient = MongoClients.create(settings);
-//                
-//                //5. Obtenemos el CodecRegistry del MongoClient
-//                CodecRegistry defaultCodecRegistry = mongoClient.getCodecRegistry();
-//                
-//                //6. Combinamos los CodecRegistry
-//                CodecRegistry codecRegistry = fromRegistries(defaultCodecRegistry, pojoCodecRegistry);
-//                
-//                //7. Reconstruimos el settings con el CodecRegistry combinado
-//                settings = MongoClientSettings.builder()
-//                .applyConnectionString(new ConnectionString(connectionString))
-//                .serverApi(serverApi)
-//                .codecRegistry(codecRegistry)
-//                .build();
-//                
-//                //8. Recreamos el MongoClient con los settings actualizados
-//                mongoClient = MongoClients.create(settings);
-//                
-//                //9. Recreamos el MongoClient con los settings actualizados
-//                //Pings la base de datos para confrimar que la conexión esta bien
-//                database = mongoClient.getDatabase(nombreDatabase);
-//                database.runCommand(new Document("ping", 1));
-//                System.out.println("Conexión establecida exitosamente");
-//                database = mongoClient.getDatabase(nombreDatabase);
-//                System.out.println("Usando: " + nombreDatabase);
-//            }catch(MongoException me){
-//                System.out.println("Error al conectar MongoBD Atlas: " + me.getMessage());
-//            }
-//        } 
+//            
+//            //3. Asignamos los ajustes al MongoClientestático de la clase
+//            mongoClient = MongoClients.create(clientSettings);
+//            
+//            //4. Retornamos la base de datos con la configuración codecs
+//            System.out.println("Base de datos utilizada: " + DATABASE_NAME);
+//            return mongoClient.getDatabase(DATABASE_NAME).withCodecRegistry(codecRegistry);
+//            
+//        }
+//        return mongoClient.getDatabase(DATABASE_NAME);
 //    }
 }

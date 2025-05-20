@@ -52,7 +52,7 @@ public class CompraDAO implements ICompraDAO{
 //            Conexion conexion = Conexion.getInstance();
 //            MongoClient mongoClient = conexion.getMongoClient();
 //            MongoDatabase database = conexion.getDatabase();
-            MongoDatabase database = Conexion.getDatabase();
+            MongoDatabase database = Conexion.getInstance().getDatabase();
             this.collection = database.getCollection("compras", Compra.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
@@ -229,13 +229,13 @@ public class CompraDAO implements ICompraDAO{
         try{
             //1. Agregamos el primer filtro, pudiendo estar un valor nulo para mejores resultados
             if(fechaInicio != null && fechaFin != null){
-                pipeline.add(Aggregates.match((Filters.and(Filters.gte("fecha", FechaCvr.toDate(fechaInicio)),
-                                               Filters.lte("fecha", FechaCvr.toDate(fechaFin))
+                pipeline.add(Aggregates.match((Filters.and(Filters.gte("fecha", fechaInicio),
+                                               Filters.lte("fecha", fechaFin)
                 ))));
             } else if (fechaInicio != null) {
-                pipeline.add(Aggregates.match(Filters.gte("fecha", FechaCvr.toDate(fechaInicio))));
+                pipeline.add(Aggregates.match(Filters.gte("fecha", fechaInicio)));
             } else if (fechaFin != null) {
-                pipeline.add(Aggregates.match(Filters.lte("fecha", FechaCvr.toDate(fechaFin))));
+                pipeline.add(Aggregates.match(Filters.lte("fecha", fechaFin)));
             }
             
             //2. Agregamos el siguiente filtro, coincidiendo con alguna parte del proveedor con ".*" y Case insensitive "i" en MongoDB
@@ -315,34 +315,4 @@ public class CompraDAO implements ICompraDAO{
             throw new PersistenciaException("Error al obtener los detalles de la compra: " + e.getMessage());
         }
     }
-    
-//    /**
-//     * Método auxiliar para transformar un documento de MongoDB a una entidad Compra.
-//     *
-//     * @param document El documento de MongoDB a transformar.
-//     * @return La entidad Compra correspondiente, incluyendo sus detalles.
-//     */
-//    private Compra toCompra(Document document){
-//        Compra compra = new Compra();
-//        compra.setId(document.getObjectId("_id"));
-//        compra.setFolio(document.getString("folio"));
-//        compra.setFecha(FechaCvr.toLocalDate(document.getDate("fecha")));
-//        compra.setTotal(document.getDouble("total"));
-//        compra.setProveedor(document.getString("proveedor"));
-//
-//        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
-//        List<Compra.DetalleCompra> detallesCompraList = new ArrayList<>();
-//        if (detallesDocumentList != null) {
-//            for (Document detalleDoc : detallesDocumentList) {
-//                Compra.DetalleCompra detalle = new Compra.DetalleCompra();
-//                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
-//                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
-//                detalle.setPrecioDeCompra(detalleDoc.getDouble("precioDeCompra"));
-//                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
-//                detallesCompraList.add(detalle);
-//            }
-//        }
-//        compra.setDetalles(detallesCompraList);
-//        return compra;
-//    }
 }

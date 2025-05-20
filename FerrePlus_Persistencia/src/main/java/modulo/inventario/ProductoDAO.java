@@ -42,10 +42,7 @@ public class ProductoDAO implements IProductoDAO{
      */
     private ProductoDAO() throws PersistenciaException{
         try{
-//            Conexion conexion = Conexion.getInstance();
-//            MongoClient mongoClient = conexion.getMongoClient();
-//            MongoDatabase database = conexion.getDatabase();
-            MongoDatabase database = Conexion.getDatabase();
+            MongoDatabase database = Conexion.getInstance().getDatabase();
             this.collection = database.getCollection("productos", Producto.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo ProductoDAO: " + e.getMessage());
@@ -98,6 +95,11 @@ public class ProductoDAO implements IProductoDAO{
         }
         
         try {
+            Producto productoBuscado = obtenerPorId(producto.getId().toHexString());
+            if(productoBuscado == null){
+                throw new PersistenciaException("El producto a actualizar no existe en los registros");
+            }
+            
             //1. Reemplazamos el documento completo con el producto
             collection.replaceOne(Filters.eq("_id", producto.getId()), producto);
             
@@ -189,7 +191,7 @@ public class ProductoDAO implements IProductoDAO{
     @Override
     public Producto obtenerPorNombre(String nombre) throws PersistenciaException {
         //0. validamos SKU no nulo
-        if(nombre == null || nombre.length() <= 0){
+        if(nombre == null){
             throw new PersistenciaException("No se puede buscar un producto con sku nulo");
         }
         
@@ -275,28 +277,4 @@ public class ProductoDAO implements IProductoDAO{
         //4. regresamos los productos filtrados
         return productos;
     }
-    
-    /**
-     * Método auxiliar Mapper para transformar documentos JSON
-     * en entidades Producto
-     * @param document el documento JSON a transformar
-     * @return Un producto con la información del documento JSON
-     */
-    private Producto toProducto(Document document){
-        Producto producto = new Producto();
-        producto.setId(document.getObjectId("_id"));
-        producto.setSku(document.getString("SKU"));
-        producto.setNombre(document.getString("nombre"));
-        producto.setCategoria(document.getString("categoria"));
-        producto.setUnidadMedida(document.getString("unidadMedida"));
-        producto.setPrecioCompraReferencial(document.getDouble("precio_compra_referencial"));
-        producto.setPrecioVenta(document.getDouble("precio_venta"));
-        producto.setProveedor(document.getString("proveedor"));
-        producto.setObservaciones(document.getString("observaciones"));
-        producto.setStock(document.getInteger("stock"));
-        producto.setEstado(document.getBoolean("estado"));
-        producto.setFechaHoraAlta(FechaCvr.toLocalDateTime(document.getDate("fechaHoraAlta")));
-        return producto;
-    }
-    
 }

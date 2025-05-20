@@ -53,7 +53,7 @@ public class VentaDAO implements IVentaDAO{
 //            Conexion conexion = Conexion.getInstance();
 //            MongoClient mongoClient = conexion.getMongoClient();
 //            MongoDatabase database = conexion.getDatabase();
-            MongoDatabase database = Conexion.getDatabase();
+            MongoDatabase database = Conexion.getInstance().getDatabase();
             this.collection = database.getCollection("ventas", Venta.class);
             productoDAO = ProductoDAO.getInstanceDAO();
         }catch(Exception e){
@@ -231,7 +231,7 @@ public class VentaDAO implements IVentaDAO{
      * {@inheritDoc}
      */
     @Override
-    public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String proveedor, String nombreProducto, Boolean estado) throws PersistenciaException {
+    public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String folio, String nombreProducto, Boolean estado) throws PersistenciaException {
         //Lista de ventas filtradas
         List<Venta> ventas = new ArrayList<>();
         
@@ -253,19 +253,19 @@ public class VentaDAO implements IVentaDAO{
         try{
             //1. Agregamos el primer filtro, pudiendo estar un valor nulo para mejores resultados
             if(fechaInicio != null && fechaFin != null){
-                pipeline.add(Aggregates.match((Filters.and(Filters.gte("fecha", FechaCvr.toDate(fechaInicio)),
-                                               Filters.lte("fecha", FechaCvr.toDate(fechaFin))
+                pipeline.add(Aggregates.match((Filters.and(Filters.gte("fechaHora", fechaInicio),
+                                               Filters.lte("fechaHora", fechaFin)
                 ))));
             } else if (fechaInicio != null) {
-                pipeline.add(Aggregates.match(Filters.gte("fecha", FechaCvr.toDate(fechaInicio))));
+                pipeline.add(Aggregates.match(Filters.gte("fechaHora", fechaInicio)));
             } else if (fechaFin != null) {
-                pipeline.add(Aggregates.match(Filters.lte("fecha", FechaCvr.toDate(fechaFin))));
+                pipeline.add(Aggregates.match(Filters.lte("fechaHora", fechaFin)));
             }
             
-            //2. Agregamos el siguiente filtro, coincidiendo con alguna parte del proveedor con ".*" y Case insensitive "i" en MongoDB
-            if(proveedor != null && !proveedor.isEmpty()){
-                Pattern patternProveedor = Pattern.compile(".*" + proveedor + ".*", Pattern.CASE_INSENSITIVE);
-                pipeline.add(Aggregates.match(Filters.regex("proveedor", patternProveedor)));
+            //2. Agregamos el siguiente filtro, coincidiendo con alguna parte del folio con ".*" y Case insensitive "i" en MongoDB
+            if(folio != null && !folio.isEmpty()){
+                Pattern patternProveedor = Pattern.compile(".*" + folio + ".*", Pattern.CASE_INSENSITIVE);
+                pipeline.add(Aggregates.match(Filters.regex("folio", patternProveedor)));
             }
             
             //3. Agregamos el siguiente filtro, true para confirmado, false para cancelado
@@ -344,35 +344,4 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Error al obtener los detalles de la venta: " + e.getMessage());
         }
     }
-    
-//    /**
-//     * Método auxiliar para transformar un documento de MongoDB a una entidad Venta.
-//     *
-//     * @param document El documento de MongoDB a transformar.
-//     * @return La entidad Venta correspondiente, incluyendo sus detalles.
-//     */
-//    private Venta toVenta(Document document) {
-//        Venta venta = new Venta();
-//        venta.setId(document.getObjectId("_id"));
-//        venta.setFolio(document.getString("folio"));
-//        venta.setFechaHora(FechaCvr.toLocalDateTime(document.getDate("fechaHora")));
-//        venta.setTotal(document.getDouble("total"));
-//        venta.setEstado(document.getBoolean("estado"));
-//        venta.setIdCaja(document.getObjectId("idCaja"));
-//
-//        List<Document> detallesDocumentList = (List<Document>) document.get("detalles");
-//        List<Venta.DetalleVenta> detallesVentaList = new ArrayList<>();
-//        if (detallesDocumentList != null) {
-//            for (Document detalleDoc : detallesDocumentList) {
-//                Venta.DetalleVenta detalle = new Venta.DetalleVenta();
-//                detalle.setIdProducto(detalleDoc.getObjectId("idProducto"));
-//                detalle.setCantidad(detalleDoc.getInteger("cantidad"));
-//                detalle.setDescuento(detalleDoc.getDouble("descuento"));
-//                detalle.setSubtotal(detalleDoc.getDouble("subtotal"));
-//                detallesVentaList.add(detalle);
-//            }
-//        }
-//        venta.setDetalles(detallesVentaList);
-//        return venta;
-//    }
 }

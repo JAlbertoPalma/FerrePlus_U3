@@ -183,7 +183,7 @@ public class VentaMapper {
      * @param dto El DetalleVentaViejoDTO a convertir.
      * @return Una nueva entidad DetalleVenta con los datos del DTO, o nulo si el DTO es nulo.
      */
-    private static Venta.DetalleVenta toDetalleEntity(VentaViejoDTO.DetalleVentaViejoDTO dto) {
+    private static VentaDetalleVenta toDetalleEntity(VentaViejoDTO.DetalleVentaViejoDTO dto) {
         if (dto == null) {
             return null;
         }

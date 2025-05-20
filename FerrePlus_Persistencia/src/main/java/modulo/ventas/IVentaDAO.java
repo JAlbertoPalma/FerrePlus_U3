@@ -69,13 +69,13 @@ public interface IVentaDAO {
      *
      * @param fechaInicio     La fecha y hora de inicio del rango para filtrar (puede ser nulo).
      * @param fechaFin        La fecha y hora de fin del rango para filtrar (puede ser nulo).
-     * @param proveedor       El proveedor para filtrar (actualmente no utilizado, puede ser nulo).
+     * @param folio       El folio para filtrar (puede ser nulo).
      * @param nombreProducto  El nombre de un producto para filtrar ventas que lo contengan (puede ser parcial o nulo).
      * @param estado          El estado de la venta para filtrar (`true` para activas, `false` para canceladas, puede ser nulo).
      * @return Una lista de ventas que cumplen con los filtros.
      * @throws PersistenciaException Si ocurre un error durante la persistencia.
      */
-    public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String proveedor, String nombreProducto, Boolean estado) throws PersistenciaException;
+    public List<Venta> obtenerPorFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String folio, String nombreProducto, Boolean estado) throws PersistenciaException;
     
     /**
      * Obtiene la lista de detalles de una venta específica basada en su ID.

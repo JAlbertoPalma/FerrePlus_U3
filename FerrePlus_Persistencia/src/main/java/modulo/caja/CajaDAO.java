@@ -41,7 +41,7 @@ public class CajaDAO implements ICajaDAO{
 //            Conexion conexion = Conexion.getInstance();
 //            MongoClient mongoClient = conexion.getMongoClient();
 //            MongoDatabase database = conexion.getDatabase();
-            MongoDatabase database = Conexion.getDatabase();
+            MongoDatabase database = Conexion.getInstance().getDatabase();
             this.collection = database.getCollection("sesionesCaja", Caja.class);
         }catch(Exception e){
             throw new PersistenciaException("Error construyendo CajaDAO: " + e.getMessage());
@@ -142,7 +142,7 @@ public class CajaDAO implements ICajaDAO{
              * si son positivos lo suma, si son negativos los resta
              */
             return collection.updateOne(
-                    Filters.eq("_id", id),
+                    Filters.eq("_id", new ObjectId(id)),
                     Updates.combine(
                             Updates.inc("totalVentas", totalVentasInc),
                             Updates.inc("cantidadDeProductos", cantidadProductosInc),
