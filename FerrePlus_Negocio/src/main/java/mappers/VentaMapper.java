@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import BO.VentaNuevoDTO;
 import org.bson.types.ObjectId;
 import DTO.VentaViejoDTO;
+import entidades.DetalleVenta;
 
 /**
  * Clase utilitaria para la conversión entre la entidad {@link Venta}
@@ -161,7 +162,7 @@ public class VentaMapper {
      * @param detalleVenta El detalle de venta a convertir.
      * @return Un nuevo DetalleVentaViejoDTO con los datos del detalle, o nulo si el detalle es nulo.
      */
-    private static VentaViejoDTO.DetalleVentaViejoDTO toDetalleViejoDTO(Venta.DetalleVenta detalleVenta) {
+    private static VentaViejoDTO.DetalleVentaViejoDTO toDetalleViejoDTO(DetalleVenta detalleVenta) {
         if (detalleVenta == null) {
             return null;
         }
@@ -183,7 +184,7 @@ public class VentaMapper {
      * @param dto El DetalleVentaViejoDTO a convertir.
      * @return Una nueva entidad DetalleVenta con los datos del DTO, o nulo si el DTO es nulo.
      */
-    private static VentaDetalleVenta toDetalleEntity(VentaViejoDTO.DetalleVentaViejoDTO dto) {
+    private static DetalleVenta toDetalleEntity(VentaViejoDTO.DetalleVentaViejoDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -195,7 +196,7 @@ public class VentaMapper {
                 e.printStackTrace();
             }
         }
-        return new Venta.DetalleVenta(
+        return new DetalleVenta(
                 idProducto,
                 dto.getCantidad(),
                 dto.getDescuento(),
@@ -213,7 +214,7 @@ public class VentaMapper {
      * @param dto El DetalleVentaNuevoDTO a convertir.
      * @return Una nueva entidad DetalleVenta con los datos del DTO, o nulo si el DTO es nulo.
      */
-    private static Venta.DetalleVenta NuevoToDetalleEntity(VentaNuevoDTO.DetalleVentaNuevoDTO dto) {
+    private static DetalleVenta NuevoToDetalleEntity(VentaNuevoDTO.DetalleVentaNuevoDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -225,7 +226,7 @@ public class VentaMapper {
                 e.printStackTrace();
             }
         }
-        return new Venta.DetalleVenta(
+        return new DetalleVenta(
                 idProducto,
                 dto.getCantidad(),
                 dto.getDescuento(),

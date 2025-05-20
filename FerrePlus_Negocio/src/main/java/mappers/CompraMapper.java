@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import BO.CompraNuevoDTO;
 import org.bson.types.ObjectId;
 import DTO.CompraViejoDTO;
+import entidades.DetalleCompra;
 
 /**
  * Clase utilitaria para la conversión entre la entidad {@link Compra}
@@ -143,7 +144,7 @@ public class CompraMapper {
      * @param detalleCompra El detalle de compra a convertir.
      * @return Un nuevo DetalleCompraViejoDTO con los datos del detalle, o nulo si el detalle es nulo.
      */
-    private static CompraViejoDTO.DetalleCompraViejoDTO toDetalleViejoDTO(Compra.DetalleCompra detalleCompra) {
+    private static CompraViejoDTO.DetalleCompraViejoDTO toDetalleViejoDTO(DetalleCompra detalleCompra) {
         if (detalleCompra == null) {
             return null;
         }
@@ -165,7 +166,7 @@ public class CompraMapper {
      * @param dto El DetalleCompraViejoDTO a convertir.
      * @return Una nueva entidad DetalleCompra con los datos del DTO, o nulo si el DTO es nulo.
      */
-    private static Compra.DetalleCompra toDetalleEntity(CompraViejoDTO.DetalleCompraViejoDTO dto) {
+    private static DetalleCompra toDetalleEntity(CompraViejoDTO.DetalleCompraViejoDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -177,7 +178,7 @@ public class CompraMapper {
                 e.printStackTrace();
             }
         }
-        return new Compra.DetalleCompra(
+        return new DetalleCompra(
                 idProducto,
                 dto.getCantidad(),
                 dto.getPrecioDeCompra(),
@@ -195,7 +196,7 @@ public class CompraMapper {
      * @param dto El DetalleCompraNuevoDTO a convertir.
      * @return Una nueva entidad DetalleCompra con los datos del DTO, o nulo si el DTO es nulo.
      */
-    private static Compra.DetalleCompra NuevoToDetalleEntity(CompraNuevoDTO.DetalleCompraNuevoDTO dto) {
+    private static DetalleCompra NuevoToDetalleEntity(CompraNuevoDTO.DetalleCompraNuevoDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -207,7 +208,7 @@ public class CompraMapper {
                 e.printStackTrace();
             }
         }
-        return new Compra.DetalleCompra(
+        return new DetalleCompra(
                 idProducto,
                 dto.getCantidad(),
                 dto.getPrecioDeCompra(),
