@@ -274,7 +274,7 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
-        this.jTableCompras.setModel(this.LlenarTabla());
+        this.jTableCompras.setModel(this.inicial());
         JTableHeader header = new JTableHeader(this.jTableCompras.getColumnModel());
         this.pnlFondo.add(header, gbc);
         gbc.gridy++;
@@ -312,20 +312,25 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 
     // Metodo para llenar la tabla de Productos.
     public DefaultTableModel LlenarTabla() throws NegocioException {
-
-        // Esto es para despues, con los botones siguiente y atras
-        int index = 1;
-        int aux = 1;
-        int min = 1;
-        int max = 0;
-//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
         //Tabla
         DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
         return model;
     }
 
-  
+     public DefaultTableModel inicial() {
+        DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < 5; i++) {
+            model.addRow(new Object[]{
+                "No registrado",
+                "No registrado",
+                0.0,
+                0.0,
+                0.0,});
+        }
+         return model;
+    }
 
 
     /**

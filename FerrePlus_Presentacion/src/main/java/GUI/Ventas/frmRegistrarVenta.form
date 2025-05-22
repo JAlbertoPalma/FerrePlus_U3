@@ -95,7 +95,7 @@
                   <Table columnCount="7" rowCount="4">
                     <Column editable="false" title="SKU" type="java.lang.String"/>
                     <Column editable="false" title="Nombre" type="java.lang.String"/>
-                    <Column editable="false" title="Cantidad" type="java.lang.Double"/>
+                    <Column editable="false" title="Cantidad" type="java.lang.Integer"/>
                     <Column editable="false" title="PrecioVenta" type="java.lang.Double"/>
                     <Column editable="false" title="CalculoVenta" type="java.lang.Double"/>
                     <Column editable="false" title="Descuentos" type="java.lang.Double"/>
@@ -230,13 +230,6 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="com.github.lgooddatepicker.components.DatePicker" name="datePickerVenta">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="680" y="530" width="-1" height="-1"/>
-            </Constraint>
-          </Constraints>
-        </Component>
         <Component class="javax.swing.JLabel" name="lblTotalVenta">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
@@ -248,6 +241,13 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="500" y="480" width="170" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="com.github.lgooddatepicker.components.DateTimePicker" name="dateTimePickerVenta">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="590" y="560" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>

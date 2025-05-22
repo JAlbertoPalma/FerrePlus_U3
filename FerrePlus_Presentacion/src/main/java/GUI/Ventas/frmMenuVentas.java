@@ -8,12 +8,15 @@ import GUI.Compras.*;
 import GUI.Login.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
+import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -99,7 +102,11 @@ public class frmMenuVentas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
-        ControlGUI.getInstancia().mostrarMenuProducto();
+        try {
+            ControlGUI.getInstancia().mostrarRegistrarVenta();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmMenuVentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 

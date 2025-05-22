@@ -33,6 +33,8 @@ public class frmProductoVendido extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
+     *
+     * @param id
      */
     public frmProductoVendido(String id) {
         initComponents();
@@ -41,9 +43,11 @@ public class frmProductoVendido extends javax.swing.JFrame {
         this.id = id;
         try {
             productoElegido = ControlGUI.getInstancia().obtenerProductoPorID(this.id);
+            this.inicial();
         } catch (NegocioException ex) {
             Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**
@@ -205,11 +209,10 @@ public class frmProductoVendido extends javax.swing.JFrame {
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
         try {
-            ControlGUI.getInstancia().mostrarRegistrarVenta(this.id, 
-                    Double.valueOf(this.txtCantidad.getText()), 
-                    Double.valueOf(this.txtCalculoVenta.getText()), 
-                    Double.valueOf(this.txtDescuento.getText()), 
+            ControlGUI.getInstancia().guardarDetallesVenta(id, Integer.valueOf(this.txtCantidad.getText()), Double.valueOf(this.txtDescuento.getText()),
                     Double.valueOf(this.txtSubtotal.getText()));
+            ControlGUI.getInstancia().PasarInfoARegistrarVenta();
+
         } catch (NegocioException ex) {
             Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -229,14 +232,12 @@ public class frmProductoVendido extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void txtCantidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCantidadFocusLost
-       
+
     }//GEN-LAST:event_txtCantidadFocusLost
 
     private void pnlFormularioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFormularioMouseClicked
         this.CalculoSubtotal();
     }//GEN-LAST:event_pnlFormularioMouseClicked
-
-    
 
     /**
      * Metodo para el ajuste de los componentes cuando la pantalla cambie de
@@ -295,7 +296,7 @@ public class frmProductoVendido extends javax.swing.JFrame {
         panel.add(this.txtDescuento, gbc);
         gbc.gridy++;
         panel.add(this.txtSubtotal, gbc);
-        gbc.gridy=gbc.gridy+2;
+        gbc.gridy = gbc.gridy + 2;
         panel.add(this.jButtonConfirmar, gbc);
 
         // Columna 4
@@ -304,12 +305,13 @@ public class frmProductoVendido extends javax.swing.JFrame {
         panel.add(this.lblUnidad, gbc);
 
     }
-private void inicial() throws NegocioException {
+
+    private void inicial() throws NegocioException {
         id = productoElegido.getId();
         this.txtNombre.setEditable(false);
         this.txtSKU.setEditable(false);
         this.txtPrecioVenta.setEditable(false);
-        this.txtCalculoVenta.setEditable(false);        
+        this.txtCalculoVenta.setEditable(false);
         this.txtSubtotal.setEditable(false);
         this.txtCantidad.setText("0");
         this.txtDescuento.setText("0.0");
@@ -322,19 +324,20 @@ private void inicial() throws NegocioException {
             this.txtSKU.setText("No registrado");
         } else {
             this.txtSKU.setText(productoElegido.getSKU());
-        this.txtPrecioVenta.setText(Double.toString(productoElegido.getPrecioVenta()));
+            this.txtPrecioVenta.setText(Double.toString(productoElegido.getPrecioVenta()));
 
+        }
     }
-}
-private void CalculoSubtotal(){
-   int cantidad = Integer.valueOf(this.txtCantidad.getText());
-   Double precio = Double.valueOf(this.txtPrecioVenta.getText());
-   Double descuento = Double.valueOf(this.txtDescuento.getText());
-   Double calculoVenta= precio*cantidad;
-   Double subtotal = (precio * cantidad)-descuento;
-    this.txtCalculoVenta.setText(String.valueOf(calculoVenta));
-    this.txtSubtotal.setText(String.valueOf(subtotal));
-}
+
+    private void CalculoSubtotal() {
+        int cantidad = Integer.valueOf(this.txtCantidad.getText());
+        Double precio = Double.valueOf(this.txtPrecioVenta.getText());
+        Double descuento = Double.valueOf(this.txtDescuento.getText());
+        Double calculoVenta = precio * cantidad;
+        Double subtotal = (precio * cantidad) - descuento;
+        this.txtCalculoVenta.setText(String.valueOf(calculoVenta));
+        this.txtSubtotal.setText(String.valueOf(subtotal));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;

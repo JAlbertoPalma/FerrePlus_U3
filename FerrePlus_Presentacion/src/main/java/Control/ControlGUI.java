@@ -4,10 +4,20 @@
  */
 package Control;
 
+
 import BO.CajaBO;
 import BO.ProductoBO;
 import DTO.CajaDTO;
+
+import BO.CompraBO;
+import BO.ProductoBO;
+import BO.VentaBO;
+import DTO.CompraDTO;
+import DTO.DetalleCompraDTO;
+import DTO.DetalleVentaDTO;
+
 import DTO.ProductoDTO;
+import DTO.VentaDTO;
 import GUI.Compras.frmConsultarCompras;
 import GUI.Compras.frmMenuCompras;
 import GUI.Compras.frmProductoComprado;
@@ -19,12 +29,22 @@ import GUI.Ventas.frmConsultarVentas;
 import GUI.Ventas.frmMenuVentas;
 import GUI.Ventas.frmProductoVendido;
 import GUI.Ventas.frmRegistrarVenta;
+
 import Interfaces.ICajaBO;
+
+import Interfaces.ICompraBO;
+
 import Interfaces.IProductoBO;
+import Interfaces.IVentaBO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import modulo.inventario.frmActualizarProducto;
 import modulo.inventario.frmMenuInventario;
@@ -56,11 +76,13 @@ public class ControlGUI {
     private frmProductosRegistrados productosRegistrados;
     private IProductoBO productoBO = new ProductoBO();
     //Compras
+    private ICompraBO compras = new CompraBO();
     private frmConsultarCompras consultarCompras;
     private frmMenuCompras menuCompras;
     private frmProductoComprado productoComprado;
     private frmRegistrarCompra registrarCompra;
     //Ventas
+    private IVentaBO ventas = new VentaBO();
     private frmConsultarVentas consultarVentas;
     private frmMenuVentas menuVentas;
     private frmProductoVendido productoVendido;
@@ -69,11 +91,14 @@ public class ControlGUI {
     private ICajaBO cajaBO = new CajaBO();
     //Auxiliares
     private ProductoDTO productoAux = new ProductoDTO();
+    List<DetalleVentaDTO> detallesVentaAux = new ArrayList<>();
+    List<DetalleCompraDTO> detallesCompraAux = new ArrayList<>();
     private double cantidad;
     private double descuento;
     private double calculoVenta;
     private double subtotal;
-    
+
+   private static final Map<String, Integer> contadorPorFecha = new HashMap<>();
     public ControlGUI() {
     }
 
@@ -147,8 +172,19 @@ public class ControlGUI {
         this.productoVendido.setLocationRelativeTo(null);
         this.productoVendido.setVisible(true);
     }
-    public void mostrarRegistrarVenta(String id, double cantidad, double calculoVenta,double descuento, double subtotal) throws NegocioException{
-        this.registrarVenta.añadir(id, cantidad, calculoVenta, descuento, subtotal);
+    public void mostrarMenuVentas()throws NegocioException{
+        this.menuVentas = new frmMenuVentas();
+        this.menuVentas.setLocationRelativeTo(null);
+        this.menuVentas.setVisible(true);
+    }
+    public void mostrarRegistrarVenta() throws NegocioException{
+        this.detallesVentaAux = new ArrayList<>();
+        this.registrarVenta = new frmRegistrarVenta();
+        this.registrarVenta.setLocationRelativeTo(null);
+        this.registrarVenta.setVisible(true);
+    }
+    public void PasarInfoARegistrarVenta() throws NegocioException{
+        this.registrarVenta.LlenarTablaProductos();
         this.registrarVenta.setVisible(true);
     }
 
@@ -197,6 +233,27 @@ public class ControlGUI {
 
     public List<ProductoDTO> ObtenerProductos() throws NegocioException {
         return this.productoBO.obtenerProductos();
+    }
+    public void guardarProductoAux(ProductoDTO producto){
+        this.productoAux = producto;
+    }
+    public ProductoDTO obtenerProductoAux(){
+        return this.productoAux;
+    }
+    
+    public void guardarDoublesAuxiliares(double cantidad, double calculoVenta, double descuento, double subtotal){
+        this.cantidad = cantidad;
+        this.calculoVenta = calculoVenta;
+        this.descuento = descuento;
+        this.subtotal = subtotal;
+    }
+    public List<Double> obtenerDoublesAuxiliares(){
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(cantidad);
+        doubles.add(calculoVenta);
+        doubles.add(descuento);
+        doubles.add(subtotal);
+        return doubles;
     }
 
     public boolean EliminarProducto(String id) throws NegocioException, PersistenciaException {
@@ -333,6 +390,7 @@ public class ControlGUI {
             throw new NegocioException("Error al validar producto");
         }
     }
+
     
     public CajaDTO getSesionCajaActiva(){
         return sesionCajaActiva;
@@ -360,5 +418,59 @@ public class ControlGUI {
         }
     }
     
+
+    public VentaDTO crearVentaDTO(List<DetalleVentaDTO> listaDetalles,boolean estado, LocalDateTime fechaHora, Double total) throws NegocioException{
+        VentaDTO nuevaVenta = new VentaDTO();
+        nuevaVenta.setDetalles(listaDetalles);
+        nuevaVenta.setEstado(estado);
+        nuevaVenta.setFechaHora(fechaHora);
+        nuevaVenta.setTotal(total);
+        //Creador del Folio.
+        // Fecha actual en formato YYYYMMDD
+        String fechaStr = fechaHora.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        // Obtener contador para la fecha actual o iniciar en 1
+        int contador = contadorPorFecha.getOrDefault(fechaStr, 0) + 1;
+        contadorPorFecha.put(fechaStr, contador);
+
+        // Formato final del folio: VT-YYYYMMDD-XXX
+        String folio = String.format("VT-%s-%03d", fechaStr, contador);
+        nuevaVenta.setFolio(folio);
+
+        return nuevaVenta;
+    }
+    public List<DetalleVentaDTO> detallesVenta(){
+        return this.detallesVentaAux;
+    }
+    public void guardarDetallesVenta(String id, int cantidad, Double descuento, Double subtotal){
+        DetalleVentaDTO detalle = new DetalleVentaDTO(id,cantidad,descuento,subtotal);
+        this.detallesVentaAux.add(detalle);
+    }
+    public List<DetalleVentaDTO> obtenerDetallesVenta(){
+        return this.detallesVentaAux;
+    }
+    public VentaDTO guardarVenta(VentaDTO venta) throws NegocioException{
+        return ventas.agregar(venta);
+    }
+    public CompraDTO crearCompraDTO(List<DetalleCompraDTO> listaDetalles,String proveedor, LocalDate fecha, Double total) throws NegocioException{
+        CompraDTO nuevaCompra = new CompraDTO();
+        nuevaCompra.setDetalles(listaDetalles);
+        nuevaCompra.setProveedor(proveedor);
+        nuevaCompra.setFecha(fecha);
+        nuevaCompra.setTotal(total);
+        //Creador del Folio.
+        // Fecha actual en formato YYYYMMDD
+        String fechaStr = fecha.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        // Obtener contador para la fecha actual o iniciar en 1
+        int contador = contadorPorFecha.getOrDefault(fechaStr, 0) + 1;
+        contadorPorFecha.put(fechaStr, contador);
+
+        // Formato final del folio: VT-YYYYMMDD-XXX
+        String folio = String.format("CP-%s-%03d", fechaStr, contador);
+        nuevaCompra.setFolio(folio);
+
+        return nuevaCompra;
+    }
 
 }
