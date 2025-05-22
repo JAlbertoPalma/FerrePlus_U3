@@ -33,7 +33,6 @@ public class VentaBO implements IVentaBO{
     private IProductoDAO productoDAO;
     private static AtomicInteger folioCounter = new AtomicInteger(0);
     private static final Logger logger = Logger.getLogger(VentaBO.class.getName());
-
     public VentaBO() {
         try {
             this.productoDAO = modulo.inventario.ProductoDAO.getInstanceDAO();

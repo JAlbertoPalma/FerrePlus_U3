@@ -11,6 +11,7 @@ import java.util.List;
 import BO.ProductoBO;
 import org.bson.types.ObjectId;
 import DTO.ProductoDTO;
+import excepciones.NegocioException;
 
 /**
  * Clase utilitaria para la conversión entre la entidad {@link Producto}
@@ -96,11 +97,14 @@ public class ProductoMapper {
      * @return Una nueva lista de ProductoViejoDTOs con los datos de las entidades,
      * o una lista vacía si la lista de productos es nula o vacía.
      */
-    public static List<ProductoDTO> toDTOList(List<Producto> productos) {
+    public static List<ProductoDTO> toDTOList(List<Producto> productos) throws NegocioException {
         List<ProductoDTO> dtos = new ArrayList<>();
-        if (productos != null && !productos.isEmpty()) {
-            for (Producto producto : productos) {
-                dtos.add(toDTO(producto));
+        if (productos == null || productos.isEmpty()) {
+            throw new NegocioException("La lista de Productos esta vacía");
+        }else{
+            for (int i = 0; i < productos.size(); i++) {
+               ProductoDTO producto = toDTO(productos.get(i));
+               dtos.add(producto);
             }
         }
         return dtos;

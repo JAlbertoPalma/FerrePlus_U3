@@ -98,7 +98,8 @@ public class ProductoBO implements IProductoBO {
     public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria, boolean estado) throws NegocioException {
         try {
             List<Producto> productosRegistrados = productoDAO.obtenerPorFiltros(sku, categoria, estado);
-            return ProductoMapper.toDTOList(productosRegistrados);
+            List<ProductoDTO> DTOS = ProductoMapper.toDTOList(productosRegistrados);
+            return DTOS;
         } catch (PersistenciaException ne) {
             throw new NegocioException("No se encontraron los productos");
         }
