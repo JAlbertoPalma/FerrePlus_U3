@@ -5,6 +5,7 @@
 package modulo.inventario;
 
 import Control.ControlGUI;
+import DTO.ProductoDTO;
 import excepciones.NegocioException;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -25,14 +26,24 @@ import javax.swing.JPanel;
  */
 public class frmActualizarProducto extends javax.swing.JFrame {
 
+    String nombre;
+    String id;
+    ProductoDTO productoElegido;
+    ProductoDTO productoActualizado;
+
     /**
      * Creates new form RegistrarProductoGUI
+     *
+     * @param nombre
      */
-    public frmActualizarProducto() {
+    public frmActualizarProducto(String nombre) throws NegocioException {
         initComponents();
         this.setExtendedState(frmActualizarProducto.MAXIMIZED_BOTH);
         this.combobox();
         this.AcomodarContenido();
+        this.nombre = nombre;
+        this.inicial();
+
     }
 
     /**
@@ -45,14 +56,24 @@ public class frmActualizarProducto extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlFormulario = new javax.swing.JPanel();
+        lblSKU = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
         lblPrecio = new javax.swing.JLabel();
         lblCategoria = new javax.swing.JLabel();
+        txtSKU = new javax.swing.JTextField();
         txtNombre = new javax.swing.JTextField();
         txtPrecioVenta = new javax.swing.JTextField();
         jComboBoxCategoria = new javax.swing.JComboBox<>();
+        jComboBoxUnidad = new javax.swing.JComboBox<>();
         jButtonCancelar = new javax.swing.JButton();
-        jButtonRegistrar = new javax.swing.JButton();
+        jButtonActualizar = new javax.swing.JButton();
+        lblUnidad = new javax.swing.JLabel();
+        txtPrecioCompra = new javax.swing.JTextField();
+        lblPrecio2 = new javax.swing.JLabel();
+        lblProveedor = new javax.swing.JLabel();
+        txtProveedor = new javax.swing.JTextField();
+        lblObservaciones = new javax.swing.JLabel();
+        txtObservaciones = new javax.swing.JTextField();
         txtStock = new javax.swing.JTextField();
         lblStock = new javax.swing.JLabel();
         pnlTitulo = new javax.swing.JPanel();
@@ -63,6 +84,11 @@ public class frmActualizarProducto extends javax.swing.JFrame {
 
         pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
         pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblSKU.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblSKU.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSKU.setText("SKU:");
+        pnlFormulario.add(lblSKU, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 90, -1));
 
         lblNombre.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -77,18 +103,26 @@ public class frmActualizarProducto extends javax.swing.JFrame {
 
         lblCategoria.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblCategoria.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblCategoria.setText("Estado:");
-        pnlFormulario.add(lblCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 210, 80, -1));
+        lblCategoria.setText("Categoría:");
+        pnlFormulario.add(lblCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 190, 110, -1));
+
+        txtSKU.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtSKU.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFormulario.add(txtSKU, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 60, 120, 22));
 
         txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtNombre.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 110, 120, 22));
 
+        txtPrecioVenta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtPrecioVenta.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtPrecioVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, 120, 22));
 
         jComboBoxCategoria.setPreferredSize(new java.awt.Dimension(150, 40));
-        pnlFormulario.add(jComboBoxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 220, 120, 22));
+        pnlFormulario.add(jComboBoxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 230, 110, 22));
+
+        jComboBoxUnidad.setPreferredSize(new java.awt.Dimension(150, 40));
+        pnlFormulario.add(jComboBoxUnidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 230, 110, 22));
 
         jButtonCancelar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonCancelar.setText("Cancelar");
@@ -100,24 +134,57 @@ public class frmActualizarProducto extends javax.swing.JFrame {
         });
         pnlFormulario.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 100, 32));
 
-        jButtonRegistrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButtonRegistrar.setText("Registrar");
-        jButtonRegistrar.setPreferredSize(new java.awt.Dimension(130, 45));
-        jButtonRegistrar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonActualizar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButtonActualizar.setText("Actualizar");
+        jButtonActualizar.setPreferredSize(new java.awt.Dimension(130, 45));
+        jButtonActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonRegistrarActionPerformed(evt);
+                jButtonActualizarActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 370, 111, 32));
+        pnlFormulario.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 370, 111, 32));
+
+        lblUnidad.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblUnidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblUnidad.setText("Unidad de Medida:");
+        pnlFormulario.add(lblUnidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 190, 210, -1));
+
+        txtPrecioCompra.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtPrecioCompra.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFormulario.add(txtPrecioCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 200, 120, 22));
+
+        lblPrecio2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblPrecio2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPrecio2.setText("Precio Compra:");
+        lblPrecio2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        pnlFormulario.add(lblPrecio2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 150, 30));
+
+        lblProveedor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblProveedor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblProveedor.setText("Proveedor:");
+        pnlFormulario.add(lblProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+
+        txtProveedor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtProveedor.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFormulario.add(txtProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 250, 120, 22));
+
+        lblObservaciones.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblObservaciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblObservaciones.setText("Observaciones:");
+        pnlFormulario.add(lblObservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, -1, -1));
+
+        txtObservaciones.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtObservaciones.setPreferredSize(new java.awt.Dimension(200, 50));
+        pnlFormulario.add(txtObservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 60, 280, 110));
 
         txtStock.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtStock.setPreferredSize(new java.awt.Dimension(200, 50));
-        pnlFormulario.add(txtStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 190, 120, 22));
+        pnlFormulario.add(txtStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 290, 120, 22));
 
         lblStock.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblStock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblStock.setText("Stock:");
-        pnlFormulario.add(lblStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 180, 70, -1));
+        lblStock.setText("Stock Inicial:");
+        pnlFormulario.add(lblStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 280, 140, -1));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
@@ -129,7 +196,7 @@ public class frmActualizarProducto extends javax.swing.JFrame {
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Actualizar Producto");
+        lblTitulo.setText("Actualizar producto");
         pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -138,33 +205,129 @@ public class frmActualizarProducto extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
+    private void jButtonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActualizarActionPerformed
+
         try {
-            this.Actualizar();
-            JOptionPane.showMessageDialog(rootPane, "Se registro el producto con exito");
+            this.actualizar();
+            JOptionPane.showMessageDialog(rootPane, "Se actualizo el producto con exito");
+            this.dispose();
+            ControlGUI.getInstancia().mostrarProductosRegistrados();
         } catch (NegocioException ex) {
             Logger.getLogger(frmActualizarProducto.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButtonRegistrarActionPerformed
+
+
+    }//GEN-LAST:event_jButtonActualizarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        ControlGUI.getInstancia().mostrarMenuProducto();
+        try {
+            ControlGUI.getInstancia().mostrarProductosRegistrados();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmActualizarProducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
+
+
     }//GEN-LAST:event_jButtonCancelarActionPerformed
+    /*
+    Metodo para colocar los datos del Producto a actualizar en cada campo para su visualización.
+     */
+    private void inicial() throws NegocioException {
 
-    private void Actualizar() throws NegocioException {
-       
+        productoElegido = ControlGUI.getInstancia().obtenerProductoPorNombre(nombre);
+        id = productoElegido.getId();
+        if (productoElegido.getNombre() == null || productoElegido.getNombre().equalsIgnoreCase("")) {
+            this.txtNombre.setText("No registrado");
+        } else {
+            this.txtNombre.setText(productoElegido.getNombre());
+        }
+        if (productoElegido.getObservaciones() == null || productoElegido.getObservaciones().equalsIgnoreCase("")) {
+            this.txtObservaciones.setText("No registrado");
+        } else {
+            this.txtObservaciones.setText(productoElegido.getObservaciones());
+        }
+        if (productoElegido.getSKU() == null || productoElegido.getSKU().equalsIgnoreCase("")) {
+            this.txtSKU.setText("No registrado");
+        } else {
+            this.txtSKU.setText(productoElegido.getSKU());
+        }
+        if (productoElegido.getPrecioCompraReferencial() == null) {
+            this.txtPrecioCompra.setText("No registrado");
+        } else {
+            this.txtPrecioCompra.setText(Double.toString(productoElegido.getPrecioCompraReferencial()));
+        }
+        if (productoElegido.getStock() == null) {
+            this.txtStock.setText("No registrado");
+        } else {
+            this.txtStock.setText(Integer.toString(productoElegido.getStock()));
+        }
+        if (productoElegido.getProveedor() == null || productoElegido.getProveedor().equalsIgnoreCase("")) {
+            this.txtProveedor.setText("No registrado");
+        } else {
+            this.txtProveedor.setText(productoElegido.getProveedor());
+        }
+        this.txtPrecioVenta.setText(Double.toString(productoElegido.getPrecioVenta()));
 
     }
-    public void combobox(){
+
+    private void actualizar() throws NegocioException {
+
+        if (ControlGUI.getInstancia().ValidarRegistroProductoActualizar(this.txtSKU.getText(),
+                this.txtNombre.getText(),
+                this.txtPrecioVenta.getText(),
+                this.txtPrecioCompra.getText(),
+                this.txtStock.getText(), id) == true) {
+            productoActualizado = ControlGUI.getInstancia().obtenerProductoPorID(id);
+            productoActualizado.setNombre(this.txtNombre.getText());
+            if (this.txtSKU.getText().equalsIgnoreCase("No registrado")) {
+                productoActualizado.setSKU("");
+            } else {
+                productoActualizado.setSKU(this.txtSKU.getText());
+            }
+            if (this.txtPrecioCompra.getText().equalsIgnoreCase("No registrado")) {
+                productoActualizado.setPrecioCompraReferencial(null);
+            } else {
+                productoActualizado.setPrecioCompraReferencial(Double.valueOf(this.txtPrecioCompra.getText()));
+            }
+            if (this.txtStock.getText().equalsIgnoreCase("No registrado")) {
+                productoActualizado.setStock(null);
+            } else {
+                productoActualizado.setStock(Integer.valueOf(this.txtStock.getText()));
+            }
+            if (this.txtProveedor.getText().equalsIgnoreCase("No registrado")) {
+                productoActualizado.setProveedor("");
+            } else {
+                productoActualizado.setProveedor(this.txtProveedor.getText());
+            }
+            if (this.txtObservaciones.getText().equalsIgnoreCase("No registrado")) {
+                productoActualizado.setObservaciones("");
+
+            } else {
+                productoActualizado.setObservaciones(this.txtObservaciones.getText());
+            }
+            productoActualizado.setCategoria(this.jComboBoxCategoria.getItemAt(this.jComboBoxCategoria.getSelectedIndex()));
+            productoActualizado.setUnidadMedida(this.jComboBoxUnidad.getItemAt(this.jComboBoxUnidad.getSelectedIndex()));
+            productoActualizado.setPrecioVenta(Double.valueOf(this.txtPrecioVenta.getText()));
+
+            ControlGUI.getInstancia().ActualizarProducto(productoActualizado);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Error: Verifique sus campos");
+            throw new NegocioException("Verifique los campos");
+        }
+
+    }
+
+    public void combobox() {
         this.jComboBoxCategoria.addItem("General");
-
+        this.jComboBoxUnidad.addItem("KG");
+        this.jComboBoxUnidad.addItem("Litros");
+        this.jComboBoxUnidad.addItem("Gramos");
     }
+
     /**
      * Metodo para el ajuste de los componentes cuando la pantalla cambie de
      * tamaño.
      */
-
     private void AcomodarContenido() {
         JPanel panel = this.pnlFormulario;
         this.pnlFormulario.setLayout(new GridBagLayout());
@@ -177,26 +340,41 @@ public class frmActualizarProducto extends javax.swing.JFrame {
 
         // Columna 0
         gbc.gridx = 0;
+        panel.add(this.lblSKU, gbc);
+        gbc.gridy++;
         panel.add(this.lblNombre, gbc);
         gbc.gridy++;
         panel.add(this.lblPrecio, gbc);
         gbc.gridy++;
-  
+        panel.add(this.lblPrecio2, gbc);
+        gbc.gridy++;
+        panel.add(this.lblProveedor, gbc);
+        gbc.gridy++;
 
         // Columna 1
         gbc.gridx = 1;
         gbc.gridy = 0;
+        panel.add(this.txtSKU, gbc);
+        gbc.gridy++;
         panel.add(this.txtNombre, gbc);
         gbc.gridy++;
         panel.add(this.txtPrecioVenta, gbc);
         gbc.gridy++;
+        panel.add(this.txtPrecioCompra, gbc);
+        gbc.gridy++;
+        panel.add(this.txtProveedor, gbc);
+        gbc.gridy++;
         panel.add(this.jButtonCancelar, gbc);
         gbc.gridy++;
-        panel.add(this.jButtonRegistrar, gbc);
+        panel.add(this.jButtonActualizar, gbc);
 
         // Columna 2
         gbc.gridx = 2;
         gbc.gridy = 0;
+        panel.add(this.lblObservaciones, gbc);
+        gbc.gridy++;
+        panel.add(this.lblUnidad, gbc);
+        gbc.gridy++;
         panel.add(this.lblCategoria, gbc);
         gbc.gridy++;
         panel.add(this.lblStock, gbc);
@@ -205,63 +383,40 @@ public class frmActualizarProducto extends javax.swing.JFrame {
         // Columna 3
         gbc.gridx = 3;
         gbc.gridy = 0;
+        panel.add(this.txtObservaciones, gbc);
+        gbc.gridy++;
+        panel.add(this.jComboBoxUnidad, gbc);
+        gbc.gridy++;
         panel.add(this.jComboBoxCategoria, gbc);
         gbc.gridy++;
         panel.add(this.txtStock, gbc);
         gbc.gridy++;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmActualizarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmActualizarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmActualizarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmActualizarProducto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmActualizarProducto().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonActualizar;
     private javax.swing.JButton jButtonCancelar;
-    private javax.swing.JButton jButtonRegistrar;
     private javax.swing.JComboBox<String> jComboBoxCategoria;
+    private javax.swing.JComboBox<String> jComboBoxUnidad;
     private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblObservaciones;
     private javax.swing.JLabel lblPrecio;
+    private javax.swing.JLabel lblPrecio2;
+    private javax.swing.JLabel lblProveedor;
+    private javax.swing.JLabel lblSKU;
     private javax.swing.JLabel lblStock;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JLabel lblUnidad;
     private javax.swing.JPanel pnlFormulario;
     private javax.swing.JPanel pnlTitulo;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtObservaciones;
+    private javax.swing.JTextField txtPrecioCompra;
     private javax.swing.JTextField txtPrecioVenta;
+    private javax.swing.JTextField txtProveedor;
+    private javax.swing.JTextField txtSKU;
     private javax.swing.JTextField txtStock;
     // End of variables declaration//GEN-END:variables
 

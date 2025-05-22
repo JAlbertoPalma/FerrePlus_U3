@@ -39,15 +39,6 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
           this.jButtonRegistrar.setText("Registrar");
     }
 
-    public frmRegistrarProducto(String id) {
-        initComponents();
-        this.setExtendedState(frmRegistrarProducto.MAXIMIZED_BOTH);
-        this.combobox();
-        this.AcomodarContenido();
-        this.id = id;
-        this.lblTitulo.setText("Actualizar Producto");
-        this.jButtonRegistrar.setText("Actualizar");
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -208,24 +199,14 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
-        if (id == null) {
+
             try {
                 this.registro();
                 JOptionPane.showMessageDialog(rootPane, "Se registro el producto con exito");
             } catch (NegocioException ex) {
                 Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            try {
-                this.actualizar();
-                JOptionPane.showMessageDialog(rootPane, "Se actualizo el producto con exito");
-                this.dispose();
-                 ControlGUI.getInstancia().mostrarProductosRegistrados();
-            } catch (NegocioException ex) {
-                Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
+         
 
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
@@ -263,24 +244,6 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
 
     }
 
-    private void actualizar() throws NegocioException {
-        if (ControlGUI.getInstancia().ValidarRegistroProducto(this.txtSKU.getText(),
-                this.txtNombre.getText(),
-                this.txtPrecioVenta.getText(),
-                this.txtPrecioCompra.getText(),
-                this.txtStock.getText()) == true) {
-            ControlGUI.getInstancia().ActualizarProducto(ControlGUI.getInstancia().crearProductoDTO(this.txtSKU.getText(),
-                    this.txtNombre.getText(),
-                    this.jComboBoxCategoria.getItemAt(this.jComboBoxCategoria.getSelectedIndex()),
-                    this.jComboBoxUnidad.getItemAt(this.jComboBoxUnidad.getSelectedIndex()),
-                    this.txtPrecioCompra.getText(),
-                    this.txtPrecioVenta.getText(),
-                    this.txtProveedor.getText(),
-                    this.txtStock.getText(),
-                    this.txtObservaciones.getText()));
-        }
-
-    }
 
     public void combobox() {
         this.jComboBoxCategoria.addItem("General");

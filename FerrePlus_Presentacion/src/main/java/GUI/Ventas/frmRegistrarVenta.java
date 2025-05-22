@@ -8,6 +8,7 @@ import GUI.Compras.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
 import DTO.ProductoDTO;
+import DTO.VentaDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import java.awt.BorderLayout;
@@ -37,6 +38,9 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
     GridBagConstraints gbc = new GridBagConstraints();
     int aux = 0;
     int fila = 0;
+    List<ProductoDTO> productos;
+    VentaDTO venta;
+    double total;
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -45,7 +49,17 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(frmRegistrarVenta.MAXIMIZED_BOTH);
         this.AcomodarContenido();
+        this.LlenarTabla();
+        productos = new ArrayList<>();
 
+    }
+    public frmRegistrarVenta(String id, double cantidad, double calculoVenta,double descuento, double subtotal) throws NegocioException {
+        initComponents();
+        this.setExtendedState(frmRegistrarVenta.MAXIMIZED_BOTH);
+        this.AcomodarContenido();
+        this.añadir(id, cantidad, calculoVenta, descuento, subtotal);
+        productos = new ArrayList<>();
+        
     }
 
     /**
@@ -67,7 +81,7 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
         jButtonConfirmar = new javax.swing.JButton();
         jButtonAgregar = new javax.swing.JButton();
         datePickerVenta = new com.github.lgooddatepicker.components.DatePicker();
-        lblTotalVenta1 = new javax.swing.JLabel();
+        lblTotalVenta = new javax.swing.JLabel();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -108,7 +122,7 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
@@ -182,10 +196,10 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
         pnlFondo.add(jButtonAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
         pnlFondo.add(datePickerVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, -1, -1));
 
-        lblTotalVenta1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        lblTotalVenta1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTotalVenta1.setText("Total Venta:");
-        pnlFondo.add(lblTotalVenta1, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 480, 170, -1));
+        lblTotalVenta.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalVenta.setText("Total Venta:");
+        lblTotalVenta.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        pnlFondo.add(lblTotalVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 480, 170, -1));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -208,8 +222,8 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
 
-            ControlGUI.getInstancia();
-            this.dispose();
+        ControlGUI.getInstancia();
+        this.dispose();
 
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
@@ -235,12 +249,20 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-       
-       
+        if (this.productos.isEmpty() || this.productos == null) {
+            JOptionPane.showMessageDialog(rootPane, "No puede registrar una venta sin productos");
+        } else {
+            try {
+                ControlGUI.getInstancia().mostrarProductosRegistrados(1);
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmRegistrarVenta.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
-      
+
 
     }//GEN-LAST:event_jButtonAgregarActionPerformed
 
@@ -284,6 +306,8 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
 //         Columna 2
         gbc.gridx = 2;
         gbc.gridy = 0;
+        this.pnlFondo.add(this.lblTotalVenta, gbc);
+        gbc.gridy++;
         this.pnlFondo.add(this.lblTotal, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.lblTotal, gbc);
@@ -317,15 +341,76 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
         int aux = 1;
         int min = 1;
         int max = 0;
+        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
 //        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
         //Tabla
-        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
-        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        if (productos.isEmpty()) {
+            model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+            for (int i = 0; i < 5; i++) {
+                model.addRow(new Object[]{
+                    "No registrado",
+                    "No registrado",
+                    0.0,
+                    0.0,
+                    0.0,});
+            }
+        } 
+
         return model;
     }
+    // Metodo para llenar la tabla de Productos.
+    public DefaultTableModel LlenarTablaProductos(String id, double cantidad, double calculoVenta, double descuento, double subtotal) throws NegocioException {
+       
+        // Esto es para despues, con los botones siguiente y atras
+        int index = 1;
+        int aux = 1;
+        int min = 1;
+        int max = 0;
+        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
+//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        //Tabla
+            productos.add(ControlGUI.getInstancia().obtenerProductoPorID(id));
+            for (int i = 0; i < productos.size(); i++) {
+            ProductoDTO productoElegido = productos.get(i);
+            model.addRow(new Object[]{
+                   productoElegido.getSKU(), //Sku
+                   productoElegido.getNombre(), //Nombre
+                   cantidad, //Cantidad 
+                   productoElegido.getPrecioVenta(), // PrecioVenta
+                   calculoVenta, //CalculoVenta
+                   descuento, //Descuento
+                   subtotal
+            });
+            
+            }
+        
 
-  
+        return model;
+    }
+    public DefaultTableModel añadir(String id, double cantidad, double calculoVenta, double descuento, double subtotal) throws NegocioException {
+        this.total = total + subtotal;
+        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
+//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        //Tabla
+            productos.add(ControlGUI.getInstancia().obtenerProductoPorID(id));
+            ProductoDTO productoElegido = ControlGUI.getInstancia().obtenerProductoPorID(id);
+            model.addRow(new Object[]{
+                   productoElegido.getSKU(), //Sku
+                   productoElegido.getNombre(), //Nombre
+                   cantidad, //Cantidad 
+                   productoElegido.getPrecioVenta(), // PrecioVenta
+                   calculoVenta, //CalculoVenta
+                   descuento, //Descuento
+                   subtotal
+            });
+            
+            
+        
 
+        return model;
+    }
+    
+ 
 
     /**
      * @param args the command line arguments
@@ -408,7 +493,7 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
     private javax.swing.JLabel lblFechaVenta;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblTotal;
-    private javax.swing.JLabel lblTotalVenta1;
+    private javax.swing.JLabel lblTotalVenta;
     private javax.swing.JPanel pnlFondo;
     private javax.swing.JPanel pnlTitulo;
     // End of variables declaration//GEN-END:variables

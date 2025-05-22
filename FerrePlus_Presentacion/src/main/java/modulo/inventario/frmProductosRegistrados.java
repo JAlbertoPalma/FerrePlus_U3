@@ -33,8 +33,14 @@ import javax.swing.table.JTableHeader;
 public class frmProductosRegistrados extends javax.swing.JFrame {
 
     GridBagConstraints gbc = new GridBagConstraints();
-    int aux = 0;
-    int fila = 0;
+    List<ProductoDTO> productos;
+    int auxEstado = 0; //Define en que operación esta: 0 para ninguna, 1 para buscar.
+    int aux = 1; //Auxiliar requerido para los botones siguiente y atras
+    int filaSeleccionada = 0; //Fila seleccionada de la tabla, se requiere para actualizar y eliminar.
+    int index = 1; //Define en que pagina se encuentra la tabla
+    int min = 1; // El minimo de la lista de productos, requerido para el boton atras.
+    int max = 0; // El maximo de la lista de productos, requerido para el boton siguiente.
+    int procedencia = 0; //Define si viene de ventas o compras, 0 para normal, 1 para ventas, 2 para compras.
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -42,6 +48,16 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     public frmProductosRegistrados() throws NegocioException {
         initComponents();
         this.setExtendedState(frmProductosRegistrados.MAXIMIZED_BOTH);
+        this.inicial();
+        this.AcomodarContenido();
+
+        this.combobox();
+    }
+
+    public frmProductosRegistrados(int procedencia) throws NegocioException {
+        initComponents();
+        this.setExtendedState(frmProductosRegistrados.MAXIMIZED_BOTH);
+        this.procedencia = procedencia;
         this.inicial();
         this.AcomodarContenido();
 
@@ -69,8 +85,11 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         jComboBoxEstado = new javax.swing.JComboBox<>();
         jButtonEliminar = new javax.swing.JButton();
         jButtonFiltrar = new javax.swing.JButton();
-        jButtonBuscar = new javax.swing.JButton();
+        jButtonAtras = new javax.swing.JButton();
         jButtonActualizar = new javax.swing.JButton();
+        jButtonBuscar = new javax.swing.JButton();
+        jButtonSiguiente = new javax.swing.JButton();
+        jButtonConfirmar = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -195,16 +214,16 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         });
         pnlFondo.add(jButtonFiltrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
 
-        jButtonBuscar.setBackground(new java.awt.Color(255, 204, 153));
-        jButtonBuscar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonBuscar.setText("Buscar");
-        jButtonBuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAtras.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonAtras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAtras.setText("Atras");
+        jButtonAtras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonBuscarActionPerformed(evt);
+                jButtonAtrasActionPerformed(evt);
             }
         });
-        pnlFondo.add(jButtonBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+        pnlFondo.add(jButtonAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 680, 130, 40));
 
         jButtonActualizar.setBackground(new java.awt.Color(255, 204, 153));
         jButtonActualizar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -216,6 +235,39 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(jButtonActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
+
+        jButtonBuscar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonBuscar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonBuscar.setText("Buscar");
+        jButtonBuscar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+
+        jButtonSiguiente.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonSiguiente.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSiguiente.setText("Siguiente");
+        jButtonSiguiente.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSiguienteActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonSiguiente, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 630, 130, 40));
+
+        jButtonConfirmar.setText("Confirmar");
+        jButtonConfirmar.setBackground(new java.awt.Color(255, 204, 153));
+        jButtonConfirmar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConfirmarActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 680, 130, 40));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -237,7 +289,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        if (aux == 1) {
+        if (auxEstado == 1) {
 
             this.jButtonBuscar.setVisible(true);
             this.jButtonActualizar.setVisible(true);
@@ -248,7 +300,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
                 Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            aux = 0;
+            auxEstado = 0;
         } else {
             ControlGUI.getInstancia().mostrarMenuPrincipal();
             this.dispose();
@@ -257,14 +309,14 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
     private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
-        if (aux == 0) {
+        if (auxEstado == 0) {
 
             this.jButtonFiltrar.setText("Eliminar");
             this.jButtonEliminar.setVisible(true);
-            String id = Integer.toString(fila);
+            String id = Integer.toString(filaSeleccionada);
             System.out.println(id);
             try {
-                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
+                String nombre = this.jTableProductos.getValueAt(filaSeleccionada, 1).toString();
                 System.out.println(nombre);
                 ControlGUI.getInstancia().EliminarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
                 JOptionPane.showMessageDialog(rootPane, "Registro Eliminado con exito");
@@ -292,20 +344,36 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonFiltrarActionPerformed
 
-    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
-        if (aux == 1) {
-
+    private void jButtonAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtrasActionPerformed
+        index--;
+        aux = aux - 8;
+        boolean aux = false;
+        if (this.jComboBoxEstado.getItemAt(this.jComboBoxEstado.getSelectedIndex()).equalsIgnoreCase("Habilitado")) {
+            aux = true;
         } else {
-            this.buscar();
+            aux = false;
+        }
+        if (this.auxEstado == 1) {
+            try {
+                this.LlenarTablaFiltro(this.txtSKU.getText(), this.txtCategoria.getText(), aux);
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                this.LlenarTabla();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-    }//GEN-LAST:event_jButtonBuscarActionPerformed
+    }//GEN-LAST:event_jButtonAtrasActionPerformed
 
     private void jButtonActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActualizarActionPerformed
-        if (aux == 0) {
+        if (auxEstado == 0) {
             try {
-                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
-                ControlGUI.getInstancia().mostrarActualizarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+                String nombre = this.jTableProductos.getValueAt(filaSeleccionada, 1).toString();
+                ControlGUI.getInstancia().mostrarActualizarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getNombre());
                 this.dispose();
             } catch (NegocioException ex) {
                 Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
@@ -315,10 +383,14 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonActualizarActionPerformed
 
     private void jTableProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableProductosMouseClicked
-
-        fila = this.jTableProductos.getSelectedRow();
-        this.jButtonEliminar.setVisible(true);
-        this.jButtonActualizar.setVisible(true);
+        if (auxEstado == 1) {
+            this.jButtonEliminar.setVisible(false);
+            this.jButtonActualizar.setVisible(false);
+        } else if (auxEstado == 0) {
+            filaSeleccionada = this.jTableProductos.getSelectedRow();
+            this.jButtonEliminar.setVisible(true);
+            this.jButtonActualizar.setVisible(true);
+        }
     }//GEN-LAST:event_jTableProductosMouseClicked
 
     private void jTableProductosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableProductosFocusLost
@@ -326,12 +398,57 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableProductosFocusLost
 
     private void pnlFondoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFondoMouseClicked
-        if (fila >= 0) {
+        if (filaSeleccionada >= 0) {
+            this.jTableProductos.clearSelection();
             this.jButtonActualizar.setVisible(false);
             this.jButtonEliminar.setVisible(false);
 
         }
     }//GEN-LAST:event_pnlFondoMouseClicked
+
+    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
+        if (auxEstado == 1) {
+
+        } else {
+            this.buscar();
+        }
+    }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    private void jButtonSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSiguienteActionPerformed
+        index++;
+        aux = aux + 8;
+        boolean aux = false;
+        if (this.jComboBoxEstado.getItemAt(this.jComboBoxEstado.getSelectedIndex()).equalsIgnoreCase("Habilitado")) {
+            aux = true;
+        } else {
+            aux = false;
+        }
+        if (this.auxEstado == 1) {
+            try {
+                this.LlenarTablaFiltro(this.txtSKU.getText(), this.txtCategoria.getText(), aux);
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                this.LlenarTabla();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonSiguienteActionPerformed
+
+    private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
+        String nombre = this.jTableProductos.getValueAt(filaSeleccionada, 1).toString();
+        try {
+            ControlGUI.getInstancia().mostrarProductoVendido(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+            this.dispose();
+            
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButtonConfirmarActionPerformed
     private void AcomodarContenido() throws NegocioException {
 
         this.pnlFondo.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -344,7 +461,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         // Columna 1
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
+//        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
         this.jTableProductos.setModel(this.LlenarTabla());
         JTableHeader header = new JTableHeader(this.jTableProductos.getColumnModel());
         this.pnlFondo.add(header, gbc);
@@ -352,6 +469,9 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.pnlFondo.add(this.jTableProductos, gbc);
         this.jTableProductos.setPreferredSize(new Dimension(750, 750));
         gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAtras, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonSiguiente, gbc);
 
 //         Columna 2
         gbc.gridx = 2;
@@ -361,36 +481,37 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonFiltrar, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jButtonVolver, gbc);
-        gbc.gridy++;
         this.pnlFondo.add(this.jButtonActualizar, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonEliminar, gbc);
         gbc.gridy++;
+        if (procedencia == 1 || procedencia == 2) {
+            this.pnlFondo.add(this.jButtonConfirmar);
+            gbc.gridy++;
+        }
+        this.pnlFondo.add(this.jButtonVolver, gbc);
+        gbc.gridy++;
 
-    }
-
-    public int contarPaginas(int nPaginas) {
-        int totalPaginas = (int) Math.ceil((double) nPaginas / 8);
-        return totalPaginas;
     }
 
     // Metodo para llenar la tabla de Productos.
     public DefaultTableModel LlenarTabla() throws NegocioException {
 
         // Esto es para despues, con los botones siguiente y atras
-        int index = 1;
-        int aux = 1;
-        int min = 1;
-        int max = 0;
         max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        List<ProductoDTO> productosObtenidos = this.calcular();
+        this.ocultarBotones();
         //Tabla
         DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
-        for (int i = 0; i < ControlGUI.getInstancia().ObtenerProductos().size(); i++) {
-            ProductoDTO producto = ControlGUI.getInstancia().ObtenerProductos().get(i);
-            System.out.println(producto.getSKU());
-            System.out.println(producto.getPrecioCompraReferencial());
+        for (int i = 0; i < productosObtenidos.size(); i++) {
+            ProductoDTO producto = productosObtenidos.get(i);
+            String estados;
+            if (producto.getEstado().equals(true)) {
+                estados = "Habilitado";
+            } else {
+                estados = "Deshabilitado";
+            }
             model.addRow(new Object[]{
                 producto.getSKU(),
                 producto.getNombre(),
@@ -400,7 +521,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
                 producto.getPrecioCompraReferencial(),
                 producto.getStock(),
                 producto.getProveedor(),
-                producto.getEstado()
+                estados
             });
         }
         return model;
@@ -408,71 +529,55 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
 
     // Metodo para llenar la tabla de Productos.
     public DefaultTableModel LlenarTablaFiltro(String sku, String categoria, boolean estado) throws NegocioException {
-        // Esto es para despues, con los botones siguiente y atras
-//        int index = 1;
-//        int aux = 1;
-//        int min = 1;
-//        int max = 0;
-//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
-        //Tabla
-        DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
-        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
-        List<ProductoDTO> productos = ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado);
-        if (productos.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto");
+        if (categoria.equalsIgnoreCase("") && sku.equalsIgnoreCase("")) {
+            this.LlenarTabla();
         } else {
-            for (int i = 0; i < productos.size(); i++) {
-                ProductoDTO producto = productos.get(i);
-                System.out.println(producto.getSKU());
-                System.out.println(producto.getPrecioCompraReferencial());
-                model.addRow(new Object[]{
-                    producto.getSKU(),
-                    producto.getNombre(),
-                    producto.getCategoria(),
-                    producto.getUnidadMedida(),
-                    producto.getPrecioVenta(),
-                    producto.getPrecioCompraReferencial(),
-                    producto.getStock(),
-                    producto.getProveedor(),
-                    producto.getEstado()
-                });
+            max = this.contarPaginas(ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado).size());
+            List<ProductoDTO> productosObtenidos = this.calcularFiltros(sku, categoria, estado);
+            this.ocultarBotones();
+            //Tabla
+            DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
+            model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+
+            try {
+                for (int i = 0; i < productosObtenidos.size(); i++) {
+                    ProductoDTO producto = productosObtenidos.get(i);
+                    String estados;
+                    if (producto.getEstado().equals(true)) {
+                        estados = "Habilitado";
+                    } else {
+                        estados = "Deshabilitado";
+                    }
+                    model.addRow(new Object[]{
+                        producto.getSKU(),
+                        producto.getNombre(),
+                        producto.getCategoria(),
+                        producto.getUnidadMedida(),
+                        producto.getPrecioVenta(),
+                        producto.getPrecioCompraReferencial(),
+                        producto.getStock(),
+                        producto.getProveedor(),
+                        estados
+                    });
+                    return model;
+                }
+            } catch (NullPointerException np) {
+                JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto");
+                throw new NullPointerException("No se encontro ningun producto");
             }
         }
-
-        return model;
+        return null;
 
     }
 
-//    public void tabla() throws NegocioException {
-//        // Modelo de la tabla
-//        String[] columnas = {"SKU", "Nombre", "Categoria", "UnidadMedida", "PrecioVenta", "PrecioCompra", "Stock", "Proveedor", "Stock"};
-//        DefaultTableModel modelo = new DefaultTableModel(columnas, 0); // 0 filas al inicio
-//        JTable tabla = new JTable(modelo);
-//        for (int i = 0; i < ControlGUI.getInstancia().ObtenerProductos().size(); i++) {
-//            ProductoDTO producto = ControlGUI.getInstancia().ObtenerProductos().get(i);
-//            modelo.addRow(new Object[]{
-//                producto.getSKU(),
-//                producto.getNombre(),
-//                producto.getCategoria(),
-//                producto.getUnidadMedida(),
-//                producto.getPrecioVenta(),
-//                producto.getPrecioCompraReferencial(),
-//                producto.getStock(),
-//                producto.getProveedor(),
-//                producto.getEstado()
-//            });
-//
-//        }
-//        // Scroll pane con la tabla
-//        JScrollPane scrollPane = new JScrollPane(tabla);
-//        this.jTableProductos = tabla;
-//        scrollPane.setPreferredSize(new Dimension(750, 350));
-//        this.jScrollPaneProductos = scrollPane;
-//
-//    }
     public void combobox() {
         this.jComboBoxEstado.addItem("Habilitado");
         this.jComboBoxEstado.addItem("Deshabilitado");
+    }
+
+    public int contarPaginas(int nPaginas) {
+        int totalPaginas = (int) Math.ceil((double) nPaginas / 8);
+        return totalPaginas;
     }
 
     public void inicial() throws NegocioException {
@@ -487,11 +592,11 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.jButtonActualizar.setVisible(false);
         this.jButtonEliminar.setVisible(false);
 
-        this.jTableProductos.setModel(this.LlenarTabla());
+//        this.jTableProductos.setModel(this.LlenarTabla());
     }
 
     public void buscar() {
-        this.aux = 1;
+        this.auxEstado = 1;
         this.lblsku.setVisible(true);
         this.lblCategoria.setVisible(true);
         this.lblEstado.setVisible(true);
@@ -505,6 +610,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
 
         gbc.gridx = 2;
         gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         this.pnlFondo.add(this.lblsku, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.txtSKU, gbc);
@@ -520,6 +626,65 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.pnlFondo.add(this.jButtonFiltrar, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonVolver, gbc);
+    }
+
+    public List<ProductoDTO> calcular() throws NegocioException {
+        List<ProductoDTO> productosObtenidos = ControlGUI.getInstancia().ObtenerProductos();
+        List<ProductoDTO> productos = new ArrayList<>();
+        try {
+            productos.add(productosObtenidos.get(aux - 1));
+            productos.add(productosObtenidos.get(aux));
+            productos.add(productosObtenidos.get(aux + 1));
+            productos.add(productosObtenidos.get(aux + 2));
+            productos.add(productosObtenidos.get(aux + 3));
+            productos.add(productosObtenidos.get(aux + 4));
+            productos.add(productosObtenidos.get(aux + 5));
+            productos.add(productosObtenidos.get(aux + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+        } finally {
+            return productos;
+        }
+    }
+
+    public List<ProductoDTO> calcularFiltros(String sku, String categoria, boolean estado) throws NegocioException {
+        List<ProductoDTO> productosObtenidosFiltro = ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado);
+        List<ProductoDTO> productos = new ArrayList<>();
+        try {
+            productos.add(productosObtenidosFiltro.get(aux - 1));
+            productos.add(productosObtenidosFiltro.get(aux));
+            productos.add(productosObtenidosFiltro.get(aux + 1));
+            productos.add(productosObtenidosFiltro.get(aux + 2));
+            productos.add(productosObtenidosFiltro.get(aux + 3));
+            productos.add(productosObtenidosFiltro.get(aux + 4));
+            productos.add(productosObtenidosFiltro.get(aux + 5));
+            productos.add(productosObtenidosFiltro.get(aux + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+
+        } finally {
+            return productos;
+        }
+
+    }
+
+    public void ocultarBotones() {
+
+        if (index == max) {
+            this.jButtonSiguiente.setVisible(false);
+
+        } else {
+            this.jButtonSiguiente.setVisible(true);
+
+        }
+
+        if (index == min) {
+            this.jButtonAtras.setVisible(false);
+
+        } else {
+            this.jButtonAtras.setVisible(true);
+
+        }
     }
 
     /**
@@ -566,9 +731,12 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonActualizar;
+    private javax.swing.JButton jButtonAtras;
     private javax.swing.JButton jButtonBuscar;
+    private javax.swing.JButton jButtonConfirmar;
     private javax.swing.JButton jButtonEliminar;
     private javax.swing.JButton jButtonFiltrar;
+    private javax.swing.JButton jButtonSiguiente;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxEstado;
     private javax.swing.JScrollPane jScrollPaneProductos;

@@ -7,6 +7,7 @@ package GUI.Ventas;
 import GUI.Compras.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.ProductoDTO;
 import excepciones.NegocioException;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -28,25 +29,21 @@ import javax.swing.JPanel;
 public class frmProductoVendido extends javax.swing.JFrame {
 
     String id;
+    ProductoDTO productoElegido;
 
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public frmProductoVendido() {
-        initComponents();
-        this.setExtendedState(frmProductoVendido.MAXIMIZED_BOTH);
-        this.AcomodarContenido();
-        this.lblTitulo.setText("Registrar Producto");
-        this.jButtonConfirmar.setText("Registrar");
-    }
-
     public frmProductoVendido(String id) {
         initComponents();
         this.setExtendedState(frmProductoVendido.MAXIMIZED_BOTH);
         this.AcomodarContenido();
         this.id = id;
-        this.lblTitulo.setText("Actualizar Producto");
-        this.jButtonConfirmar.setText("Actualizar");
+        try {
+            productoElegido = ControlGUI.getInstancia().obtenerProductoPorID(this.id);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -83,6 +80,11 @@ public class frmProductoVendido extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(750, 600));
 
         pnlFormulario.setBackground(new java.awt.Color(204, 255, 204));
+        pnlFormulario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pnlFormularioMouseClicked(evt);
+            }
+        });
         pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblSKU.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -111,10 +113,15 @@ public class frmProductoVendido extends javax.swing.JFrame {
 
         txtCantidad.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtCantidad.setPreferredSize(new java.awt.Dimension(200, 50));
+        txtCantidad.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCantidadFocusLost(evt);
+            }
+        });
         pnlFormulario.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, 120, 22));
 
-        jButtonCancelar.setText("Cancelar");
         jButtonCancelar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButtonCancelar.setText("Cancelar");
         jButtonCancelar.setPreferredSize(new java.awt.Dimension(130, 45));
         jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,8 +130,8 @@ public class frmProductoVendido extends javax.swing.JFrame {
         });
         pnlFormulario.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 100, 32));
 
-        jButtonConfirmar.setText("Confirmar");
         jButtonConfirmar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButtonConfirmar.setText("Confirmar");
         jButtonConfirmar.setPreferredSize(new java.awt.Dimension(130, 45));
         jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -197,28 +204,39 @@ public class frmProductoVendido extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-
+        try {
+            ControlGUI.getInstancia().mostrarRegistrarVenta(this.id, 
+                    Double.valueOf(this.txtCantidad.getText()), 
+                    Double.valueOf(this.txtCalculoVenta.getText()), 
+                    Double.valueOf(this.txtDescuento.getText()), 
+                    Double.valueOf(this.txtSubtotal.getText()));
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         if (id == null) {
-            ControlGUI.getInstancia().mostrarMenuProducto();
-            this.dispose();
             try {
-                ControlGUI.getInstancia().mostrarProductosRegistrados();
+                ControlGUI.getInstancia().mostrarProductosRegistrados(1);
             } catch (NegocioException ex) {
                 Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
             this.dispose();
         }
 
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
-    private void registro() throws NegocioException {
+    private void txtCantidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCantidadFocusLost
+       
+    }//GEN-LAST:event_txtCantidadFocusLost
 
-    }
+    private void pnlFormularioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFormularioMouseClicked
+        this.CalculoSubtotal();
+    }//GEN-LAST:event_pnlFormularioMouseClicked
+
+    
 
     /**
      * Metodo para el ajuste de los componentes cuando la pantalla cambie de
@@ -286,48 +304,37 @@ public class frmProductoVendido extends javax.swing.JFrame {
         panel.add(this.lblUnidad, gbc);
 
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmProductoVendido.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmProductoVendido.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmProductoVendido.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmProductoVendido.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+private void inicial() throws NegocioException {
+        id = productoElegido.getId();
+        this.txtNombre.setEditable(false);
+        this.txtSKU.setEditable(false);
+        this.txtPrecioVenta.setEditable(false);
+        this.txtCalculoVenta.setEditable(false);        
+        this.txtSubtotal.setEditable(false);
+        this.txtCantidad.setText("0");
+        this.txtDescuento.setText("0.0");
+        if (productoElegido.getNombre() == null || productoElegido.getNombre().equalsIgnoreCase("")) {
+            this.txtNombre.setText("No registrado");
+        } else {
+            this.txtNombre.setText(productoElegido.getNombre());
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+        if (productoElegido.getSKU() == null || productoElegido.getSKU().equalsIgnoreCase("")) {
+            this.txtSKU.setText("No registrado");
+        } else {
+            this.txtSKU.setText(productoElegido.getSKU());
+        this.txtPrecioVenta.setText(Double.toString(productoElegido.getPrecioVenta()));
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmProductoVendido().setVisible(true);
-            }
-        });
     }
+}
+private void CalculoSubtotal(){
+   int cantidad = Integer.valueOf(this.txtCantidad.getText());
+   Double precio = Double.valueOf(this.txtPrecioVenta.getText());
+   Double descuento = Double.valueOf(this.txtDescuento.getText());
+   Double calculoVenta= precio*cantidad;
+   Double subtotal = (precio * cantidad)-descuento;
+    this.txtCalculoVenta.setText(String.valueOf(calculoVenta));
+    this.txtSubtotal.setText(String.valueOf(subtotal));
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancelar;
