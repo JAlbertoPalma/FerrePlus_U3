@@ -41,14 +41,12 @@ public class CajaBO implements ICajaBO{
             throw new NegocioException("El monto inicial debe ser un valor positivo o cero.");
         }
         
-        // Regla de Negocio: Que no exista otra caja activa abierta. Solo se podrá tener una sesión de caja abierta al mismo tiempo.
         try {
-            CajaDTO sesionActivaExistente = obtenerSesionActiva(); // Usar el método del propio BO para consistencia
+            CajaDTO sesionActivaExistente = obtenerSesionActiva();
             if (sesionActivaExistente != null && sesionActivaExistente.getEstadoSesion()) {
-                throw new NegocioException("Ya existe una sesión de caja activa. Cierre la sesión anterior antes de abrir una nueva.");
+                throw new NegocioException("Ya existe una sesión de caja activa. Cierre la sesión anterior antes de abrir una nueva. Fecha: " + sesionActivaExistente.getFechaHoraApertura());
             }
         } catch (NegocioException e) {
-            // Si obtenerSesionActiva() lanza una NegocioException, la re-lanzamos o envolvemos
             throw new NegocioException("Error al verificar sesiones activas existentes: " + e.getMessage(), e);
         }
 
@@ -58,6 +56,7 @@ public class CajaBO implements ICajaBO{
 
         // 3. Llamar a la capa de persistencia
         try {
+            System.out.println("Negocio - Vamos a guardar la caja: " + cajaEntity.toString());
             Caja cajaGuardada = cajaDAO.abrir(cajaEntity);
             // 4. Convertir Entidad a DTO y retornar utilizando el Mapper
             return CajaMapper.toDTO(cajaGuardada);
@@ -105,13 +104,9 @@ public class CajaBO implements ICajaBO{
         
         // Monto final estimado = monto inicial + total de ventas
         cajaDTO.setMontoFinalEstimado(sesionActiva.getMontoInicial() + sesionActiva.getTotalVentas()); // Automática
-        
-        // Las observaciones de cierre son opcionales y se tomarán del DTO de entrada.
-        // Asegúrate de que el DTO de entrada para cerrar pueda contener observacionesCierre.
 
         // 2. Convertir DTO a Entidad utilizando el Mapper
         Caja cajaEntity = CajaMapper.toEntity(cajaDTO);
-        cajaEntity.setEstadoSesion(false); // La sesión pasa a estado inactivo al cerrar
 
         // 3. Llamar a la capa de persistencia
         try {

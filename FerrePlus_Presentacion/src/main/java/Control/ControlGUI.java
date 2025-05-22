@@ -4,7 +4,9 @@
  */
 package Control;
 
+import BO.CajaBO;
 import BO.ProductoBO;
+import DTO.CajaDTO;
 import DTO.ProductoDTO;
 import GUI.Compras.frmConsultarCompras;
 import GUI.Compras.frmMenuCompras;
@@ -17,6 +19,7 @@ import GUI.Ventas.frmConsultarVentas;
 import GUI.Ventas.frmMenuVentas;
 import GUI.Ventas.frmProductoVendido;
 import GUI.Ventas.frmRegistrarVenta;
+import Interfaces.ICajaBO;
 import Interfaces.IProductoBO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -38,7 +41,9 @@ import modulo.inventario.frmRegistrarProducto;
  * @author joelr
  */
 public class ControlGUI {
-
+    // Atributo global y escencial para el funcionamiento
+    public CajaDTO sesionCajaActiva;
+    
     // Instancia
     private static ControlGUI instancia;
     // Login
@@ -49,7 +54,7 @@ public class ControlGUI {
     private frmRegistrarProducto registrarProducto;
     private frmActualizarProducto actualizarProducto;
     private frmProductosRegistrados productosRegistrados;
-    private IProductoBO producto = new ProductoBO();
+    private IProductoBO productoBO = new ProductoBO();
     //Compras
     private frmConsultarCompras consultarCompras;
     private frmMenuCompras menuCompras;
@@ -60,12 +65,15 @@ public class ControlGUI {
     private frmMenuVentas menuVentas;
     private frmProductoVendido productoVendido;
     private frmRegistrarVenta registrarVenta;
+    //Caja
+    private ICajaBO cajaBO = new CajaBO();
     //Auxiliares
     private ProductoDTO productoAux = new ProductoDTO();
     private double cantidad;
     private double descuento;
     private double calculoVenta;
     private double subtotal;
+    
     public ControlGUI() {
     }
 
@@ -75,6 +83,7 @@ public class ControlGUI {
         }
         return instancia;
     }
+    
 
     /*
     Metodo para mostrar el frmLogin.
@@ -168,31 +177,31 @@ public class ControlGUI {
         if (producto == null) {
             throw new NegocioException("El producto esta vacio");
         }
-        return this.producto.registrarProducto(producto);
+        return this.productoBO.registrarProducto(producto);
     }
 
     public List<ProductoDTO> obtenerProductosFiltro(String sku, String categoria, boolean estado) throws NegocioException {
-        return this.producto.obtenerProductosFiltro(sku, categoria, estado);
+        return this.productoBO.obtenerProductosFiltro(sku, categoria, estado);
     }
 
     public ProductoDTO obtenerProductoPorNombre(String nombre) throws NegocioException {
-        return this.producto.obtenerProductoNombre(nombre);
+        return this.productoBO.obtenerProductoNombre(nombre);
     }
 
     public ProductoDTO obtenerProductoPorSKU(String sku) throws NegocioException {
-        return this.producto.obtenerProductoSKU(sku);
+        return this.productoBO.obtenerProductoSKU(sku);
     }
     public ProductoDTO obtenerProductoPorID(String id) throws NegocioException {
-        return this.producto.obtenerProductoID(id);
+        return this.productoBO.obtenerProductoID(id);
     }
 
     public List<ProductoDTO> ObtenerProductos() throws NegocioException {
-        return this.producto.obtenerProductos();
+        return this.productoBO.obtenerProductos();
     }
 
     public boolean EliminarProducto(String id) throws NegocioException, PersistenciaException {
         try {
-            this.producto.eliminarProducto(id);
+            this.productoBO.eliminarProducto(id);
             return true;
         } catch (NegocioException ne) {
             throw new NegocioException("Error al eliminar");
@@ -202,7 +211,7 @@ public class ControlGUI {
 
     public boolean ActualizarProducto(ProductoDTO producto) throws NegocioException {
         try {
-            this.producto.actualizarProducto(producto);
+            this.productoBO.actualizarProducto(producto);
             return true;
         } catch (NegocioException ne) {
             throw new NegocioException("Error al actualizar");
@@ -233,7 +242,7 @@ public class ControlGUI {
         } else if (precioVenta.matches(".*[a-zA-Z].*") || precioCompra.matches(".*[a-zA-Z].*") || stock.matches(".*[a-zA-Z].*")) {
             JOptionPane.showMessageDialog(null, "Los campos precioVenta,precioCompra y stock solo pueden llevar numeros");
             throw new NegocioException("Los compra,venta y stock no llevan letras");
-            //Validación de producto ya existente.
+            //Validación de productoBO ya existente.
         } else if (this.ValidacionProductoExistente(sku, nombre) == true) {
             JOptionPane.showMessageDialog(null, "El nombre o SKU del producto ya esta registrado en el sistema");
         } else {
@@ -265,7 +274,7 @@ public class ControlGUI {
         } else if (precioVenta.matches(".*[a-zA-Z].*") || precioCompra.matches(".*[a-zA-Z].*") || stock.matches(".*[a-zA-Z].*")) {
             JOptionPane.showMessageDialog(null, "Los campos precioVenta,precioCompra y stock solo pueden llevar numeros");
             throw new NegocioException("Los compra,venta y stock no llevan letras");
-            //Validación de producto ya existente.
+            //Validación de productoBO ya existente.
         } else if (this.ValidacionProductoExistenteActualizar(sku, nombre,id) == true) {
             JOptionPane.showMessageDialog(null, "El producto ya se ha registrado en el sistema");
         } else {
@@ -323,7 +332,33 @@ public class ControlGUI {
         } catch (NegocioException ne) {
             throw new NegocioException("Error al validar producto");
         }
-
     }
+    
+    public CajaDTO getSesionCajaActiva(){
+        return sesionCajaActiva;
+    }
+    
+    public void extraerSesionCajaActiva() throws NegocioException{
+        sesionCajaActiva = cajaBO.obtenerSesionActiva();
+        System.out.println("Extraída caja: " + sesionCajaActiva);
+    }
+    
+    public CajaDTO abrirCaja(CajaDTO caja) throws NegocioException{
+        try{
+            return cajaBO.abrir(caja);
+        }catch(NegocioException ne){
+            throw new NegocioException(ne.getMessage());
+        }
+    }
+    
+    public CajaDTO cerrarCaja(String observaciones) throws NegocioException{
+        try{
+            sesionCajaActiva.setObservacionesCierre(observaciones);
+            return cajaBO.cerrar(sesionCajaActiva);
+        }catch(NegocioException ne){
+            throw new NegocioException(ne.getMessage());
+        }
+    }
+    
 
 }

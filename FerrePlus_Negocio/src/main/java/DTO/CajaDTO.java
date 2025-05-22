@@ -33,6 +33,10 @@ public class CajaDTO {
     public CajaDTO() {
     }
 
+    public CajaDTO(Double montoInicial) {
+        this.montoInicial = montoInicial;
+    }
+
     public CajaDTO(String id, LocalDateTime fechaHoraApertura, Double montoInicial, Boolean estadoSesion, Double totalVentas, Integer cantidadDeProductos, Integer numeroDeVentas) {
         this.id = id;
         this.fechaHoraApertura = fechaHoraApertura;

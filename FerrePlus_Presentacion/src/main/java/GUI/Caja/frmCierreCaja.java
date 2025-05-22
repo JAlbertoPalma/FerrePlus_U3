@@ -6,6 +6,7 @@ package GUI.Caja;
 
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.CajaDTO;
 import excepciones.NegocioException;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
@@ -35,18 +36,23 @@ public class frmCierreCaja extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(frmCierreCaja.MAXIMIZED_BOTH);
         this.AcomodarContenido();
-        this.lblTitulo.setText("Registrar Producto");
-        this.jButtonConfirmar.setText("Registrar");
+        this.lblTitulo.setText("Cierre de caja");
+        this.jButtonConfirmar.setText("Cerrar");
+        try {
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmAperturaCaja.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public frmCierreCaja(String id) {
-        initComponents();
-        this.setExtendedState(frmCierreCaja.MAXIMIZED_BOTH);
-        this.AcomodarContenido();
-        this.id = id;
-        this.lblTitulo.setText("Actualizar Producto");
-        this.jButtonConfirmar.setText("Actualizar");
-    }
+//    public frmCierreCaja(String id) {
+//        initComponents();
+//        this.setExtendedState(frmCierreCaja.MAXIMIZED_BOTH);
+//        this.AcomodarContenido();
+//        this.id = id;
+//        this.lblTitulo.setText("Actualizar Producto");
+//        this.jButtonConfirmar.setText("Actualizar");
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -98,9 +104,11 @@ public class frmCierreCaja extends javax.swing.JFrame {
         pnlFormulario.add(lblMontoFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 130, 160, -1));
 
         txtTotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtTotal.setEnabled(false);
         txtTotal.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 110, 120, 22));
 
+        txtMontoFinal.setEnabled(false);
         txtMontoFinal.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtMontoFinal, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 160, 120, 22));
 
@@ -114,8 +122,8 @@ public class frmCierreCaja extends javax.swing.JFrame {
         });
         pnlFormulario.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 100, 32));
 
-        jButtonConfirmar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonConfirmar.setText("Confirmar");
+        jButtonConfirmar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonConfirmar.setPreferredSize(new java.awt.Dimension(130, 45));
         jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -124,6 +132,7 @@ public class frmCierreCaja extends javax.swing.JFrame {
         });
         pnlFormulario.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 370, 111, 32));
 
+        txtCantidad.setEnabled(false);
         txtCantidad.setPreferredSize(new java.awt.Dimension(200, 50));
         txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,6 +153,7 @@ public class frmCierreCaja extends javax.swing.JFrame {
         pnlFormulario.add(lblNumeroTotalVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 90, -1, -1));
 
         txtNumeroTotalVentas.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtNumeroTotalVentas.setEnabled(false);
         txtNumeroTotalVentas.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtNumeroTotalVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 130, 120, 22));
 
@@ -155,6 +165,8 @@ public class frmCierreCaja extends javax.swing.JFrame {
         txtCierre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtCierre.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 280, 110));
+
+        datePickerFecha.setEnabled(false);
         pnlFormulario.add(datePickerFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, -1, -1));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
@@ -164,10 +176,10 @@ public class frmCierreCaja extends javax.swing.JFrame {
         pnlTitulo.setPreferredSize(new java.awt.Dimension(400, 105));
         pnlTitulo.setLayout(new java.awt.GridBagLayout());
 
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("Cierre de caja");
         lblTitulo.setFont(new java.awt.Font("Tw Cen MT Condensed Extra Bold", 1, 36)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTitulo.setText("Registrar producto");
         pnlTitulo.add(lblTitulo, new java.awt.GridBagConstraints());
 
         getContentPane().add(pnlTitulo, java.awt.BorderLayout.PAGE_START);
@@ -177,7 +189,18 @@ public class frmCierreCaja extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-
+        //Campo vacío
+        String cierre = "Sin observaciones";
+        if(txtCierre.getText() != null || !txtCierre.getText().equals("")){
+            cierre = txtCierre.getText();
+        }
+        
+        try{
+            ControlGUI.getInstancia().cerrarCaja(cierre);
+            JOptionPane.showMessageDialog(this, "Se ha cerrado la sesión de la caja!", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
+        }catch(NegocioException ne){
+            JOptionPane.showMessageDialog(this, ne.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 

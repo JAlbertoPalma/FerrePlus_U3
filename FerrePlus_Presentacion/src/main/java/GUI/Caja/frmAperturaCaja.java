@@ -8,12 +8,16 @@ import GUI.Compras.*;
 import GUI.Login.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.CajaDTO;
+import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +35,11 @@ public class frmAperturaCaja extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(frmAperturaCaja.MAXIMIZED_BOTH);
         this.AcomodarContenido();
+        try {
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmAperturaCaja.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -117,6 +126,35 @@ public class frmAperturaCaja extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
+        //Campo vacío
+        if(txtMontoInicial.getText() == null || txtMontoInicial.getText().length()<0 || txtMontoInicial.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Indique el monto inicial para abrir la sesion de la caja", "Información requerida", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try{
+            //Validar numberFormatException
+            double montoInicial = Double.parseDouble(txtMontoInicial.getText());
+            
+//            //Si hay sesión de caja activa, no se puede abrir una sesión de caja
+//            if(ControlGUI.getInstancia().obtenerSesionActivaCaja() != null){
+//                JOptionPane.showMessageDialog(this, "Ya hay una sesión de caja activa, realice el corte de caja para abrir una nueva sesión", "Sesión de caja activa", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+            //Crear la cajaDTO
+            CajaDTO caja = new CajaDTO(montoInicial);
+            
+            //Pasados filtros se abre la caja
+            caja = ControlGUI.getInstancia().abrirCaja(caja);
+            
+            //Si no hubo errores
+            JOptionPane.showMessageDialog(this, "Se ha abierto la caja con éxito", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
+        }catch(NegocioException ne){
+            JOptionPane.showMessageDialog(this, ne.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }catch(NumberFormatException nfe){
+            JOptionPane.showMessageDialog(this, "Ingrese un valor numérico válido para el monto inicial", "Formato inválido", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //Pasados filtros
         ControlGUI.getInstancia().mostrarLogin();
         this.dispose();
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
