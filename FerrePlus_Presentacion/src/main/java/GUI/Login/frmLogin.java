@@ -6,12 +6,16 @@ package GUI.Login;
 
 import modulo.inventario.*;
 import Control.ControlGUI;
+import GUI.Caja.frmAperturaCaja;
+import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,6 +33,11 @@ public class frmLogin extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(frmLogin.MAXIMIZED_BOTH);
         this.AcomodarContenido();
+        try {
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

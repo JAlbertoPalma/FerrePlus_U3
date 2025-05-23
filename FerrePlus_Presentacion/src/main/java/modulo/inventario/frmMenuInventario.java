@@ -119,11 +119,7 @@ public class frmMenuInventario extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerActionPerformed
-        try {
-            ControlGUI.getInstancia().mostrarProductosRegistrados();
-        } catch (NegocioException ex) {
-            Logger.getLogger(frmMenuInventario.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ControlGUI.getInstancia().mostrarMenuPrincipal();
         this.dispose();
     }//GEN-LAST:event_jButtonVerActionPerformed
     private void AcomodarContenido() {
@@ -148,8 +144,6 @@ public class frmMenuInventario extends javax.swing.JFrame {
          this.jButtonVolver.setPreferredSize(new Dimension(200, 50));
         
         this.add(this.pnlMenu, BorderLayout.CENTER);
-        
-
     }
 
     /**

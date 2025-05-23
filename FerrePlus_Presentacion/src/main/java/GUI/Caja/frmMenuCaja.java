@@ -22,14 +22,14 @@ import javax.swing.JPanel;
  *
  * @author joelr
  */
-public class frmMenuCajas extends javax.swing.JFrame {
+public class frmMenuCaja extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
      */
-    public frmMenuCajas() {
+    public frmMenuCaja() {
         initComponents();
-        this.setExtendedState(frmMenuCajas.MAXIMIZED_BOTH);
+        this.setExtendedState(frmMenuCaja.MAXIMIZED_BOTH);
         this.AcomodarContenido();
     }
 
@@ -67,6 +67,11 @@ public class frmMenuCajas extends javax.swing.JFrame {
         jButtonCierre.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonCierre.setText("Cierre de Cajas");
         jButtonCierre.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonCierre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCierreActionPerformed(evt);
+            }
+        });
         pnlFormulario.add(jButtonCierre, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 160, 40));
 
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -99,14 +104,19 @@ public class frmMenuCajas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonAperturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAperturaActionPerformed
-        ControlGUI.getInstancia().mostrarMenuProducto();
+        ControlGUI.getInstancia().mostrarAperturaCaja();
         this.dispose();
     }//GEN-LAST:event_jButtonAperturaActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        ControlGUI.getInstancia().mostrarLogin();
+        ControlGUI.getInstancia().mostrarMenuPrincipal();
         this.dispose();
     }//GEN-LAST:event_jButtonVolverActionPerformed
+
+    private void jButtonCierreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCierreActionPerformed
+        // TODO add your handling code here:
+        ControlGUI.getInstancia().mostrarCierreCaja();
+    }//GEN-LAST:event_jButtonCierreActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlFormulario; 
         this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -150,14 +160,78 @@ public class frmMenuCajas extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCaja.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCaja.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCaja.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmMenuCajas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmMenuCaja.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -226,7 +300,7 @@ public class frmMenuCajas extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmMenuCajas().setVisible(true);
+                new frmMenuCaja().setVisible(true);
             }
         });
     }

@@ -8,6 +8,7 @@ import GUI.Compras.*;
 import GUI.Login.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
+import GUI.Caja.frmAperturaCaja;
 import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -34,6 +35,11 @@ public class frmMenuVentas extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(frmMenuVentas.MAXIMIZED_BOTH);
         this.AcomodarContenido();
+        try {
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmAperturaCaja.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -102,6 +108,11 @@ public class frmMenuVentas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegistrarActionPerformed
+        if(ControlGUI.getInstancia().getSesionCajaActiva() == null){
+            JOptionPane.showMessageDialog(this, "No se pueden registrar ventas sin haber abierto una sesión de caja", "Caja no abierta", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         try {
             ControlGUI.getInstancia().mostrarRegistrarVenta();
         } catch (NegocioException ex) {
@@ -111,7 +122,7 @@ public class frmMenuVentas extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        ControlGUI.getInstancia().mostrarLogin();
+        ControlGUI.getInstancia().mostrarMenuPrincipal();
         this.dispose();
     }//GEN-LAST:event_jButtonVolverActionPerformed
     private void AcomodarContenido() {

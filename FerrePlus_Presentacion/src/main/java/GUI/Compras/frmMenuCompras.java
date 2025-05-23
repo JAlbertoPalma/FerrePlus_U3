@@ -110,7 +110,7 @@ public class frmMenuCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-        ControlGUI.getInstancia().mostrarLogin();
+        ControlGUI.getInstancia().mostrarMenuPrincipal();
         this.dispose();
     }//GEN-LAST:event_jButtonVolverActionPerformed
     private void AcomodarContenido() {

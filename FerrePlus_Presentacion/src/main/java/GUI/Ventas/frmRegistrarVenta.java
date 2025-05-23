@@ -217,12 +217,7 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
-
-        try {
-            ControlGUI.getInstancia().mostrarMenuVentas();
-        } catch (NegocioException ex) {
-            Logger.getLogger(frmRegistrarVenta.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ControlGUI.getInstancia().mostrarMenuVentas();
         this.dispose();
 
 

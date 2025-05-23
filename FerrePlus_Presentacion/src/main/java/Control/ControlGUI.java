@@ -18,6 +18,9 @@ import DTO.DetalleVentaDTO;
 
 import DTO.ProductoDTO;
 import DTO.VentaDTO;
+import GUI.Caja.frmAperturaCaja;
+import GUI.Caja.frmCierreCaja;
+import GUI.Caja.frmMenuCaja;
 import GUI.Compras.frmConsultarCompras;
 import GUI.Compras.frmMenuCompras;
 import GUI.Compras.frmProductoComprado;
@@ -89,6 +92,10 @@ public class ControlGUI {
     private frmRegistrarVenta registrarVenta;
     //Caja
     private ICajaBO cajaBO = new CajaBO();
+    private frmAperturaCaja aperturaCaja;
+    private frmCierreCaja cierreCaja;
+    private frmMenuCaja menuCaja;
+    
     //Auxiliares
     private ProductoDTO productoAux = new ProductoDTO();
     List<DetalleVentaDTO> detallesVentaAux = new ArrayList<>();
@@ -121,6 +128,8 @@ public class ControlGUI {
         this.login.setVisible(true);
     }
 
+    
+    /////////////////////////////INVENTARIO////////////////////////////////
     /*
     Metodo para mostrar el frm del Menu Principal.
      */
@@ -155,7 +164,6 @@ public class ControlGUI {
         this.actualizarProducto.setLocationRelativeTo(null);
         this.actualizarProducto.setVisible(true);
     }
-  
 
     public void mostrarProductosRegistrados() throws NegocioException {
         this.productosRegistrados = new frmProductosRegistrados();
@@ -172,7 +180,9 @@ public class ControlGUI {
         this.productoVendido.setLocationRelativeTo(null);
         this.productoVendido.setVisible(true);
     }
-    public void mostrarMenuVentas()throws NegocioException{
+    
+    //////////////////////////////VENTAS////////////////////////////////
+    public void mostrarMenuVentas() {
         this.menuVentas = new frmMenuVentas();
         this.menuVentas.setLocationRelativeTo(null);
         this.menuVentas.setVisible(true);
@@ -187,6 +197,8 @@ public class ControlGUI {
         this.registrarVenta.LlenarTablaProductos();
         this.registrarVenta.setVisible(true);
     }
+    
+    /////////////////////////////COMPRAS////////////////////////////////
     public void PasarInfoARegistrarCompra() throws NegocioException{
         this.registrarCompra.LlenarTabla();
         this.registrarCompra.setVisible(true);
@@ -201,6 +213,29 @@ public class ControlGUI {
         this.registrarCompra = new frmRegistrarCompra();
         this.registrarCompra.setLocationRelativeTo(null);
         this.registrarCompra.setVisible(true);
+    }
+    
+    public void mostrarMenuCompras(){
+        this.menuCompras = new frmMenuCompras();
+        this.menuCompras.setLocationRelativeTo(null);
+        this.menuCompras.setVisible(true);
+    }
+    
+    /////////////////////////////CAJA////////////////////////////////
+    public void mostrarAperturaCaja(){
+        this.aperturaCaja = new frmAperturaCaja();
+        this.aperturaCaja.setLocationRelativeTo(null);
+        this.aperturaCaja.setVisible(true);
+    }
+    public void mostrarCierreCaja(){
+        this.cierreCaja = new frmCierreCaja();
+        this.cierreCaja.setLocationRelativeTo(null);
+        this.cierreCaja.setVisible(true);
+    }
+    public void mostrarMenuCaja(){
+        this.menuCaja = new frmMenuCaja();
+        this.menuCaja.setLocationRelativeTo(null);
+        this.menuCaja.setVisible(true);
     }
     
 

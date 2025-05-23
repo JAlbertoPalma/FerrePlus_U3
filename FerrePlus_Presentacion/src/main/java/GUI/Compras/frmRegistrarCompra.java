@@ -356,9 +356,10 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
             model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
             for (int i = 0; i < detalles.size(); i++) {
                 int cantidad = detalles.get(i).getCantidad();
-                double precio = ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getPrecioCompraReferencial();
-                double total = precio * cantidad;
-                this.total = this.total + total;
+                double precio = detalles.get(i).getPrecioDeCompra();
+//                double precio = ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getPrecioCompraReferencial();
+                double subtotal = precio * cantidad;
+                this.total = this.total + subtotal;
                 model.addRow(new Object[]{
                     ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getSKU(), //Sku
                     ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getNombre(), //Nombre

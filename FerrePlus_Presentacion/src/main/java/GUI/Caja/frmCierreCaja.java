@@ -41,8 +41,11 @@ public class frmCierreCaja extends javax.swing.JFrame {
         try {
             ControlGUI.getInstancia().extraerSesionCajaActiva();
         } catch (NegocioException ex) {
-            Logger.getLogger(frmAperturaCaja.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(frmCierreCaja.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //llenar con los datos de la sesión de caja activa
+        llenarCamposSesion();
     }
 
 //    public frmCierreCaja(String id) {
@@ -205,8 +208,7 @@ public class frmCierreCaja extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-
-
+        ControlGUI.getInstancia().mostrarMenuCaja();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
@@ -266,6 +268,18 @@ public class frmCierreCaja extends javax.swing.JFrame {
         this.jButtonConfirmar.setPreferredSize(new Dimension(150, 35));
         gbc.gridy++;
 
+    }
+    
+    private void llenarCamposSesion(){
+        //Obtenemos la sesión activa
+        CajaDTO sesionCaja = ControlGUI.getInstancia().getSesionCajaActiva();
+        
+        //llenamos los txt
+        txtCantidad.setText(sesionCaja.getCantidadDeProductos().toString());
+        txtCierre.setText(sesionCaja.getObservacionesCierre());
+        txtMontoFinal.setText(sesionCaja.getMontoFinalEstimado().toString());
+        txtNumeroTotalVentas.setText(sesionCaja.getNumeroDeVentas().toString());
+        txtTotal.setText(sesionCaja.getTotalVentas().toString());
     }
 
     /**

@@ -134,12 +134,7 @@ public class frmAperturaCaja extends javax.swing.JFrame {
         try{
             //Validar numberFormatException
             double montoInicial = Double.parseDouble(txtMontoInicial.getText());
-            
-//            //Si hay sesión de caja activa, no se puede abrir una sesión de caja
-//            if(ControlGUI.getInstancia().obtenerSesionActivaCaja() != null){
-//                JOptionPane.showMessageDialog(this, "Ya hay una sesión de caja activa, realice el corte de caja para abrir una nueva sesión", "Sesión de caja activa", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
+
             //Crear la cajaDTO
             CajaDTO caja = new CajaDTO(montoInicial);
             
@@ -153,14 +148,11 @@ public class frmAperturaCaja extends javax.swing.JFrame {
         }catch(NumberFormatException nfe){
             JOptionPane.showMessageDialog(this, "Ingrese un valor numérico válido para el monto inicial", "Formato inválido", JOptionPane.ERROR_MESSAGE);
         }
-        
-        //Pasados filtros
-        ControlGUI.getInstancia().mostrarLogin();
-        this.dispose();
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
         // TODO add your handling code here:
+        ControlGUI.getInstancia().mostrarMenuCaja();
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
     private void txtMontoInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMontoInicialActionPerformed

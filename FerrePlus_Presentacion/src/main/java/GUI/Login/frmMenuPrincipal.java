@@ -41,11 +41,11 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlFormulario = new javax.swing.JPanel();
-        jButtonInventario1 = new javax.swing.JButton();
-        jButtonCompras = new javax.swing.JButton();
-        jButtonVentas = new javax.swing.JButton();
-        jButtonCajas = new javax.swing.JButton();
-        jButtonSalir = new javax.swing.JButton();
+        btnInventario = new javax.swing.JButton();
+        btnCompras = new javax.swing.JButton();
+        btnVentas = new javax.swing.JButton();
+        btnCaja = new javax.swing.JButton();
+        btnCerrarSesion = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -54,40 +54,55 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
         pnlFormulario.setBackground(new java.awt.Color(255, 204, 153));
         pnlFormulario.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButtonInventario1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonInventario1.setText("Inventario");
-        jButtonInventario1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonInventario1.addActionListener(new java.awt.event.ActionListener() {
+        btnInventario.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnInventario.setText("Inventario");
+        btnInventario.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnInventario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonInventario1ActionPerformed(evt);
+                btnInventarioActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonInventario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 130, 40));
+        pnlFormulario.add(btnInventario, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 130, 40));
 
-        jButtonCompras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonCompras.setText("Compras");
-        jButtonCompras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonCompras, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 130, 40));
-
-        jButtonVentas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonVentas.setText("Ventas");
-        jButtonVentas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 130, 130, 40));
-
-        jButtonCajas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonCajas.setText("Cajas");
-        jButtonCajas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        pnlFormulario.add(jButtonCajas, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, 130, 40));
-
-        jButtonSalir.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonSalir.setText("Salir");
-        jButtonSalir.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+        btnCompras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnCompras.setText("Compras");
+        btnCompras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnCompras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSalirActionPerformed(evt);
+                btnComprasActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 260, 130, 40));
+        pnlFormulario.add(btnCompras, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 130, 40));
+
+        btnVentas.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnVentas.setText("Ventas");
+        btnVentas.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVentasActionPerformed(evt);
+            }
+        });
+        pnlFormulario.add(btnVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 130, 130, 40));
+
+        btnCaja.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnCaja.setText("Caja");
+        btnCaja.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnCaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaActionPerformed(evt);
+            }
+        });
+        pnlFormulario.add(btnCaja, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, 130, 40));
+
+        btnCerrarSesion.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnCerrarSesion.setText("Cerrar sesión");
+        btnCerrarSesion.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSesionActionPerformed(evt);
+            }
+        });
+        pnlFormulario.add(btnCerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 260, 130, 40));
 
         getContentPane().add(pnlFormulario, java.awt.BorderLayout.CENTER);
 
@@ -108,15 +123,30 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonInventario1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInventario1ActionPerformed
+    private void btnInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioActionPerformed
         ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
-    }//GEN-LAST:event_jButtonInventario1ActionPerformed
+    }//GEN-LAST:event_btnInventarioActionPerformed
 
-    private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         ControlGUI.getInstancia().mostrarLogin();
         this.dispose();
-    }//GEN-LAST:event_jButtonSalirActionPerformed
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
+    private void btnComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprasActionPerformed
+        // TODO add your handling code here:
+        ControlGUI.getInstancia().mostrarMenuCompras();
+    }//GEN-LAST:event_btnComprasActionPerformed
+
+    private void btnCajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaActionPerformed
+        // TODO add your handling code here:
+        ControlGUI.getInstancia().mostrarMenuCaja();
+    }//GEN-LAST:event_btnCajaActionPerformed
+
+    private void btnVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasActionPerformed
+        // TODO add your handling code here:
+        ControlGUI.getInstancia().mostrarMenuVentas();
+    }//GEN-LAST:event_btnVentasActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlFormulario; 
         this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -129,24 +159,24 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
         // Columna 0
 //        gbc.gridx = 0;
         
-        this.pnlFormulario.add(this.jButtonInventario1,gbc);
-        this.jButtonInventario1.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.btnInventario,gbc);
+        this.btnInventario.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.jButtonCompras,gbc);
-        this.jButtonCompras.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.btnCompras,gbc);
+        this.btnCompras.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.jButtonVentas,gbc);
-        this.jButtonVentas.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.btnVentas,gbc);
+        this.btnVentas.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.jButtonCajas,gbc);
-        this.jButtonCajas.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.btnCaja,gbc);
+        this.btnCaja.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.jButtonSalir,gbc);
-        this.jButtonSalir.setPreferredSize(new Dimension(200, 50));
+        this.pnlFormulario.add(this.btnCerrarSesion,gbc);
+        this.btnCerrarSesion.setPreferredSize(new Dimension(200, 50));
           gbc.gridy++;
           gbc.gridy++;
         this.add(this.pnlFormulario, BorderLayout.CENTER);
@@ -203,11 +233,11 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCajas;
-    private javax.swing.JButton jButtonCompras;
-    private javax.swing.JButton jButtonInventario1;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JButton jButtonVentas;
+    private javax.swing.JButton btnCaja;
+    private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnCompras;
+    private javax.swing.JButton btnInventario;
+    private javax.swing.JButton btnVentas;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel pnlFormulario;
     private javax.swing.JPanel pnlTitulo;
