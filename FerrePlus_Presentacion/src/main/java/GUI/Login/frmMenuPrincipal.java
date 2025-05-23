@@ -136,16 +136,19 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
     private void btnComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprasActionPerformed
         // TODO add your handling code here:
         ControlGUI.getInstancia().mostrarMenuCompras();
+        this.dispose();
     }//GEN-LAST:event_btnComprasActionPerformed
 
     private void btnCajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaActionPerformed
         // TODO add your handling code here:
         ControlGUI.getInstancia().mostrarMenuCaja();
+        this.dispose();
     }//GEN-LAST:event_btnCajaActionPerformed
 
     private void btnVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasActionPerformed
         // TODO add your handling code here:
         ControlGUI.getInstancia().mostrarMenuVentas();
+        this.dispose();
     }//GEN-LAST:event_btnVentasActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlFormulario; 

@@ -458,18 +458,18 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSiguienteActionPerformed
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-        
+
         String nombre = this.jTableProductos.getValueAt(filaSeleccionada, 1).toString();
         try {
             if (procedencia == 1) {
                 ControlGUI.getInstancia().mostrarProductoVendido(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
-            this.dispose();
+                this.dispose();
             }
             if (procedencia == 2) {
                 ControlGUI.getInstancia().mostrarProductoComprado(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
                 this.dispose();
             }
-            
+
         } catch (NegocioException ex) {
             Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -498,6 +498,9 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.pnlFondo.add(this.jButtonAtras, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonSiguiente, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonConfirmar, gbc);
+        gbc.gridy++;
 
 //         Columna 2
         gbc.gridx = 2;
@@ -511,10 +514,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonEliminar, gbc);
         gbc.gridy++;
-        if (procedencia == 1 || procedencia == 2) {
-            this.pnlFondo.add(this.jButtonConfirmar,gbc);
-            gbc.gridy++;
-        }
+
         this.pnlFondo.add(this.jButtonVolver, gbc);
         gbc.gridy++;
 
@@ -617,6 +617,11 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.jButtonFiltrar.setVisible(false);
         this.jButtonActualizar.setVisible(false);
         this.jButtonEliminar.setVisible(false);
+        if (this.procedencia == 1 || this.procedencia == 2) {
+            this.jButtonConfirmar.setVisible(true);
+        } else {
+            this.jButtonConfirmar.setVisible(false);
+        }
 
 //        this.jTableProductos.setModel(this.LlenarTabla());
     }

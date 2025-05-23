@@ -38,8 +38,10 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 
     GridBagConstraints gbc = new GridBagConstraints();
     int aux = 0;
+    int auxEstado = 0;
     int fila = 0;
     double total = 0;
+    int filaSeleccionada = 0; //Fila seleccionada de la tabla, se requiere para eliminar.
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -155,7 +157,7 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
         lblFechaCompra.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlFondo.add(lblFechaCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 520, 170, -1));
 
-        jButtonEliminar.setText("Eliminar");
+        jButtonEliminar.setText("Limpiar Tabla");
         jButtonEliminar.setBackground(new java.awt.Color(255, 204, 204));
         jButtonEliminar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonEliminar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -177,7 +179,7 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
         });
         pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
 
-        jButtonAgregar.setText("Agregar");
+        jButtonAgregar.setText("Agregar Producto");
         jButtonAgregar.setBackground(new java.awt.Color(255, 204, 204));
         jButtonAgregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonAgregar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -223,45 +225,42 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
 
-        ControlGUI.getInstancia();
+        ControlGUI.getInstancia().mostrarMenuCompras();
         this.dispose();
 
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
     private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
-//        if (aux == 0) {
-//
-//            this.jButtonConfirmar.setText("Eliminar");
-//            this.jButtonEliminar.setVisible(true);
-//            String id = Integer.toString(fila);
-//            System.out.println(id);
-//            try {
-//                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
-//                System.out.println(nombre);
-//                ControlGUI.getInstancia().EliminarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
-//                JOptionPane.showMessageDialog(rootPane, "Registro Eliminado con exito");
-//            } catch (NegocioException | PersistenciaException ex) {
-//                Logger.getLogger(frmComprasRegistradas.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        ControlGUI.getInstancia().limpiarListaDetalles();
+        this.inicial();
 
 
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
         if (ControlGUI.getInstancia().obtenerDetalleCompra() == null || ControlGUI.getInstancia().obtenerDetalleCompra().isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "No puede registrar una compra sin productos");
+            JOptionPane.showMessageDialog(rootPane, "No puede registrar una compra sin productos.");
         } else {
-            try {
-                ControlGUI.getInstancia().registrarCompra(ControlGUI.getInstancia().crearCompraDTO(
-                        ControlGUI.getInstancia().obtenerDetalleCompra(),
-                        this.jTextFieldProveedor.getText(),
-                        this.datePickerCompra.getDate(),
-                        this.total));
-            } catch (NegocioException ex) {
-                Logger.getLogger(frmRegistrarCompra.class.getName()).log(Level.SEVERE, null, ex);
+            if (this.datePickerCompra.getDate() == null) {
+                JOptionPane.showMessageDialog(rootPane, "Debe elegir una fecha para la compra.");
+            } else {
+                if (this.jTextFieldProveedor.getText().equalsIgnoreCase("") || this.jTextFieldProveedor.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(rootPane, "Debe introducir un proveedor para la compra");
+                } else {
+                    try {
+                        ControlGUI.getInstancia().registrarCompra(ControlGUI.getInstancia().crearCompraDTO(
+                                ControlGUI.getInstancia().obtenerDetalleCompra(),
+                                this.jTextFieldProveedor.getText(),
+                                this.datePickerCompra.getDate(),
+                                this.total));
+                        JOptionPane.showMessageDialog(rootPane, "Compra Registrada Correctamente");
+                    } catch (NegocioException ex) {
+                        Logger.getLogger(frmRegistrarCompra.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
+
         }
 
 
@@ -278,9 +277,12 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAgregarActionPerformed
 
     private void jTableComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableComprasMouseClicked
-
-        fila = this.jTableCompras.getSelectedRow();
-        this.jButtonEliminar.setVisible(true);
+        if (auxEstado == 1) {
+            this.jButtonEliminar.setVisible(false);
+        } else if (auxEstado == 0) {
+            filaSeleccionada = this.jTableCompras.getSelectedRow();
+            this.jButtonEliminar.setVisible(true);
+        }
     }//GEN-LAST:event_jTableComprasMouseClicked
 
     private void jTableComprasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableComprasFocusLost
@@ -320,11 +322,11 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 
         this.pnlFondo.add(this.lblTotalCompra, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.lblTotal,gbc);
+        this.pnlFondo.add(this.lblTotal, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.lblFechaCompra, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.datePickerCompra,gbc);
+        this.pnlFondo.add(this.datePickerCompra, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.lblProveedor, gbc);
         gbc.gridy++;
@@ -358,6 +360,9 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
                 int cantidad = detalles.get(i).getCantidad();
                 double precio = detalles.get(i).getPrecioDeCompra();
 //                double precio = ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getPrecioCompraReferencial();
+//=======
+//                double precio = ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getPrecioCompraReferencial();
+//>>>>>>> Stashed changes
                 double subtotal = precio * cantidad;
                 this.total = this.total + subtotal;
                 model.addRow(new Object[]{
@@ -365,7 +370,7 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
                     ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getNombre(), //Nombre
                     cantidad, //Cantidad 
                     precio, // PrecioCompra
-                    total
+                    subtotal
 
                 });
             }
@@ -386,6 +391,8 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     }
 
     public DefaultTableModel inicial() {
+        this.total = 0;
+        this.lblTotal.setText(String.valueOf(total));
         DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
         for (int i = 0; i < 5; i++) {

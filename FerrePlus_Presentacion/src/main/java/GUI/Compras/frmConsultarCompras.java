@@ -6,6 +6,8 @@ package GUI.Compras;
 
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.CompraDTO;
+import DTO.DetalleCompraDTO;
 import DTO.ProductoDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -15,6 +17,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,8 +37,15 @@ import javax.swing.table.JTableHeader;
 public class frmConsultarCompras extends javax.swing.JFrame {
 
     GridBagConstraints gbc = new GridBagConstraints();
-    int aux = 0;
-    int fila = 0;
+    List<ProductoDTO> productos;
+    int aux = 1; //Auxiliar requerido para los botones siguiente y atras de Compras.
+    int index = 1; //Define en que pagina se encuentra la tabla de Compras.
+    int min = 1; // El minimo de la lista de productos, requerido para el boton atras de Compras.
+    int max = 0; // El maximo de la lista de productos, requerido para el boton siguiente de Compras.
+    int aux2 = 1; //Auxiliar requerido para los botones siguiente y atras de Detalles.
+    int index2 = 1; //Define en que pagina se encuentra la tabla de Detalles.
+    int min2 = 1; // El minimo de la lista de productos, requerido para el boton atras de Detalles.
+    int max2 = 0; // El maximo de la lista de productos, requerido para el boton siguiente de Detalles.
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -59,18 +69,22 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         pnlFondo = new javax.swing.JPanel();
         jButtonVolver = new javax.swing.JButton();
         lblNombreProducto = new javax.swing.JLabel();
-        jScrollPaneProductos = new javax.swing.JScrollPane();
+        jScrollPaneCompras = new javax.swing.JScrollPane();
         jTableCompras = new javax.swing.JTable();
         txtNombreProducto = new javax.swing.JTextField();
         lblFechaInicio = new javax.swing.JLabel();
-        jButtonEliminar = new javax.swing.JButton();
         datePickerInicio = new com.github.lgooddatepicker.components.DatePicker();
         lblFechaFin = new javax.swing.JLabel();
         datePickerFin = new com.github.lgooddatepicker.components.DatePicker();
         lblProveedor = new javax.swing.JLabel();
         txtProveedor = new javax.swing.JTextField();
-        jButtonConfirmar = new javax.swing.JButton();
-        jButtonAgregar = new javax.swing.JButton();
+        jButtonFiltrar = new javax.swing.JButton();
+        jButtonAtras = new javax.swing.JButton();
+        jButtonSiguiente = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableProductosCompras = new javax.swing.JTable();
+        jButtonSiguiente2 = new javax.swing.JButton();
+        jButtonAtras2 = new javax.swing.JButton();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -101,20 +115,20 @@ public class frmConsultarCompras extends javax.swing.JFrame {
 
         jTableCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Folio", "Nombre", "Cantidad", "PrecioCompra", "Fecha", "Hora", "Proveedor", "Subtotal"
+                "Folio", "Fecha", "Proveedor", "Subtotal"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -135,19 +149,15 @@ public class frmConsultarCompras extends javax.swing.JFrame {
                 jTableComprasMouseClicked(evt);
             }
         });
-        jScrollPaneProductos.setViewportView(jTableCompras);
+        jScrollPaneCompras.setViewportView(jTableCompras);
         if (jTableCompras.getColumnModel().getColumnCount() > 0) {
             jTableCompras.getColumnModel().getColumn(0).setResizable(false);
             jTableCompras.getColumnModel().getColumn(1).setResizable(false);
             jTableCompras.getColumnModel().getColumn(2).setResizable(false);
             jTableCompras.getColumnModel().getColumn(3).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(4).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(5).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(6).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(7).setResizable(false);
         }
 
-        pnlFondo.add(jScrollPaneProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 890, -1));
+        pnlFondo.add(jScrollPaneCompras, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 890, -1));
 
         txtNombreProducto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtNombreProducto.setPreferredSize(new java.awt.Dimension(200, 50));
@@ -158,53 +168,96 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         lblFechaInicio.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblFechaInicio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlFondo.add(lblFechaInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 560, 170, -1));
-
-        jButtonEliminar.setText("Eliminar");
-        jButtonEliminar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonEliminar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEliminarActionPerformed(evt);
-            }
-        });
-        pnlFondo.add(jButtonEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
         pnlFondo.add(datePickerInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, -1, -1));
 
-        lblFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblFechaFin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblFechaFin.setText("Fecha Fin:");
+        lblFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblFechaFin.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlFondo.add(lblFechaFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 600, 170, -1));
         pnlFondo.add(datePickerFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 610, -1, -1));
 
-        lblProveedor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblProveedor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblProveedor.setText("Proveedor: ");
+        lblProveedor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         pnlFondo.add(lblProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 510, 210, -1));
 
         txtProveedor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtProveedor.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFondo.add(txtProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 520, 190, 22));
 
-        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonConfirmar.setText("Confirmar");
-        jButtonConfirmar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonFiltrar.setText("Filtrar");
+        jButtonFiltrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonFiltrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonFiltrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonConfirmarActionPerformed(evt);
+                jButtonFiltrarActionPerformed(evt);
             }
         });
-        pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
+        pnlFondo.add(jButtonFiltrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
 
-        jButtonAgregar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonAgregar.setText("Agregar Producto");
-        jButtonAgregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonAgregar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonAtras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAtras.setText("Atras");
+        jButtonAtras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAgregarActionPerformed(evt);
+                jButtonAtrasActionPerformed(evt);
             }
         });
-        pnlFondo.add(jButtonAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+        pnlFondo.add(jButtonAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 630, 130, 40));
+
+        jButtonSiguiente.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSiguiente.setText("Siguiente");
+        jButtonSiguiente.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSiguienteActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonSiguiente, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 630, 130, 40));
+
+        jTableProductosCompras.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Nombre", "Cantidad", "Total", "FolioCompra"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTableProductosCompras);
+
+        pnlFondo.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 690, -1, -1));
+
+        jButtonSiguiente2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSiguiente2.setText("Siguiente");
+        jButtonSiguiente2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSiguiente2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSiguiente2ActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonSiguiente2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 650, 130, 40));
+
+        jButtonAtras2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAtras2.setText("Atras");
+        jButtonAtras2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAtras2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAtras2ActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonAtras2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 650, 130, 40));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -227,36 +280,14 @@ public class frmConsultarCompras extends javax.swing.JFrame {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
 
-        ControlGUI.getInstancia();
+        ControlGUI.getInstancia().mostrarMenuCompras();
         this.dispose();
 
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
-    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
-//        if (aux == 0) {
-//
-//            this.jButtonConfirmar.setText("Eliminar");
-//            this.jButtonEliminar.setVisible(true);
-//            String id = Integer.toString(fila);
-//            System.out.println(id);
-//            try {
-//                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
-//                System.out.println(nombre);
-//                ControlGUI.getInstancia().EliminarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
-//                JOptionPane.showMessageDialog(rootPane, "Registro Eliminado con exito");
-//            } catch (NegocioException | PersistenciaException ex) {
-//                Logger.getLogger(frmComprasRegistradas.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-
-
-    }//GEN-LAST:event_jButtonEliminarActionPerformed
-
     private void jTableComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableComprasMouseClicked
 
-        fila = this.jTableCompras.getSelectedRow();
-        this.jButtonEliminar.setVisible(true);
     }//GEN-LAST:event_jTableComprasMouseClicked
 
     private void jTableComprasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableComprasFocusLost
@@ -264,19 +295,61 @@ public class frmConsultarCompras extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableComprasFocusLost
 
     private void pnlFondoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFondoMouseClicked
-        if (fila >= 0) {
-            this.jButtonEliminar.setVisible(false);
 
-        }
     }//GEN-LAST:event_pnlFondoMouseClicked
 
-    private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonConfirmarActionPerformed
+    private void jButtonFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFiltrarActionPerformed
+        try {
+            this.LlenarTablaFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(rootPane, "No se encontro ninguna compra");
 
-    private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonFiltrarActionPerformed
 
-    }//GEN-LAST:event_jButtonAgregarActionPerformed
+    private void jButtonAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtrasActionPerformed
+        index--;
+        aux = aux - 8;
+        try {
+            this.LlenarTablaFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAtrasActionPerformed
+
+    private void jButtonSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSiguienteActionPerformed
+        index++;
+        aux = aux + 8;
+
+        try {
+            this.LlenarTablaFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButtonSiguienteActionPerformed
+
+    private void jButtonSiguiente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSiguiente2ActionPerformed
+        index2++;
+        aux2 = aux2 + 8;
+        try {
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonSiguiente2ActionPerformed
+
+    private void jButtonAtras2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtras2ActionPerformed
+        index2--;
+        aux2 = aux2 - 8;
+        try {
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDate(), this.datePickerFin.getDate(), this.txtProveedor.getText(), this.txtNombreProducto.getText());
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAtras2ActionPerformed
     private void AcomodarContenido() throws NegocioException {
 
         this.pnlFondo.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -289,13 +362,29 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         // Columna 1
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
-        this.jTableCompras.setModel(this.LlenarTabla());
+//        gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
+        this.jTableCompras.setModel(this.LlenarTablaInicial());
+        this.jTableProductosCompras.setModel(this.LlenarTablaDetallesInicial());
         JTableHeader header = new JTableHeader(this.jTableCompras.getColumnModel());
+
         this.pnlFondo.add(header, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jTableCompras, gbc);
         this.jTableCompras.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAtras, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonSiguiente, gbc);
+        gbc.gridy++;
+        JTableHeader header2 = new JTableHeader(this.jTableProductosCompras.getColumnModel());
+        this.pnlFondo.add(header2,gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jTableProductosCompras, gbc);
+        this.jTableProductosCompras.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAtras2, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonSiguiente2, gbc);
         gbc.gridy++;
 
 //         Columna 2
@@ -317,16 +406,10 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         gbc.gridy++;
         this.pnlFondo.add(this.datePickerFin, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jButtonAgregar,gbc);
+        this.pnlFondo.add(this.jButtonFiltrar, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jButtonConfirmar, gbc);
-        gbc.gridy++;
-        this.pnlFondo.add(this.jButtonEliminar, gbc);
-        gbc.gridy++;
-        this.jButtonEliminar.setVisible(false);
         this.pnlFondo.add(this.jButtonVolver, gbc);
         gbc.gridy++;
-
 
     }
 
@@ -335,19 +418,173 @@ public class frmConsultarCompras extends javax.swing.JFrame {
         return totalPaginas;
     }
 
-    // Metodo para llenar la tabla de Productos.
-    public DefaultTableModel LlenarTabla() throws NegocioException {
+    // Metodo para llenar la tabla de Compras al iniciar.
+    public DefaultTableModel LlenarTablaInicial() throws NegocioException {
 
-        // Esto es para despues, con los botones siguiente y atras
-        int index = 1;
-        int aux = 1;
-        int min = 1;
-        int max = 0;
-//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
+        DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < 5; i++) {
+            model.addRow(new Object[]{
+                "Busque",
+                "Algo",
+                "Para mostrarlo",
+                0.0});
+        }
+        return model;
+    }
+
+    // Metodo para llenar la tabla de DetallesCompras al iniciar.
+    public DefaultTableModel LlenarTablaDetallesInicial() throws NegocioException {
+
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductosCompras.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < 5; i++) {
+            model.addRow(new Object[]{
+                "Busque",
+                0,
+                0.0,
+                "Algo"});
+        }
+        return model;
+    }
+
+    // Metodo para llenar la tabla de compras.
+    public DefaultTableModel LlenarTablaFiltro(LocalDate fechaInicio, LocalDate fechaFin, String proveedor, String nombreProducto) throws NegocioException {
+        max = this.contarPaginas(ControlGUI.getInstancia().comprasFiltro(fechaInicio, fechaFin, proveedor, nombreProducto).size());
+        List<CompraDTO> comprasObtenidas = this.calcularFiltros(fechaInicio, fechaFin, proveedor, nombreProducto);
+        this.ocultarBotones();
         //Tabla
         DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
-        return model;
+
+        try {
+            for (int i = 0; i < comprasObtenidas.size(); i++) {
+                CompraDTO compra = comprasObtenidas.get(i);
+                model.addRow(new Object[]{
+                    compra.getFolio(),
+                    compra.getFecha(),
+                    compra.getProveedor(),
+                    compra.getTotal()
+                });
+                
+            }
+            return model;
+        } catch (NullPointerException np) {
+            JOptionPane.showMessageDialog(rootPane, "No se encontro ninguna compra");
+            throw new NullPointerException("No se encontro ninguna compra");
+        }
+
+    }
+
+    // Metodo para llenar la tabla de compras.
+    public DefaultTableModel LlenarTablaDetallesFiltro(LocalDate fechaInicio, LocalDate fechaFin, String proveedor, String nombreProducto) throws NegocioException {
+        int conteo = 0;
+        List<DetalleCompraDTO> detalles = new ArrayList<>();
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductosCompras.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        List<CompraDTO> comprasObtenidas = this.calcularFiltros(fechaInicio, fechaFin, proveedor, nombreProducto);
+        for (int i = 0; i < comprasObtenidas.size(); i++) {
+            for (int j = 0; j < comprasObtenidas.get(i).getDetalles().size(); j++) {
+                DetalleCompraDTO detalle = comprasObtenidas.get(i).getDetalles().get(j);
+                detalles.add(detalle);
+            }
+        }
+        max2 = this.contarPaginas(detalles.size());
+        this.ocultarBotones2();
+        List<DetalleCompraDTO> detallesFiltrados = this.calcularDetallesFiltros(detalles);
+        
+        for (int i = 0; i < detallesFiltrados.size(); i++) {
+            String nombreAux="";
+            if (ControlGUI.getInstancia().obtenerProductoPorID(detallesFiltrados.get(i).getIdProducto()) == null) {
+                nombreAux = "No especificado";
+            }else{
+                nombreAux = ControlGUI.getInstancia().obtenerProductoPorID(detallesFiltrados.get(i).getIdProducto()).getNombre();
+            }
+            model.addRow(new Object[]{
+                    nombreAux,
+                    detallesFiltrados.get(i).getCantidad(),
+                    detallesFiltrados.get(i).getSubtotal(),
+                    comprasObtenidas.get(i).getFolio()
+                });
+        }
+        return null;
+    }
+
+    public void ocultarBotones() {
+
+        if (index == max) {
+            this.jButtonSiguiente.setVisible(false);
+
+        } else {
+            this.jButtonSiguiente.setVisible(true);
+
+        }
+
+        if (index == min) {
+            this.jButtonAtras.setVisible(false);
+
+        } else {
+            this.jButtonAtras.setVisible(true);
+
+        }
+    }
+
+    public void ocultarBotones2() {
+
+        if (index2 == max2) {
+            this.jButtonSiguiente2.setVisible(false);
+
+        } else {
+            this.jButtonSiguiente2.setVisible(true);
+
+        }
+
+        if (index2 == min2) {
+            this.jButtonAtras2.setVisible(false);
+
+        } else {
+            this.jButtonAtras2.setVisible(true);
+        }
+    }
+
+    public List<CompraDTO> calcularFiltros(LocalDate fechaInicio, LocalDate fechaFin, String proveedor, String nombreProducto) throws NegocioException {
+        List<CompraDTO> comprasObtenidasFiltro = ControlGUI.getInstancia().comprasFiltro(fechaInicio, fechaFin, proveedor, nombreProducto);
+        List<CompraDTO> detalles = new ArrayList<>();
+        try {
+            detalles.add(comprasObtenidasFiltro.get(aux - 1));
+            detalles.add(comprasObtenidasFiltro.get(aux));
+            detalles.add(comprasObtenidasFiltro.get(aux + 1));
+            detalles.add(comprasObtenidasFiltro.get(aux + 2));
+            detalles.add(comprasObtenidasFiltro.get(aux + 3));
+            detalles.add(comprasObtenidasFiltro.get(aux + 4));
+            detalles.add(comprasObtenidasFiltro.get(aux + 5));
+            detalles.add(comprasObtenidasFiltro.get(aux + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+
+        } finally {
+            return detalles;
+        }
+
+    }
+    public List<DetalleCompraDTO> calcularDetallesFiltros(List<DetalleCompraDTO> lista) throws NegocioException {
+        List<DetalleCompraDTO> detalles = new ArrayList<>();
+        try {
+            detalles.add(lista.get(aux2 - 1));
+            detalles.add(lista.get(aux2));
+            detalles.add(lista.get(aux2 + 1));
+            detalles.add(lista.get(aux2 + 2));
+            detalles.add(lista.get(aux2 + 3));
+            detalles.add(lista.get(aux2 + 4));
+            detalles.add(lista.get(aux2 + 5));
+            detalles.add(lista.get(aux2 + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+
+        } finally {
+            return detalles;
+        }
+
     }
 
     /**
@@ -423,12 +660,16 @@ public class frmConsultarCompras extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.github.lgooddatepicker.components.DatePicker datePickerFin;
     private com.github.lgooddatepicker.components.DatePicker datePickerInicio;
-    private javax.swing.JButton jButtonAgregar;
-    private javax.swing.JButton jButtonConfirmar;
-    private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonAtras;
+    private javax.swing.JButton jButtonAtras2;
+    private javax.swing.JButton jButtonFiltrar;
+    private javax.swing.JButton jButtonSiguiente;
+    private javax.swing.JButton jButtonSiguiente2;
     private javax.swing.JButton jButtonVolver;
-    private javax.swing.JScrollPane jScrollPaneProductos;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPaneCompras;
     private javax.swing.JTable jTableCompras;
+    private javax.swing.JTable jTableProductosCompras;
     private javax.swing.JLabel lblFechaFin;
     private javax.swing.JLabel lblFechaInicio;
     private javax.swing.JLabel lblNombreProducto;

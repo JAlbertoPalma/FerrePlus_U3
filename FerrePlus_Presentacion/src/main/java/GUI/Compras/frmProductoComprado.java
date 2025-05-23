@@ -185,17 +185,14 @@ public class frmProductoComprado extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        if (id == null) {
-            ControlGUI.getInstancia().mostrarMenuProducto();
-        this.dispose();
+
             try {
-                ControlGUI.getInstancia().mostrarProductosRegistrados();
+                ControlGUI.getInstancia().mostrarProductosRegistrados(2);
+                    this.dispose();
             } catch (NegocioException ex) {
                 Logger.getLogger(frmProductoComprado.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }else{
-            this.dispose();
-        }
+        
         
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
@@ -271,6 +268,7 @@ public class frmProductoComprado extends javax.swing.JFrame {
         this.txtPrecioCompra.setText(String.valueOf(productoElegido.getPrecioCompraReferencial()));
         this.lblUnidad.setText(productoElegido.getUnidadMedida());
         this.txtSubtotal.setText("0.0");
+        this.lblUnidad.setText(productoElegido.getUnidadMedida());
         
         
     }

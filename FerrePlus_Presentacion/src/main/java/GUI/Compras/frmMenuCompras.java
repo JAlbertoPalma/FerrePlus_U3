@@ -69,6 +69,11 @@ public class frmMenuCompras extends javax.swing.JFrame {
         jButtonConsultar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonConsultar.setText("Consultar Compras");
         jButtonConsultar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConsultarActionPerformed(evt);
+            }
+        });
         pnlFormulario.add(jButtonConsultar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 80, 160, 40));
 
         jButtonVolver.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
@@ -113,6 +118,15 @@ public class frmMenuCompras extends javax.swing.JFrame {
         ControlGUI.getInstancia().mostrarMenuPrincipal();
         this.dispose();
     }//GEN-LAST:event_jButtonVolverActionPerformed
+
+    private void jButtonConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarActionPerformed
+        try {
+            ControlGUI.getInstancia().mostrarConsultarCompras();
+            this.dispose();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmMenuCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonConsultarActionPerformed
     private void AcomodarContenido() {
         JPanel panel = this.pnlFormulario; 
         this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
