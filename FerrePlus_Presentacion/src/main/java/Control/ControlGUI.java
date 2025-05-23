@@ -187,6 +187,22 @@ public class ControlGUI {
         this.registrarVenta.LlenarTablaProductos();
         this.registrarVenta.setVisible(true);
     }
+    public void PasarInfoARegistrarCompra() throws NegocioException{
+        this.registrarCompra.LlenarTabla();
+        this.registrarCompra.setVisible(true);
+    }
+    public void mostrarProductoComprado(String id){
+        this.productoComprado = new frmProductoComprado(id);
+        this.productoComprado.setLocationRelativeTo(null);
+        this.productoComprado.setVisible(true);
+        
+    }
+    public void mostrarRegistrarCompra() throws NegocioException{
+        this.registrarCompra = new frmRegistrarCompra();
+        this.registrarCompra.setLocationRelativeTo(null);
+        this.registrarCompra.setVisible(true);
+    }
+    
 
     
     public ProductoDTO crearProductoDTO(String SKU, String nombre, String categoria, String unidadMedida, String precioCompraReferencial, String precioVenta, String proveedor, String stock, String observaciones) {
@@ -446,11 +462,26 @@ public class ControlGUI {
         DetalleVentaDTO detalle = new DetalleVentaDTO(id,cantidad,descuento,subtotal);
         this.detallesVentaAux.add(detalle);
     }
+
     public List<DetalleVentaDTO> obtenerDetallesVenta(){
         return this.detallesVentaAux;
     }
-    public VentaDTO guardarVenta(VentaDTO venta) throws NegocioException{
+    public VentaDTO registrarVenta(VentaDTO venta) throws NegocioException{
         return ventas.agregar(venta);
+    }
+    public void guardarDetalleCompra(String id, int cantidad, double precioCompra, double subtotal){
+        DetalleCompraDTO detalle = new DetalleCompraDTO();
+        detalle.setCantidad(cantidad);
+        detalle.setIdProducto(id);
+        detalle.setPrecioDeCompra(precioCompra);
+        detalle.setSubtotal(subtotal);
+        this.detallesCompraAux.add(detalle);
+    }
+    public List<DetalleCompraDTO> obtenerDetalleCompra(){
+        return this.detallesCompraAux;
+    }
+    public CompraDTO registrarCompra(CompraDTO compra) throws NegocioException{
+        return compras.agregar(compra);
     }
     public CompraDTO crearCompraDTO(List<DetalleCompraDTO> listaDetalles,String proveedor, LocalDate fecha, Double total) throws NegocioException{
         CompraDTO nuevaCompra = new CompraDTO();

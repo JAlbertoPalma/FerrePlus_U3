@@ -253,7 +253,11 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "No puede registrar una venta sin productos");
         } else {
             try {
-                ControlGUI.getInstancia().guardarVenta(ControlGUI.getInstancia().crearVentaDTO(ControlGUI.getInstancia().obtenerDetallesVenta(),true, this.dateTimePickerVenta.getDateTimePermissive(), total));
+                ControlGUI.getInstancia().registrarVenta(ControlGUI.getInstancia().crearVentaDTO(
+                        ControlGUI.getInstancia().obtenerDetallesVenta(),
+                        true, 
+                        this.dateTimePickerVenta.getDateTimePermissive(), 
+                        total));
             } catch (NegocioException ex) {
                 Logger.getLogger(frmRegistrarVenta.class.getName()).log(Level.SEVERE, null, ex);
             }

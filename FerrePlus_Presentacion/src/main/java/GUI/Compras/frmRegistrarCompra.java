@@ -6,6 +6,8 @@ package GUI.Compras;
 
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.CompraDTO;
+import DTO.DetalleCompraDTO;
 import DTO.ProductoDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -15,6 +17,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,6 +39,7 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     GridBagConstraints gbc = new GridBagConstraints();
     int aux = 0;
     int fila = 0;
+    double total = 0;
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -66,7 +70,9 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
         jButtonConfirmar = new javax.swing.JButton();
         jButtonAgregar = new javax.swing.JButton();
         datePickerCompra = new com.github.lgooddatepicker.components.DatePicker();
+        lblProveedor = new javax.swing.JLabel();
         lblTotalCompra = new javax.swing.JLabel();
+        jTextFieldProveedor = new javax.swing.JTextField();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -183,10 +189,18 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
         pnlFondo.add(jButtonAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
         pnlFondo.add(datePickerCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 530, -1, -1));
 
+        lblProveedor.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblProveedor.setText("Proveedor:");
+        lblProveedor.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        pnlFondo.add(lblProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 560, 170, -1));
+
         lblTotalCompra.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblTotalCompra.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTotalCompra.setText("Total Compra:");
         pnlFondo.add(lblTotalCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 480, 170, -1));
+
+        jTextFieldProveedor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        pnlFondo.add(jTextFieldProveedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, 150, -1));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -209,8 +223,8 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
 
-            ControlGUI.getInstancia();
-            this.dispose();
+        ControlGUI.getInstancia();
+        this.dispose();
 
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
@@ -236,12 +250,30 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-       
-       
+        if (ControlGUI.getInstancia().obtenerDetalleCompra() == null || ControlGUI.getInstancia().obtenerDetalleCompra().isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "No puede registrar una compra sin productos");
+        } else {
+            try {
+                ControlGUI.getInstancia().registrarCompra(ControlGUI.getInstancia().crearCompraDTO(
+                        ControlGUI.getInstancia().obtenerDetalleCompra(),
+                        this.jTextFieldProveedor.getText(),
+                        this.datePickerCompra.getDate(),
+                        this.total));
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmRegistrarCompra.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
-      
+        try {
+            ControlGUI.getInstancia().mostrarProductosRegistrados(2);
+            this.setVisible(false);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmRegistrarCompra.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_jButtonAgregarActionPerformed
 
@@ -285,13 +317,18 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
 //         Columna 2
         gbc.gridx = 2;
         gbc.gridy = 0;
+
         this.pnlFondo.add(this.lblTotalCompra, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.lblTotal, gbc);
+        this.pnlFondo.add(this.lblTotal,gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.lblFechaCompra, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.datePickerCompra, gbc);
+        this.pnlFondo.add(this.datePickerCompra,gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.lblProveedor, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jTextFieldProveedor, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonAgregar, gbc);
         gbc.gridy++;
@@ -313,12 +350,41 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     // Metodo para llenar la tabla de Productos.
     public DefaultTableModel LlenarTabla() throws NegocioException {
         //Tabla
+        List<DetalleCompraDTO> detalles = ControlGUI.getInstancia().obtenerDetalleCompra();
         DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
-        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        try {
+            model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+            for (int i = 0; i < detalles.size(); i++) {
+                int cantidad = detalles.get(i).getCantidad();
+                double precio = ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getPrecioCompraReferencial();
+                double total = precio * cantidad;
+                this.total = this.total + total;
+                model.addRow(new Object[]{
+                    ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getSKU(), //Sku
+                    ControlGUI.getInstancia().obtenerProductoPorID(detalles.get(i).getIdProducto()).getNombre(), //Nombre
+                    cantidad, //Cantidad 
+                    precio, // PrecioCompra
+                    total
+
+                });
+            }
+        } catch (NullPointerException np) {
+            model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+            for (int i = 0; i < 5; i++) {
+                model.addRow(new Object[]{
+                    "No registrado",
+                    "No registrado",
+                    0.0,
+                    0.0,
+                    0.0,});
+            }
+
+        }
+        this.lblTotal.setText(Double.toString(this.total));
         return model;
     }
 
-     public DefaultTableModel inicial() {
+    public DefaultTableModel inicial() {
         DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
         for (int i = 0; i < 5; i++) {
@@ -329,9 +395,8 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
                 0.0,
                 0.0,});
         }
-         return model;
+        return model;
     }
-
 
     /**
      * @param args the command line arguments
@@ -395,7 +460,9 @@ public class frmRegistrarCompra extends javax.swing.JFrame {
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JScrollPane jScrollPaneProductos;
     private javax.swing.JTable jTableCompras;
+    private javax.swing.JTextField jTextFieldProveedor;
     private javax.swing.JLabel lblFechaCompra;
+    private javax.swing.JLabel lblProveedor;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel lblTotalCompra;

@@ -302,8 +302,27 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
 
             auxEstado = 0;
         } else {
-            ControlGUI.getInstancia().mostrarMenuPrincipal();
-            this.dispose();
+            if (procedencia == 0) {
+                ControlGUI.getInstancia().mostrarMenuProducto();
+                this.dispose();
+            }
+            if (procedencia == 1) {
+                try {
+                    ControlGUI.getInstancia().mostrarRegistrarVenta();
+                    this.dispose();
+                } catch (NegocioException ex) {
+                    Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if (procedencia == 2) {
+                try {
+                    ControlGUI.getInstancia().mostrarRegistrarCompra();
+                    this.dispose();
+                } catch (NegocioException ex) {
+                    Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
         }
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
@@ -439,10 +458,17 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonSiguienteActionPerformed
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
+        
         String nombre = this.jTableProductos.getValueAt(filaSeleccionada, 1).toString();
         try {
-            ControlGUI.getInstancia().mostrarProductoVendido(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+            if (procedencia == 1) {
+                ControlGUI.getInstancia().mostrarProductoVendido(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
             this.dispose();
+            }
+            if (procedencia == 2) {
+                ControlGUI.getInstancia().mostrarProductoComprado(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
+                this.dispose();
+            }
             
         } catch (NegocioException ex) {
             Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
@@ -486,7 +512,7 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         this.pnlFondo.add(this.jButtonEliminar, gbc);
         gbc.gridy++;
         if (procedencia == 1 || procedencia == 2) {
-            this.pnlFondo.add(this.jButtonConfirmar);
+            this.pnlFondo.add(this.jButtonConfirmar,gbc);
             gbc.gridy++;
         }
         this.pnlFondo.add(this.jButtonVolver, gbc);
