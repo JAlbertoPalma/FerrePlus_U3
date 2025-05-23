@@ -197,6 +197,11 @@ public class ControlGUI {
         this.registrarVenta.LlenarTablaProductos();
         this.registrarVenta.setVisible(true);
     }
+    public void mostrarConsultarVentas() throws NegocioException{
+        this.consultarVentas = new frmConsultarVentas();
+        this.consultarVentas.setLocationRelativeTo(null);
+        this.consultarVentas.setVisible(true);
+    }
     
     /////////////////////////////COMPRAS////////////////////////////////
     public void PasarInfoARegistrarCompra() throws NegocioException{
@@ -219,6 +224,11 @@ public class ControlGUI {
         this.menuCompras = new frmMenuCompras();
         this.menuCompras.setLocationRelativeTo(null);
         this.menuCompras.setVisible(true);
+    }
+    public void mostrarConsultarCompras() throws NegocioException{
+        this.consultarCompras = new frmConsultarCompras();
+        this.consultarCompras.setLocationRelativeTo(null);
+        this.consultarCompras.setVisible(true);
     }
     
     /////////////////////////////CAJA////////////////////////////////
@@ -490,6 +500,10 @@ public class ControlGUI {
 
         return nuevaVenta;
     }
+    public List<VentaDTO> obtenerVentaFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin,String folio, String nombreProducto, boolean estado) throws NegocioException{
+        return this.ventas.obtenerPorFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
+    }
+   
     public List<DetalleVentaDTO> detallesVenta(){
         return this.detallesVentaAux;
     }
@@ -504,6 +518,10 @@ public class ControlGUI {
     public VentaDTO registrarVenta(VentaDTO venta) throws NegocioException{
         return ventas.agregar(venta);
     }
+    public List<CompraDTO> comprasFiltro(LocalDate inicio, LocalDate fin, String proveedor, String nombreProducto) throws NegocioException{
+       return compras.obtenerPorFiltros(inicio, fin, proveedor, nombreProducto);
+    }
+
     public void guardarDetalleCompra(String id, int cantidad, double precioCompra, double subtotal){
         DetalleCompraDTO detalle = new DetalleCompraDTO();
         detalle.setCantidad(cantidad);
@@ -517,6 +535,9 @@ public class ControlGUI {
     }
     public CompraDTO registrarCompra(CompraDTO compra) throws NegocioException{
         return compras.agregar(compra);
+    }
+    public void limpiarListaDetalles(){
+        this.detallesCompraAux = new ArrayList<>();
     }
     public CompraDTO crearCompraDTO(List<DetalleCompraDTO> listaDetalles,String proveedor, LocalDate fecha, Double total) throws NegocioException{
         CompraDTO nuevaCompra = new CompraDTO();

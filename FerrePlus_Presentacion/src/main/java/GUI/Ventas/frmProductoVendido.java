@@ -220,14 +220,15 @@ public class frmProductoVendido extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        if (id == null) {
+
             try {
                 ControlGUI.getInstancia().mostrarProductosRegistrados(1);
+                this.dispose();
             } catch (NegocioException ex) {
                 Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.dispose();
-        }
+            
+        
 
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 

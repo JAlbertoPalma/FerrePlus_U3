@@ -7,7 +7,9 @@ package GUI.Ventas;
 import GUI.Compras.*;
 import modulo.inventario.*;
 import Control.ControlGUI;
+import DTO.DetalleVentaDTO;
 import DTO.ProductoDTO;
+import DTO.VentaDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import java.awt.BorderLayout;
@@ -16,6 +18,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,8 +39,16 @@ import javax.swing.table.JTableHeader;
 public class frmConsultarVentas extends javax.swing.JFrame {
 
     GridBagConstraints gbc = new GridBagConstraints();
-    int aux = 0;
-    int fila = 0;
+    List<ProductoDTO> productos;
+    int aux = 1; //Auxiliar requerido para los botones siguiente y atras de Compras.
+    int index = 1; //Define en que pagina se encuentra la tabla de Compras.
+    int min = 1; // El minimo de la lista de productos, requerido para el boton atras de Compras.
+    int max = 0; // El maximo de la lista de productos, requerido para el boton siguiente de Compras.
+    int aux2 = 1; //Auxiliar requerido para los botones siguiente y atras de Detalles.
+    int index2 = 1; //Define en que pagina se encuentra la tabla de Detalles.
+    int min2 = 1; // El minimo de la lista de productos, requerido para el boton atras de Detalles.
+    int max2 = 0; // El maximo de la lista de productos, requerido para el boton siguiente de Detalles.
+    int filaSeleccionada = 0; //Fila seleccionada de la tabla, se requiere para eliminar.
 
     /**
      * Creates new form RegistrarProductoGUI
@@ -59,19 +71,26 @@ public class frmConsultarVentas extends javax.swing.JFrame {
 
         pnlFondo = new javax.swing.JPanel();
         jButtonVolver = new javax.swing.JButton();
-        lblNombreProducto = new javax.swing.JLabel();
+        lblEstado = new javax.swing.JLabel();
         jScrollPaneProductos = new javax.swing.JScrollPane();
-        jTableCompras = new javax.swing.JTable();
+        jTableVentas = new javax.swing.JTable();
         txtNombreProducto = new javax.swing.JTextField();
         lblFechaInicio = new javax.swing.JLabel();
         jButtonEliminar = new javax.swing.JButton();
-        datePickerInicio = new com.github.lgooddatepicker.components.DatePicker();
         lblFechaFin = new javax.swing.JLabel();
-        datePickerFin = new com.github.lgooddatepicker.components.DatePicker();
         lblFolio = new javax.swing.JLabel();
         txtFolio = new javax.swing.JTextField();
         jButtonConfirmar = new javax.swing.JButton();
-        jButtonAgregar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableProductosVentas = new javax.swing.JTable();
+        jButtonAtras = new javax.swing.JButton();
+        jButtonSiguiente = new javax.swing.JButton();
+        jButtonAtras2 = new javax.swing.JButton();
+        jButtonSiguiente2 = new javax.swing.JButton();
+        datePickerFin = new com.github.lgooddatepicker.components.DateTimePicker();
+        datePickerInicio = new com.github.lgooddatepicker.components.DateTimePicker();
+        jComboBoxEstado = new javax.swing.JComboBox<>();
+        lblNombreProducto = new javax.swing.JLabel();
         pnlTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
 
@@ -95,27 +114,27 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         });
         pnlFondo.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 580, 130, 40));
 
-        lblNombreProducto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNombreProducto.setText("Nombre Producto: ");
-        lblNombreProducto.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        pnlFondo.add(lblNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 480, 210, -1));
+        lblEstado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblEstado.setText("Estado");
+        lblEstado.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        pnlFondo.add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 770, 210, -1));
 
-        jTableCompras.setModel(new javax.swing.table.DefaultTableModel(
+        jTableVentas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Folio", "Nombre", "Cantidad", "PrecioCompra", "Fecha", "Hora", "Proveedor", "Subtotal"
+                "Folio", "FechaHora", "Subtotal", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -126,26 +145,22 @@ public class frmConsultarVentas extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTableCompras.addFocusListener(new java.awt.event.FocusAdapter() {
+        jTableVentas.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTableComprasFocusLost(evt);
+                jTableVentasFocusLost(evt);
             }
         });
-        jTableCompras.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTableVentas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTableComprasMouseClicked(evt);
+                jTableVentasMouseClicked(evt);
             }
         });
-        jScrollPaneProductos.setViewportView(jTableCompras);
-        if (jTableCompras.getColumnModel().getColumnCount() > 0) {
-            jTableCompras.getColumnModel().getColumn(0).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(1).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(2).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(3).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(4).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(5).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(6).setResizable(false);
-            jTableCompras.getColumnModel().getColumn(7).setResizable(false);
+        jScrollPaneProductos.setViewportView(jTableVentas);
+        if (jTableVentas.getColumnModel().getColumnCount() > 0) {
+            jTableVentas.getColumnModel().getColumn(0).setResizable(false);
+            jTableVentas.getColumnModel().getColumn(1).setResizable(false);
+            jTableVentas.getColumnModel().getColumn(2).setResizable(false);
+            jTableVentas.getColumnModel().getColumn(3).setResizable(false);
         }
 
         pnlFondo.add(jScrollPaneProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 890, -1));
@@ -169,14 +184,12 @@ public class frmConsultarVentas extends javax.swing.JFrame {
             }
         });
         pnlFondo.add(jButtonEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
-        pnlFondo.add(datePickerInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, -1, -1));
 
         lblFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblFechaFin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblFechaFin.setText("Fecha Fin:");
         lblFechaFin.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlFondo.add(lblFechaFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 600, 170, -1));
-        pnlFondo.add(datePickerFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 610, -1, -1));
 
         lblFolio.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblFolio.setText("Folio: ");
@@ -197,15 +210,92 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         });
         pnlFondo.add(jButtonConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 530, 130, 40));
 
-        jButtonAgregar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonAgregar.setText("Agregar Producto");
-        jButtonAgregar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAgregarActionPerformed(evt);
+        jTableProductosVentas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Nombre", "Cantidad", "Descuentos", "Venta", "FolioVenta"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
-        pnlFondo.add(jButtonAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 530, 130, 40));
+        jScrollPane1.setViewportView(jTableProductosVentas);
+        if (jTableProductosVentas.getColumnModel().getColumnCount() > 0) {
+            jTableProductosVentas.getColumnModel().getColumn(0).setResizable(false);
+            jTableProductosVentas.getColumnModel().getColumn(1).setResizable(false);
+            jTableProductosVentas.getColumnModel().getColumn(2).setResizable(false);
+            jTableProductosVentas.getColumnModel().getColumn(3).setResizable(false);
+            jTableProductosVentas.getColumnModel().getColumn(4).setResizable(false);
+        }
+
+        pnlFondo.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 670, -1, -1));
+
+        jButtonAtras.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAtras.setText("Atras");
+        jButtonAtras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAtras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAtrasActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 630, 130, 40));
+
+        jButtonSiguiente.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSiguiente.setText("Siguiente");
+        jButtonSiguiente.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSiguienteActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonSiguiente, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 630, 130, 40));
+
+        jButtonAtras2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonAtras2.setText("Atras");
+        jButtonAtras2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonAtras2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAtras2ActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonAtras2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 700, 130, 40));
+
+        jButtonSiguiente2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonSiguiente2.setText("Siguiente");
+        jButtonSiguiente2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonSiguiente2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSiguiente2ActionPerformed(evt);
+            }
+        });
+        pnlFondo.add(jButtonSiguiente2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 650, 130, 40));
+        pnlFondo.add(datePickerFin, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 610, -1, -1));
+        pnlFondo.add(datePickerInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 570, -1, -1));
+
+        jComboBoxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Confirmada", "Cancelada" }));
+        pnlFondo.add(jComboBoxEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 780, -1, -1));
+
+        lblNombreProducto.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblNombreProducto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNombreProducto.setText("Nombre Producto: ");
+        pnlFondo.add(lblNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 480, 210, -1));
 
         getContentPane().add(pnlFondo, java.awt.BorderLayout.CENTER);
 
@@ -228,7 +318,7 @@ public class frmConsultarVentas extends javax.swing.JFrame {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
 
-        ControlGUI.getInstancia();
+        ControlGUI.getInstancia().mostrarMenuVentas();
         this.dispose();
 
 
@@ -254,30 +344,126 @@ public class frmConsultarVentas extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
-    private void jTableComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableComprasMouseClicked
+    private void jTableVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableVentasMouseClicked
 
-        fila = this.jTableCompras.getSelectedRow();
+        filaSeleccionada = this.jTableVentas.getSelectedRow();
         this.jButtonEliminar.setVisible(true);
-    }//GEN-LAST:event_jTableComprasMouseClicked
+    }//GEN-LAST:event_jTableVentasMouseClicked
 
-    private void jTableComprasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableComprasFocusLost
+    private void jTableVentasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableVentasFocusLost
 
-    }//GEN-LAST:event_jTableComprasFocusLost
+    }//GEN-LAST:event_jTableVentasFocusLost
 
     private void pnlFondoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFondoMouseClicked
-        if (fila >= 0) {
+        if (filaSeleccionada >= 0) {
             this.jButtonEliminar.setVisible(false);
 
         }
     }//GEN-LAST:event_pnlFondoMouseClicked
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
-        // TODO add your handling code here:
+         boolean estado;
+            if (this.jComboBoxEstado.getSelectedItem().equals("Confirmada")) {
+                estado = true;
+            }else{
+                estado = false;
+            }
+        try {
+            this.LlenarTablaFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarVentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
 
-    private void jButtonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarActionPerformed
+    private void jButtonAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtrasActionPerformed
+        index--;
+        aux = aux - 8;
+        try {
+            boolean estado;
+            if (this.jComboBoxEstado.getSelectedItem().equals("Confirmada")) {
+                estado = true;
+            }else{
+                estado = false;
+            }
+            this.LlenarTablaFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAtrasActionPerformed
 
-    }//GEN-LAST:event_jButtonAgregarActionPerformed
+    private void jButtonSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSiguienteActionPerformed
+        index++;
+        aux = aux + 8;
+
+        try {
+            boolean estado;
+            if (this.jComboBoxEstado.getSelectedItem().equals("Confirmada")) {
+                estado = true;
+            }else{
+                estado = false;
+            }
+            this.LlenarTablaFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonSiguienteActionPerformed
+
+    private void jButtonAtras2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtras2ActionPerformed
+        index2--;
+        aux2 = aux2 - 8;
+        try {
+             boolean estado;
+            if (this.jComboBoxEstado.getSelectedItem().equals("Confirmada")) {
+                estado = true;
+            }else{
+                estado = false;
+            }
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonAtras2ActionPerformed
+
+    private void jButtonSiguiente2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSiguiente2ActionPerformed
+        index2++;
+        aux2 = aux2 + 8;
+        try {
+             boolean estado;
+            if (this.jComboBoxEstado.getSelectedItem().equals("Confirmada")) {
+                estado = true;
+            }else{
+                estado = false;
+            }
+            this.LlenarTablaDetallesFiltro(this.datePickerInicio.getDateTimePermissive() ,
+                    this.datePickerFin.getDateTimePermissive() ,
+                    this.txtFolio.getText() ,
+                    this.txtNombreProducto.getText() ,
+                    estado);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmConsultarCompras.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonSiguiente2ActionPerformed
     private void AcomodarContenido() throws NegocioException {
 
         this.pnlFondo.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
@@ -291,18 +477,33 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH; // Alarga la tabla con el tamaño.
-        this.jTableCompras.setModel(this.LlenarTabla());
-        JTableHeader header = new JTableHeader(this.jTableCompras.getColumnModel());
+        this.jTableVentas.setModel(this.LlenarTablaInicial());
+        JTableHeader header = new JTableHeader(this.jTableVentas.getColumnModel());
         this.pnlFondo.add(header, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jTableCompras, gbc);
-        this.jTableCompras.setPreferredSize(new Dimension(750, 750));
+        this.pnlFondo.add(this.jTableVentas, gbc);
+        this.jTableVentas.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAtras, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonSiguiente, gbc);
+        gbc.gridy++;
+        this.jTableProductosVentas.setModel(this.LlenarTablaDetallesInicial());
+        JTableHeader header2 = new JTableHeader(this.jTableProductosVentas.getColumnModel());
+        this.pnlFondo.add(header2, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jTableProductosVentas, gbc);
+        this.jTableProductosVentas.setPreferredSize(new Dimension(750, 750));
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonAtras2, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jButtonSiguiente2, gbc);
         gbc.gridy++;
 
 //         Columna 2
         gbc.gridx = 2;
         gbc.gridy = 0;
-        this.pnlFondo.add(this.lblNombreProducto, gbc);
+        this.pnlFondo.add(this.lblEstado, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.txtNombreProducto, gbc);
         gbc.gridy++;
@@ -318,7 +519,9 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         gbc.gridy++;
         this.pnlFondo.add(this.datePickerFin, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jButtonAgregar,gbc);
+        this.pnlFondo.add(this.lblEstado, gbc);
+        gbc.gridy++;
+        this.pnlFondo.add(this.jComboBoxEstado, gbc);
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonConfirmar, gbc);
         gbc.gridy++;
@@ -328,140 +531,202 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         this.pnlFondo.add(this.jButtonVolver, gbc);
         gbc.gridy++;
 
-
     }
 
     public int contarPaginas(int nPaginas) {
         int totalPaginas = (int) Math.ceil((double) nPaginas / 8);
         return totalPaginas;
     }
+    // Metodo para llenar la tabla de Compras al iniciar.
 
-    // Metodo para llenar la tabla de Productos.
-    public DefaultTableModel LlenarTabla() throws NegocioException {
+    public DefaultTableModel LlenarTablaInicial() throws NegocioException {
 
-        // Esto es para despues, con los botones siguiente y atras
-        int index = 1;
-        int aux = 1;
-        int min = 1;
-        int max = 0;
-//        max = this.contarPaginas(ControlGUI.getInstancia().ObtenerProductos().size());
-        //Tabla
-        DefaultTableModel model = (DefaultTableModel) this.jTableCompras.getModel();
+        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
         model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < 5; i++) {
+            model.addRow(new Object[]{
+                "Busque",
+                0,
+                0.0,
+                "para mostrarlo"});
+        }
         return model;
     }
+    // Metodo para llenar la tabla de DetallesCompras al iniciar.
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmConsultarVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmConsultarVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmConsultarVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmConsultarVentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    public DefaultTableModel LlenarTablaDetallesInicial() throws NegocioException {
+
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductosVentas.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        for (int i = 0; i < 5; i++) {
+            model.addRow(new Object[]{
+                "Busque",
+                0,
+                0.0,
+                0.0,
+                "Algo"});
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+        return model;
+    }
+    // Metodo para llenar la tabla de ventas.
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new frmConsultarVentas().setVisible(true);
-                } catch (NegocioException ex) {
-                    Logger.getLogger(frmConsultarVentas.class.getName()).log(Level.SEVERE, null, ex);
+    public DefaultTableModel LlenarTablaFiltro(LocalDateTime fechaInicio, LocalDateTime fechaFin, String folio, String nombreProducto, boolean estado) throws NegocioException {
+        max = this.contarPaginas(ControlGUI.getInstancia().obtenerVentaFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado).size());
+        List<VentaDTO> ventasObtenidas = this.calcularFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
+        this.ocultarBotones();
+        //Tabla
+        DefaultTableModel model = (DefaultTableModel) this.jTableVentas.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+
+        try {
+            for (int i = 0; i < ventasObtenidas.size(); i++) {
+                String estados;
+                VentaDTO venta = ventasObtenidas.get(i);
+                if (venta.getEstado() == true) {
+                    estados = "Confirmada";
+                } else {
+                    estados = "Cancelada";
                 }
+                model.addRow(new Object[]{
+                    venta.getFolio(),
+                    venta.getFechaHora(),
+                    venta.getTotal(),
+                    estados
+                });
+
             }
-        });
+            return model;
+        } catch (NullPointerException np) {
+            JOptionPane.showMessageDialog(rootPane, "No se encontro ninguna venta");
+            throw new NullPointerException("No se encontro ninguna venta");
+        }
+
+    }
+    // Metodo para llenar la tabla de detalles de ventas.
+    public DefaultTableModel LlenarTablaDetallesFiltro(LocalDateTime fechaInicio, LocalDateTime fechaFin, String folio, String nombreProducto, boolean estado) throws NegocioException {
+        List<DetalleVentaDTO> detalles = new ArrayList<>();
+        DefaultTableModel model = (DefaultTableModel) this.jTableProductosVentas.getModel();
+        model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
+        List<VentaDTO> ventasObtenidas = this.calcularFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
+        for (int i = 0; i < ventasObtenidas.size(); i++) {
+            for (int j = 0; j < ventasObtenidas.get(i).getDetalles().size(); j++) {
+                DetalleVentaDTO detalle = ventasObtenidas.get(i).getDetalles().get(j);
+                detalles.add(detalle);
+            }
+        }
+        max2 = this.contarPaginas(detalles.size());
+        this.ocultarBotones2();
+        List<DetalleVentaDTO> detallesFiltrados = this.calcularDetallesFiltros(detalles);
+        
+        for (int i = 0; i < detallesFiltrados.size(); i++) {
+            String nombreAux="";
+            if (ControlGUI.getInstancia().obtenerProductoPorID(detallesFiltrados.get(i).getIdProducto()) == null) {
+                nombreAux = "No especificado";
+            }else{
+                nombreAux = ControlGUI.getInstancia().obtenerProductoPorID(detallesFiltrados.get(i).getIdProducto()).getNombre();
+            }
+            model.addRow(new Object[]{
+                    nombreAux,
+                    detallesFiltrados.get(i).getCantidad(),
+                    detallesFiltrados.get(i).getDescuento(),
+                    ControlGUI.getInstancia().obtenerProductoPorID(detallesFiltrados.get(i).getIdProducto()).getPrecioVenta(),
+                    ventasObtenidas.get(i).getFolio()
+                });
+        }
+        return null;
+    }
+    public void ocultarBotones() {
+
+        if (index == max) {
+            this.jButtonSiguiente.setVisible(false);
+
+        } else {
+            this.jButtonSiguiente.setVisible(true);
+
+        }
+
+        if (index == min) {
+            this.jButtonAtras.setVisible(false);
+
+        } else {
+            this.jButtonAtras.setVisible(true);
+
+        }
     }
 
+    public void ocultarBotones2() {
+
+        if (index2 == max2) {
+            this.jButtonSiguiente2.setVisible(false);
+
+        } else {
+            this.jButtonSiguiente2.setVisible(true);
+
+        }
+
+        if (index2 == min2) {
+            this.jButtonAtras2.setVisible(false);
+
+        } else {
+            this.jButtonAtras2.setVisible(true);
+        }
+    }
+
+    public List<VentaDTO> calcularFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin, String folio, String nombreProducto, boolean estado) throws NegocioException {
+        List<VentaDTO> ventasObtenidasFiltro = ControlGUI.getInstancia().obtenerVentaFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
+        List<VentaDTO> detalles = new ArrayList<>();
+        try {
+            detalles.add(ventasObtenidasFiltro.get(aux - 1));
+            detalles.add(ventasObtenidasFiltro.get(aux));
+            detalles.add(ventasObtenidasFiltro.get(aux + 1));
+            detalles.add(ventasObtenidasFiltro.get(aux + 2));
+            detalles.add(ventasObtenidasFiltro.get(aux + 3));
+            detalles.add(ventasObtenidasFiltro.get(aux + 4));
+            detalles.add(ventasObtenidasFiltro.get(aux + 5));
+            detalles.add(ventasObtenidasFiltro.get(aux + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+
+        } finally {
+            return detalles;
+        }
+
+    }
+
+    public List<DetalleVentaDTO> calcularDetallesFiltros(List<DetalleVentaDTO> lista) throws NegocioException {
+        List<DetalleVentaDTO> detalles = new ArrayList<>();
+        try {
+            detalles.add(lista.get(aux2 - 1));
+            detalles.add(lista.get(aux2));
+            detalles.add(lista.get(aux2 + 1));
+            detalles.add(lista.get(aux2 + 2));
+            detalles.add(lista.get(aux2 + 3));
+            detalles.add(lista.get(aux2 + 4));
+            detalles.add(lista.get(aux2 + 5));
+            detalles.add(lista.get(aux2 + 6));
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Se paso del rango pero no pasa nada :D ");
+
+        } finally {
+            return detalles;
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.github.lgooddatepicker.components.DatePicker datePickerFin;
-    private com.github.lgooddatepicker.components.DatePicker datePickerInicio;
-    private javax.swing.JButton jButtonAgregar;
+    private com.github.lgooddatepicker.components.DateTimePicker datePickerFin;
+    private com.github.lgooddatepicker.components.DateTimePicker datePickerInicio;
+    private javax.swing.JButton jButtonAtras;
+    private javax.swing.JButton jButtonAtras2;
     private javax.swing.JButton jButtonConfirmar;
     private javax.swing.JButton jButtonEliminar;
+    private javax.swing.JButton jButtonSiguiente;
+    private javax.swing.JButton jButtonSiguiente2;
     private javax.swing.JButton jButtonVolver;
+    private javax.swing.JComboBox<String> jComboBoxEstado;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneProductos;
-    private javax.swing.JTable jTableCompras;
+    private javax.swing.JTable jTableProductosVentas;
+    private javax.swing.JTable jTableVentas;
+    private javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblFechaFin;
     private javax.swing.JLabel lblFechaInicio;
     private javax.swing.JLabel lblFolio;

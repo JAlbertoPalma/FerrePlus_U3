@@ -211,17 +211,8 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        if (id == null) {
-            ControlGUI.getInstancia().mostrarMenuProducto();
+        ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
-            try {
-                ControlGUI.getInstancia().mostrarProductosRegistrados();
-            } catch (NegocioException ex) {
-                Logger.getLogger(frmRegistrarProducto.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }else{
-            this.dispose();
-        }
         
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
