@@ -86,4 +86,15 @@ public interface IVentaDAO {
      * o si no se encuentra la venta.
      */
     public List<DetalleVenta> obtenerDetalles(String id) throws PersistenciaException;
+    
+    /**
+     * Obtiene el siguiente folio consecutivo para la fecha y hora actual del sistema,
+     * basándose en los folios existentes para esa fecha. Si no hay folios para la fecha,
+     * inicia la secuencia en 1.
+     * El formato del folio es VT-YYYYMMDD-XXX.
+     * @return El siguiente folio único.
+     * @throws PersistenciaException Si ocurre un error al acceder a la base de datos.
+     */
+    String obtenerSiguienteFolio() throws PersistenciaException; // ¡Ya no recibe LocalDateTime!
+
 }

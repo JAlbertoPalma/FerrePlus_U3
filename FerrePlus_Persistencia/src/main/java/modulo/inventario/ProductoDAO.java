@@ -40,7 +40,7 @@ public class ProductoDAO implements IProductoDAO{
      *
      * @throws PersistenciaException Si ocurre un error al establecer la conexión con la base de datos.
      */
-    public ProductoDAO() throws PersistenciaException{
+    private ProductoDAO() throws PersistenciaException{
         try{
             MongoDatabase database = Conexion.getInstance().getDatabase();
             this.collection = database.getCollection("productos", Producto.class);

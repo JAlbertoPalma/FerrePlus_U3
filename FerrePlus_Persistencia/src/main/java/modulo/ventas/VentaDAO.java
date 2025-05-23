@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import conexion.Conexion;
@@ -18,8 +19,10 @@ import entidades.Producto;
 import entidades.Venta;
 import excepciones.PersistenciaException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import modulo.inventario.IProductoDAO;
 import modulo.inventario.ProductoDAO;
@@ -342,6 +345,42 @@ public class VentaDAO implements IVentaDAO{
             throw new PersistenciaException("Id inválido: " + id);
         }catch(Exception e){
             throw new PersistenciaException("Error al obtener los detalles de la venta: " + e.getMessage());
+        }
+    }
+    
+    @Override
+    public String obtenerSiguienteFolio() throws PersistenciaException {
+        try {
+            LocalDateTime now = LocalDateTime.now(); 
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            String fechaParte = now.format(dateFormatter);
+            String prefix = "VT-" + fechaParte + "-";
+
+            // Buscar la venta con el folio más alto para la fecha actual
+            Venta lastFolioDoc = collection.find(Filters.regex("folio", "^" + Pattern.quote(prefix)))
+                                                    .sort(Sorts.descending("folio"))
+                                                    .first();
+
+            int nextIndex = 1;
+            if (lastFolioDoc != null) {
+                String lastFolio = lastFolioDoc.getFolio();
+                //Extraemos el índice numérico del último folio
+                Pattern pattern = Pattern.compile("VT-\\d{8}-(\\d+)");
+                Matcher matcher = pattern.matcher(lastFolio);
+                if (matcher.find()) {
+                    try {
+                        int lastIndex = Integer.parseInt(matcher.group(1));
+                        nextIndex = lastIndex + 1;
+                    } catch (NumberFormatException e) {
+                        nextIndex = 1;
+                    }
+                }
+            }
+            
+            return String.format("%s%03d", prefix, nextIndex);
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al generar el siguiente folio para la venta: " + e.getMessage(), e);
         }
     }
 }

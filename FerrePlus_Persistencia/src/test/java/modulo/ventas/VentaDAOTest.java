@@ -4,10 +4,12 @@
  */
 package modulo.ventas;
 
+import entidades.DetalleCompra;
 import entidades.DetalleVenta;
 import entidades.Venta;
 import excepciones.PersistenciaException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
@@ -24,12 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VentaDAOTest {
     private IVentaDAO ventaDAO;
     private Venta ventaValida;
+    private ObjectId productoIdPrueba = new ObjectId("681bd995c1b020138e159a02");
 
     @BeforeEach
     public void setUp() throws PersistenciaException {
         ventaDAO = VentaDAO.getInstanceDAO();
+        List<DetalleVenta> detalles = Arrays.asList(
+            new DetalleVenta(productoIdPrueba, 2, 15.0, 30.0)
+        );
         ventaValida = new Venta("TESTFOLIO", LocalDateTime.now(), 100.0,
-                new ObjectId("681c7271618fd87bdcee6ad1"), List.of());
+                new ObjectId("681c7271618fd87bdcee6ad1"), detalles);
         ventaDAO.agregar(ventaValida);
     }
 
@@ -92,8 +98,8 @@ public class VentaDAOTest {
     public void testObtenerDetallesDeVentaExistente() throws PersistenciaException {
         Venta ventaConDetalles = new Venta("FOLIODETALLE", LocalDateTime.now(), 250.0,
                 new ObjectId("681c7271618fd87bdcee6ad1"), List.of(
-                        new DetalleVenta(new ObjectId("681c720c0674fd6be46c013f"), 2, 50.0, 100.0),
-                        new DetalleVenta(new ObjectId("681c720c0674fd6be46c013f"), 1, 150.0, 100.0)
+                        new DetalleVenta(new ObjectId("681bd995c1b020138e159a02"), 2, 50.0, 100.0),
+                        new DetalleVenta(new ObjectId("681bd995c1b020138e159a02"), 1, 150.0, 100.0)
                 ));
         ventaDAO.agregar(ventaConDetalles);
 

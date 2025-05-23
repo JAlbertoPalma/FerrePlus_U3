@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CompraDAOTest {
     private ICompraDAO compraDAO;
     private Compra compraValida;
-    private ObjectId productoIdPrueba = new ObjectId("681c720c0674fd6be46c013f");
+    private ObjectId productoIdPrueba = new ObjectId("681bd995c1b020138e159a02");
 
     @BeforeEach
     public void setUp() throws PersistenciaException {

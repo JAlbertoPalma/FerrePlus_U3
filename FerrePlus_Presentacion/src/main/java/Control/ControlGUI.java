@@ -502,6 +502,7 @@ public class ControlGUI {
         return this.detallesVentaAux;
     }
     public VentaDTO registrarVenta(VentaDTO venta) throws NegocioException{
+        venta.setIdCaja(sesionCajaActiva.getId());
         return ventas.agregar(venta);
     }
     public void guardarDetalleCompra(String id, int cantidad, double precioCompra, double subtotal){

@@ -91,4 +91,15 @@ public interface ICompraDAO {
      * o si no se encuentra la compra.
      */
     public List<DetalleCompra> obtenerDetalles(String id) throws PersistenciaException;
+
+    /**
+     * Obtiene el siguiente folio consecutivo para la fecha actual del sistema,
+     * basándose en los folios existentes para esa fecha. Si no hay folios para la fecha,
+     * inicia la secuencia en 1.
+     * El formato del folio es CP-YYYYMMDD-XXX.
+     * @return El siguiente folio único.
+     * @throws PersistenciaException Si ocurre un error al acceder a la base de datos.
+     */
+    String obtenerSiguienteFolio() throws PersistenciaException; // ¡Ya no recibe LocalDate!
+
 }

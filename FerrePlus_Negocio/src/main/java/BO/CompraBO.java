@@ -79,7 +79,7 @@ public class CompraBO implements ICompraBO{
                 throw new NegocioException("El precio de compra unitario no puede ser negativo.");
             }
 
-            // Regla: Validar que cada producto esté previamente registrado en el inventario.
+            //Regla: Validar que cada producto esté previamente registrado en el inventario.
             Producto productoExistente;
             try {
                 productoExistente = productoDAO.obtenerPorId(detalle.getIdProducto());
@@ -99,8 +99,12 @@ public class CompraBO implements ICompraBO{
         // Regla: Calcular automáticamente el total de la compra.
         compraDTO.setTotal(totalCalculado);
 
-        // Regla: Generar un folio único con el formato CP-YYYYMMDD-XXX
-        compraDTO.setFolio(generarFolio());
+        try {
+            // Regla: Generar un folio único con el formato CP-YYYYMMDD-XXX
+            compraDTO.setFolio(compraDAO.obtenerSiguienteFolio());
+        } catch (PersistenciaException pe) {
+            throw new NegocioException("Error al obtener el folio: " + pe.getMessage(), pe);
+        }
 
         // Regla: Registrar automáticamente la fecha y hora del registro de la operación (ya la tienes en el DTO o se establece en el DAO)
         compraDTO.setFecha(LocalDate.now());

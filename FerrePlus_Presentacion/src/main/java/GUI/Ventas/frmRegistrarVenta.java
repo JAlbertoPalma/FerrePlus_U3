@@ -251,7 +251,8 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
                 ControlGUI.getInstancia().registrarVenta(ControlGUI.getInstancia().crearVentaDTO(
                         ControlGUI.getInstancia().obtenerDetallesVenta(),
                         true, 
-                        this.dateTimePickerVenta.getDateTimePermissive(), 
+                        LocalDateTime.now(),
+//                        this.dateTimePickerVenta.getDateTimePermissive(), 
                         total));
             } catch (NegocioException ex) {
                 Logger.getLogger(frmRegistrarVenta.class.getName()).log(Level.SEVERE, null, ex);

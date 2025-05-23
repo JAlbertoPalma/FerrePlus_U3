@@ -121,9 +121,12 @@ public class VentaBO implements IVentaBO{
         // Regla: Establecer el estado de la venta como activa por defecto al ser creada.
         ventaDTO.setEstado(true);
 
-        // --- 2. Generación de Folio (utilizando el método privado de esta clase) ---
-        // Aquí es donde aplicamos el método generarFolio directamente en el BO
-        ventaDTO.setFolio(generarFolio());
+        try {
+            // Regla: Generar un folio único con el formato CP-YYYYMMDD-XXX
+            ventaDTO.setFolio(ventaDAO.obtenerSiguienteFolio());
+        } catch (PersistenciaException pe) {
+            throw new NegocioException("Error al obtener el folio: " + pe.getMessage(), pe);
+        }
 
         // --- 3. Mapeo DTO a Entidad ---
         Venta ventaEntity;
