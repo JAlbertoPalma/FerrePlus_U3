@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import modulo.inventario.frmActualizarProducto;
 import modulo.inventario.frmMenuInventario;
@@ -135,8 +137,12 @@ public class ControlGUI {
      */
     public void mostrarMenuPrincipal() {
         if (this.menuPrincipal == null) {
-            this.menuPrincipal = new frmMenuPrincipal();
-            menuPrincipal.setLocationRelativeTo(null);
+            try {
+                this.menuPrincipal = new frmMenuPrincipal();
+                menuPrincipal.setLocationRelativeTo(null);
+            } catch (NegocioException ex) {
+                Logger.getLogger(ControlGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         this.menuPrincipal.setVisible(true);
     }

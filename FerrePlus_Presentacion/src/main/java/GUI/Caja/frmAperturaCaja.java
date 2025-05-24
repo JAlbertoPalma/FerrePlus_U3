@@ -140,6 +140,7 @@ public class frmAperturaCaja extends javax.swing.JFrame {
             
             //Pasados filtros se abre la caja
             caja = ControlGUI.getInstancia().abrirCaja(caja);
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
             
             //Si no hubo errores
             JOptionPane.showMessageDialog(this, "Se ha abierto la caja con éxito", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
@@ -153,6 +154,7 @@ public class frmAperturaCaja extends javax.swing.JFrame {
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
         // TODO add your handling code here:
         ControlGUI.getInstancia().mostrarMenuCaja();
+        this.dispose();
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
     private void txtMontoInicialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMontoInicialActionPerformed

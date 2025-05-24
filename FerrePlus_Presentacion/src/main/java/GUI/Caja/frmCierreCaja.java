@@ -200,6 +200,7 @@ public class frmCierreCaja extends javax.swing.JFrame {
         
         try{
             ControlGUI.getInstancia().cerrarCaja(cierre);
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
             JOptionPane.showMessageDialog(this, "Se ha cerrado la sesión de la caja!", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
         }catch(NegocioException ne){
             JOptionPane.showMessageDialog(this, ne.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -209,6 +210,7 @@ public class frmCierreCaja extends javax.swing.JFrame {
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         ControlGUI.getInstancia().mostrarMenuCaja();
+        this.dispose();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed

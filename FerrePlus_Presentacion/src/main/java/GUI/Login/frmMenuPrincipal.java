@@ -6,12 +6,15 @@ package GUI.Login;
 
 import modulo.inventario.*;
 import Control.ControlGUI;
+import excepciones.NegocioException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,8 +27,10 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
 
     /**
      * Creates new form RegistrarProductoGUI
+     *
+     * @throws excepciones.NegocioException
      */
-    public frmMenuPrincipal() {
+    public frmMenuPrincipal() throws NegocioException {
         initComponents();
         this.setExtendedState(frmMenuPrincipal.MAXIMIZED_BOTH);
         this.AcomodarContenido();
@@ -124,6 +129,7 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioActionPerformed
+
         ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
     }//GEN-LAST:event_btnInventarioActionPerformed
@@ -147,11 +153,17 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
 
     private void btnVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasActionPerformed
         // TODO add your handling code here:
-        ControlGUI.getInstancia().mostrarMenuVentas();
-        this.dispose();
+        if (ControlGUI.getInstancia().getSesionCajaActiva() == null) {
+            JOptionPane.showMessageDialog(this, "Se necesita abrir una caja para acceder a Ventas", "Acción no permitida", JOptionPane.ERROR_MESSAGE);
+
+        } else {
+            ControlGUI.getInstancia().mostrarMenuVentas();
+            this.dispose();
+        }
+
     }//GEN-LAST:event_btnVentasActionPerformed
     private void AcomodarContenido() {
-        JPanel panel = this.pnlFormulario; 
+        JPanel panel = this.pnlFormulario;
         this.pnlFormulario.setLayout(new GridBagLayout()); // Permite centrar componentes dentro
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 0; // Todos estarán en la misma fila (fila 0), se incrementa para mover a la siguiente fila.
@@ -161,79 +173,42 @@ public class frmMenuPrincipal extends javax.swing.JFrame {
 
         // Columna 0
 //        gbc.gridx = 0;
-        
-        this.pnlFormulario.add(this.btnInventario,gbc);
+        this.pnlFormulario.add(this.btnInventario, gbc);
         this.btnInventario.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.btnCompras,gbc);
+        this.pnlFormulario.add(this.btnCompras, gbc);
         this.btnCompras.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.btnVentas,gbc);
+        this.pnlFormulario.add(this.btnVentas, gbc);
         this.btnVentas.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.btnCaja,gbc);
+        this.pnlFormulario.add(this.btnCaja, gbc);
         this.btnCaja.setPreferredSize(new Dimension(200, 50));
         gbc.gridy++;
         gbc.gridy++;
-        this.pnlFormulario.add(this.btnCerrarSesion,gbc);
+        this.pnlFormulario.add(this.btnCerrarSesion, gbc);
         this.btnCerrarSesion.setPreferredSize(new Dimension(200, 50));
-          gbc.gridy++;
-          gbc.gridy++;
+        gbc.gridy++;
+        gbc.gridy++;
         this.add(this.pnlFormulario, BorderLayout.CENTER);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    public void verificarCajaActiva() {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+            ControlGUI.getInstancia().extraerSesionCajaActiva();
+            if (ControlGUI.getInstancia().sesionCajaActiva == null || ControlGUI.getInstancia().sesionCajaActiva.getEstadoSesion() == null) {
+                this.btnVentas.setEnabled(false);
+            } else {
+                this.btnVentas.setEnabled(true);
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmMenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmMenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmMenuPrincipal().setVisible(true);
-            }
-        });
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCaja;

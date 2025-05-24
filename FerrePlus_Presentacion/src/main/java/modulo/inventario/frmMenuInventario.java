@@ -119,7 +119,11 @@ public class frmMenuInventario extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
     private void jButtonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVerActionPerformed
-        ControlGUI.getInstancia().mostrarMenuPrincipal();
+        try {
+            ControlGUI.getInstancia().mostrarProductosRegistrados();
+        } catch (NegocioException ex) {
+            Logger.getLogger(frmMenuInventario.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.dispose();
     }//GEN-LAST:event_jButtonVerActionPerformed
     private void AcomodarContenido() {

@@ -558,14 +558,15 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
         if (categoria.equalsIgnoreCase("") && sku.equalsIgnoreCase("")) {
             this.LlenarTabla();
         } else {
-            max = this.contarPaginas(ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado).size());
-            List<ProductoDTO> productosObtenidos = this.calcularFiltros(sku, categoria, estado);
-            this.ocultarBotones();
+
             //Tabla
             DefaultTableModel model = (DefaultTableModel) this.jTableProductos.getModel();
             model.setRowCount(0); // Limpiar todas las filas existentes en la tabla
 
             try {
+                max = this.contarPaginas(ControlGUI.getInstancia().obtenerProductosFiltro(sku, categoria, estado).size());
+                List<ProductoDTO> productosObtenidos = this.calcularFiltros(sku, categoria, estado);
+                this.ocultarBotones();
                 for (int i = 0; i < productosObtenidos.size(); i++) {
                     ProductoDTO producto = productosObtenidos.get(i);
                     String estados;
@@ -590,6 +591,9 @@ public class frmProductosRegistrados extends javax.swing.JFrame {
             } catch (NullPointerException np) {
                 JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto");
                 throw new NullPointerException("No se encontro ningun producto");
+            } catch (NegocioException ne) {
+                JOptionPane.showMessageDialog(rootPane, "No se encontro ningun producto con los filtros introducidos");
+                throw new NegocioException("No se encontro ningun producto con los filtros introducidos");
             }
         }
         return null;

@@ -69,6 +69,7 @@ public class frmLogin extends javax.swing.JFrame {
         lblUsuario.setText("Usuario");
         pnlFormulario.add(lblUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 120, -1));
 
+        txtUsuario.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtUsuario.setPreferredSize(new java.awt.Dimension(200, 50));
         txtUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -82,6 +83,7 @@ public class frmLogin extends javax.swing.JFrame {
         lblContrasena.setText("Contraseña");
         pnlFormulario.add(lblContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 100, 160, -1));
 
+        txtContrasena.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtContrasena.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFormulario.add(txtContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 140, 120, 22));
 

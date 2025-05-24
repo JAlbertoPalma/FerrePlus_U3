@@ -59,7 +59,7 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
         txtPrecioVenta = new javax.swing.JTextField();
         jComboBoxCategoria = new javax.swing.JComboBox<>();
         jComboBoxUnidad = new javax.swing.JComboBox<>();
-        jButtonCancelar = new javax.swing.JButton();
+        jButtonVolver = new javax.swing.JButton();
         jButtonRegistrar = new javax.swing.JButton();
         lblUnidad = new javax.swing.JLabel();
         txtPrecioCompra = new javax.swing.JTextField();
@@ -118,15 +118,15 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
         jComboBoxUnidad.setPreferredSize(new java.awt.Dimension(150, 40));
         pnlFormulario.add(jComboBoxUnidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 230, 110, 22));
 
-        jButtonCancelar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButtonCancelar.setText("Cancelar");
-        jButtonCancelar.setPreferredSize(new java.awt.Dimension(130, 45));
-        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonVolver.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButtonVolver.setText("Volver");
+        jButtonVolver.setPreferredSize(new java.awt.Dimension(130, 45));
+        jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCancelarActionPerformed(evt);
+                jButtonVolverActionPerformed(evt);
             }
         });
-        pnlFormulario.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 100, 32));
+        pnlFormulario.add(jButtonVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 370, 100, 32));
 
         jButtonRegistrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonRegistrar.setText("Registrar");
@@ -210,11 +210,11 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonRegistrarActionPerformed
 
-    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
         ControlGUI.getInstancia().mostrarMenuProducto();
         this.dispose();
         
-    }//GEN-LAST:event_jButtonCancelarActionPerformed
+    }//GEN-LAST:event_jButtonVolverActionPerformed
 
     private void registro() throws NegocioException {
         if (ControlGUI.getInstancia().ValidarRegistroProducto(this.txtSKU.getText(),
@@ -284,7 +284,7 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
         gbc.gridy++;
         panel.add(this.txtProveedor, gbc);
         gbc.gridy++;
-        panel.add(this.jButtonCancelar, gbc);
+        panel.add(this.jButtonVolver, gbc);
         gbc.gridy++;
         panel.add(this.jButtonRegistrar, gbc);
 
@@ -350,8 +350,8 @@ public class frmRegistrarProducto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonRegistrar;
+    private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxCategoria;
     private javax.swing.JComboBox<String> jComboBoxUnidad;
     private javax.swing.JLabel lblCategoria;
