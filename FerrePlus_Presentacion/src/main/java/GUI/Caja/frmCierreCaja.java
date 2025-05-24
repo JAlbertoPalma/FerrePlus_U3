@@ -273,11 +273,12 @@ public class frmCierreCaja extends javax.swing.JFrame {
     private void llenarCamposSesion(){
         //Obtenemos la sesión activa
         CajaDTO sesionCaja = ControlGUI.getInstancia().getSesionCajaActiva();
-        
+         
+        Double montoFinal = sesionCaja.getMontoInicial() + sesionCaja.getTotalVentas();
         //llenamos los txt
         txtCantidad.setText(sesionCaja.getCantidadDeProductos().toString());
         txtCierre.setText(sesionCaja.getObservacionesCierre());
-        txtMontoFinal.setText(sesionCaja.getMontoFinalEstimado().toString());
+        txtMontoFinal.setText(montoFinal.toString());
         txtNumeroTotalVentas.setText(sesionCaja.getNumeroDeVentas().toString());
         txtTotal.setText(sesionCaja.getTotalVentas().toString());
     }

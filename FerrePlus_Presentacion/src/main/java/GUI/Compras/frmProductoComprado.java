@@ -176,10 +176,18 @@ public class frmProductoComprado extends javax.swing.JFrame {
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
         try {
-            ControlGUI.getInstancia().guardarDetalleCompra(id, Integer.valueOf(this.txtCantidad.getText()), Double.valueOf(this.txtPrecioCompra.getText()), Double.valueOf(this.txtSubtotal.getText()));
+            int cantidad = Integer.parseInt(this.txtCantidad.getText());
+
+            if(cantidad <= 0){
+                JOptionPane.showMessageDialog(this, "la cantidad debe ser mayor a 0", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ControlGUI.getInstancia().guardarDetalleCompra(id, cantidad, Double.valueOf(this.txtPrecioCompra.getText()), Double.valueOf(this.txtSubtotal.getText()));
             ControlGUI.getInstancia().PasarInfoARegistrarCompra();
         } catch (NegocioException ex) {
-            Logger.getLogger(frmProductoComprado.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Ingrese datos numéricos", "Datos erroneos", JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_jButtonConfirmarActionPerformed

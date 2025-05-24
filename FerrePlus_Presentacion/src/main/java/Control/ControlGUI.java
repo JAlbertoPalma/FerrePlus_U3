@@ -523,6 +523,10 @@ public class ControlGUI {
         System.out.println("Se le añadieron detalles: " + venta.getDetalles());
         return ventaBO.agregar(venta);
     }
+    
+    public boolean actualizarResumenCaja(String id, double totalVenta, int cantidad) throws NegocioException{
+        return cajaBO.actualizarResumenVentas(id, totalVenta, cantidad, 1);
+    }
     public List<CompraDTO> comprasFiltro(LocalDate inicio, LocalDate fin, String proveedor, String nombreProducto) throws NegocioException{
        return compraBO.obtenerPorFiltros(inicio, fin, proveedor, nombreProducto);
     }

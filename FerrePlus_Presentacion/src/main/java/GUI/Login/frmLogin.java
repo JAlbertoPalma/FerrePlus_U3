@@ -131,13 +131,21 @@ public class frmLogin extends javax.swing.JFrame {
     private void jButtonIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonIngresarActionPerformed
         if (this.txtUsuario.getText().isEmpty() && this.txtContrasena.getText().isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Debe escribir un usuario y una contraseña para ingresar");
-        } else if (this.txtUsuario.getText().isEmpty()) {
+        }
+        
+        if (this.txtUsuario.getText().isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Debe escribir un usuario");
-        } else if (this.txtContrasena.getText().isEmpty()) {
+        }
+        
+        if (this.txtContrasena.getText().isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Debe escribir una contraseña");
-        }else{
+        }
+        
+        if(this.txtUsuario.getText().equalsIgnoreCase("administrador") && this.txtContrasena.getText().equalsIgnoreCase("admin123")){
             ControlGUI.getInstancia().mostrarMenuPrincipal();
             this.dispose();
+        }else{
+            JOptionPane.showMessageDialog(this, "Credenciales inválidas");
         }
 
     }//GEN-LAST:event_jButtonIngresarActionPerformed

@@ -115,6 +115,11 @@ public class frmMenuCaja extends javax.swing.JFrame {
 
     private void jButtonCierreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCierreActionPerformed
         // TODO add your handling code here:
+        if(ControlGUI.getInstancia().getSesionCajaActiva() == null){
+            JOptionPane.showMessageDialog(this, "Abra una sesión de caja antes de cerrarla", "Acción no permitida", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         ControlGUI.getInstancia().mostrarCierreCaja();
     }//GEN-LAST:event_jButtonCierreActionPerformed
     private void AcomodarContenido() {

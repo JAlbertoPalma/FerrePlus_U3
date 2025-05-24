@@ -245,15 +245,23 @@ public class frmRegistrarVenta extends javax.swing.JFrame {
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
         if (ControlGUI.getInstancia().obtenerDetallesVenta() == null || ControlGUI.getInstancia().obtenerDetallesVenta().isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "No puede registrar una venta sin productos");
+            JOptionPane.showMessageDialog(this, "No puede registrar una venta sin productos", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             try {
-                ControlGUI.getInstancia().registrarVenta(ControlGUI.getInstancia().crearVentaDTO(
+                VentaDTO ventaHecha = ControlGUI.getInstancia().registrarVenta(ControlGUI.getInstancia().crearVentaDTO(
                         ControlGUI.getInstancia().obtenerDetallesVenta(),
                         true, 
                         LocalDateTime.now(),
 //                        this.dateTimePickerVenta.getDateTimePermissive(), 
                         total));
+                
+                boolean cuco = ControlGUI.getInstancia().actualizarResumenCaja(ControlGUI.getInstancia().getSesionCajaActiva().getId(), 
+                                                        ventaHecha.getTotal(), 
+                                                        ControlGUI.getInstancia().obtenerDetallesVenta().size());
+                if(!cuco){
+                    JOptionPane.showMessageDialog(this, "No se actualizó el resumen de la caja :(", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                JOptionPane.showMessageDialog(this, "Se creó la venta con folio: " + ventaHecha.getFolio(), "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
             } catch (NegocioException ex) {
                 Logger.getLogger(frmRegistrarVenta.class.getName()).log(Level.SEVERE, null, ex);
             }
