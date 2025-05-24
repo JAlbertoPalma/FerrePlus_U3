@@ -12,6 +12,7 @@ import excepciones.PersistenciaException;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import mappers.CajaMapper;
 import modulo.caja.ICajaDAO;
 import modulo.inventario.IProductoDAO;
@@ -20,7 +21,8 @@ import modulo.inventario.IProductoDAO;
  *
  * @author Beto_
  */
-public class CajaBO implements ICajaBO{
+public class CajaBO implements ICajaBO {
+
     private ICajaDAO cajaDAO;
 
     public CajaBO() {
@@ -30,23 +32,27 @@ public class CajaBO implements ICajaBO{
             Logger.getLogger(CajaBO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public CajaDTO abrir(CajaDTO cajaDTO) throws NegocioException {
         // 1. Validaciones de Negocio (basadas en tus reglas)
         if (cajaDTO == null) {
+            JOptionPane.showMessageDialog(null, "La información de la caja no puede ser nula para la apertura.");
             throw new NegocioException("La información de la caja no puede ser nula para la apertura.");
         }
         if (cajaDTO.getMontoInicial() == null || cajaDTO.getMontoInicial() < 0) { // Regla: Monto inicial positivo o cero
+            JOptionPane.showMessageDialog(null, "El monto inicial debe ser un valor positivo o cero.");
             throw new NegocioException("El monto inicial debe ser un valor positivo o cero.");
         }
-        
+
         try {
             CajaDTO sesionActivaExistente = obtenerSesionActiva();
             if (sesionActivaExistente != null && sesionActivaExistente.getEstadoSesion()) {
+                JOptionPane.showMessageDialog(null, "Ya existe una sesión de caja activa. Cierre la sesión anterior antes de abrir una nueva. Fecha: " + sesionActivaExistente.getFechaHoraApertura());
                 throw new NegocioException("Ya existe una sesión de caja activa. Cierre la sesión anterior antes de abrir una nueva. Fecha: " + sesionActivaExistente.getFechaHoraApertura());
             }
         } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, "Error al verificar sesiones activas existentes");
             throw new NegocioException("Error al verificar sesiones activas existentes: " + e.getMessage(), e);
         }
 
@@ -61,6 +67,7 @@ public class CajaBO implements ICajaBO{
             // 4. Convertir Entidad a DTO y retornar utilizando el Mapper
             return CajaMapper.toDTO(cajaGuardada);
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null, "Error al registrar la apertura de caja");
             throw new NegocioException("Error al registrar la apertura de caja: " + e.getMessage(), e);
         }
     }
@@ -69,9 +76,11 @@ public class CajaBO implements ICajaBO{
     public CajaDTO cerrar(CajaDTO cajaDTO) throws NegocioException {
         // 1. Validaciones de Negocio (basadas en tus reglas)
         if (cajaDTO == null) {
+            JOptionPane.showMessageDialog(null, "La información de la caja no puede ser nula para el cierre.");
             throw new NegocioException("La información de la caja no puede ser nula para el cierre.");
         }
         if (cajaDTO.getId() == null || cajaDTO.getId().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El ID de la caja es obligatorio para el cierre.");
             throw new NegocioException("El ID de la caja es obligatorio para el cierre.");
         }
         // Fecha y hora de cierre (automática), totalVentas, cantidadProductos, numeroVentas (automáticos)
@@ -82,16 +91,20 @@ public class CajaBO implements ICajaBO{
         try {
             sesionActiva = obtenerSesionActiva(); // Obtener la sesión activa del DAO
         } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, "Error al verificar la sesión activa para el cierre");
             throw new NegocioException("Error al verificar la sesión activa para el cierre: " + e.getMessage(), e);
         }
 
         if (sesionActiva == null) {
+            JOptionPane.showMessageDialog(null, "No hay ninguna sesión de caja activa para cerrar.");
             throw new NegocioException("No hay ninguna sesión de caja activa para cerrar.");
         }
         if (!sesionActiva.getId().equals(cajaDTO.getId())) {
+            JOptionPane.showMessageDialog(null, "La caja con ID " + cajaDTO.getId() + " no es la sesión activa actual. Solo se puede cerrar la sesión activa.");
             throw new NegocioException("La caja con ID " + cajaDTO.getId() + " no es la sesión activa actual. Solo se puede cerrar la sesión activa.");
         }
         if (!sesionActiva.getEstadoSesion()) { // Redundante si ya verificamos que es la activa, pero es una buena doble verificación
+            JOptionPane.showMessageDialog(null, "La sesión de caja con ID " + cajaDTO.getId() + " ya está cerrada.");
             throw new NegocioException("La sesión de caja con ID " + cajaDTO.getId() + " ya está cerrada.");
         }
 
@@ -101,7 +114,7 @@ public class CajaBO implements ICajaBO{
         cajaDTO.setTotalVentas(sesionActiva.getTotalVentas()); // Automática
         cajaDTO.setCantidadDeProductos(sesionActiva.getCantidadDeProductos()); // Automática
         cajaDTO.setNumeroDeVentas(sesionActiva.getNumeroDeVentas()); // Automática
-        
+
         // Monto final estimado = monto inicial + total de ventas
         cajaDTO.setMontoFinalEstimado(sesionActiva.getMontoInicial() + sesionActiva.getTotalVentas()); // Automática
 
@@ -116,6 +129,7 @@ public class CajaBO implements ICajaBO{
             // Estos son resultados de la acción de cerrar, no validaciones previas.
             return CajaMapper.toDTO(cajaCerrada); // El DAO debería devolver la entidad actualizada
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null, "Error al registrar el cierre de caja");
             throw new NegocioException("Error al registrar el cierre de caja: " + e.getMessage(), e);
         }
     }
@@ -124,6 +138,7 @@ public class CajaBO implements ICajaBO{
     public boolean actualizarResumenVentas(String id, double totalVentasInc, int cantidadProductosInc, int numeroVentasInc) throws NegocioException {
         // 1. Validaciones de Negocio
         if (id == null || id.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El ID de la caja es obligatorio para actualizar el resumen de ventas.");
             throw new NegocioException("El ID de la caja es obligatorio para actualizar el resumen de ventas.");
         }
 
@@ -132,13 +147,16 @@ public class CajaBO implements ICajaBO{
         try {
             CajaDTO cajaExistente = obtenerPorId(id); // Obtener el estado actual de la caja
             if (cajaExistente == null) {
+                 JOptionPane.showMessageDialog(null, "No se encontró la caja con ID: " + id + " para actualizar su resumen de ventas.");
                 throw new NegocioException("No se encontró la caja con ID: " + id + " para actualizar su resumen de ventas.");
             }
             if (!cajaExistente.getEstadoSesion()) {
+                JOptionPane.showMessageDialog(null, "No se puede actualizar el resumen de ventas de una caja que no está activa.");
                 throw new NegocioException("No se puede actualizar el resumen de ventas de una caja que no está activa.");
             }
 
         } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, "Error al verificar la caja para actualizar resumen de ventas");
             throw new NegocioException("Error al verificar la caja para actualizar resumen de ventas: " + e.getMessage(), e);
         }
 
@@ -146,6 +164,7 @@ public class CajaBO implements ICajaBO{
         try {
             return cajaDAO.actualizarResumenVentas(id, totalVentasInc, cantidadProductosInc, numeroVentasInc);
         } catch (PersistenciaException e) {
+             JOptionPane.showMessageDialog(null, "Error al actualizar el resumen de ventas");
             throw new NegocioException("Error al actualizar el resumen de ventas: " + e.getMessage(), e);
         }
     }
@@ -154,6 +173,7 @@ public class CajaBO implements ICajaBO{
     public CajaDTO obtenerPorId(String id) throws NegocioException {
         // 1. Validaciones de Negocio
         if (id == null || id.trim().isEmpty()) {
+              JOptionPane.showMessageDialog(null,"El ID de la caja es obligatorio para la consulta.");
             throw new NegocioException("El ID de la caja es obligatorio para la consulta.");
         }
 
@@ -163,6 +183,7 @@ public class CajaBO implements ICajaBO{
             // 3. Convertir Entidad a DTO y retornar utilizando el Mapper
             return CajaMapper.toDTO(cajaEntity); // toDTO ya maneja el caso de entidad nula
         } catch (PersistenciaException e) {
+             JOptionPane.showMessageDialog(null,"Error al obtener la caja por ID");
             throw new NegocioException("Error al obtener la caja por ID: " + e.getMessage(), e);
         }
     }
@@ -175,6 +196,7 @@ public class CajaBO implements ICajaBO{
             // 3. Convertir Entidad a DTO y retornar utilizando el Mapper
             return CajaMapper.toDTO(cajaEntity); // toDTO ya maneja el caso de entidad nula
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener la sesión de caja activa");
             throw new NegocioException("Error al obtener la sesión de caja activa: " + e.getMessage(), e);
         }
     }

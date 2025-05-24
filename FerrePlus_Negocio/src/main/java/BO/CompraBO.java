@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import mappers.CompraMapper;
 import mappers.DetalleCompraMapper;
 import modulo.compras.ICompraDAO;
@@ -56,12 +57,15 @@ public class CompraBO implements ICompraBO{
     public CompraDTO agregar(CompraDTO compraDTO) throws NegocioException {
         // 1. Validaciones de Negocio
         if (compraDTO == null) {
+             JOptionPane.showMessageDialog(null,"La información de la compra no puede ser nula.");
             throw new NegocioException("La información de la compra no puede ser nula.");
         }
         if (compraDTO.getFecha() == null) {
+                JOptionPane.showMessageDialog(null,"La fecha de compra es obligatoria.");
             throw new NegocioException("La fecha de compra es obligatoria.");
         }
         if (compraDTO.getDetalles() == null || compraDTO.getDetalles().isEmpty()) {
+                 JOptionPane.showMessageDialog(null,"Una compra debe tener al menos un producto en sus detalles.");
             throw new NegocioException("Una compra debe tener al menos un producto en sus detalles.");
         }
 
@@ -70,12 +74,15 @@ public class CompraBO implements ICompraBO{
         // Validar y calcular subtotales de cada detalle
         for (DetalleCompraDTO detalle : compraDTO.getDetalles()) {
             if (detalle.getIdProducto() == null || detalle.getIdProducto().trim().isEmpty()) {
+                   JOptionPane.showMessageDialog(null,"El ID del producto en el detalle no puede ser nulo o vacío.");
                 throw new NegocioException("El ID del producto en el detalle no puede ser nulo o vacío.");
             }
             if (detalle.getCantidad() == null || detalle.getCantidad() <= 0) { // Evitar cantidades negativas o cero
+                JOptionPane.showMessageDialog(null,"La cantidad adquirida para un producto debe ser positiva.");
                 throw new NegocioException("La cantidad adquirida para un producto debe ser positiva.");
             }
             if (detalle.getPrecioDeCompra() == null || detalle.getPrecioDeCompra() < 0) { // Evitar precios negativos
+                 JOptionPane.showMessageDialog(null,"El precio de compra unitario no puede ser negativo.");
                 throw new NegocioException("El precio de compra unitario no puede ser negativo.");
             }
 
@@ -84,9 +91,11 @@ public class CompraBO implements ICompraBO{
             try {
                 productoExistente = productoDAO.obtenerPorId(detalle.getIdProducto());
             } catch (PersistenciaException e) {
+                 JOptionPane.showMessageDialog(null,"Error al verificar la existencia del producto con ID " + detalle.getIdProducto());
                 throw new NegocioException("Error al verificar la existencia del producto con ID " + detalle.getIdProducto() + ": " + e.getMessage(), e);
             }
             if (productoExistente == null) {
+                                 JOptionPane.showMessageDialog(null,"El producto con ID " + detalle.getIdProducto()+ " no está registrado en el inventario.");
                 throw new NegocioException("El producto con ID " + detalle.getIdProducto() + " no está registrado en el inventario.");
             }
 
@@ -103,6 +112,7 @@ public class CompraBO implements ICompraBO{
             // Regla: Generar un folio único con el formato CP-YYYYMMDD-XXX
             compraDTO.setFolio(compraDAO.obtenerSiguienteFolio());
         } catch (PersistenciaException pe) {
+            JOptionPane.showMessageDialog(null,"Error al obtener el folio");
             throw new NegocioException("Error al obtener el folio: " + pe.getMessage(), pe);
         }
 
@@ -113,6 +123,7 @@ public class CompraBO implements ICompraBO{
         try {
             compraEntity = CompraMapper.toEntity(compraDTO);
         } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null,"Error al mapear la compra a entidad");
             throw new NegocioException("Error al mapear la compra a entidad: " + e.getMessage(), e);
         }
 
@@ -121,6 +132,7 @@ public class CompraBO implements ICompraBO{
         try {
             compraGuardada = compraDAO.agregar(compraEntity);
         } catch (PersistenciaException e) {
+                 JOptionPane.showMessageDialog(null,"Error al agregar la compra en la base de datos: ");
             throw new NegocioException("Error al agregar la compra en la base de datos: " + e.getMessage(), e);
         }
 
@@ -158,12 +170,14 @@ public class CompraBO implements ICompraBO{
     @Override
     public CompraDTO obtenerPorId(String id) throws NegocioException {
         if (id == null || id.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null,"El ID de la compra no puede ser nulo o vacío para la consulta.");
             throw new NegocioException("El ID de la compra no puede ser nulo o vacío para la consulta.");
         }
         try {
             Compra compraEntity = compraDAO.obtenerPorId(id);
             return CompraMapper.toDTO(compraEntity); // Maneja null si no se encuentra
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener la compra por ID");
             throw new NegocioException("Error al obtener la compra por ID: " + e.getMessage(), e);
         }
     }
@@ -171,12 +185,14 @@ public class CompraBO implements ICompraBO{
     @Override
     public CompraDTO obtenerPorFolio(String folio) throws NegocioException {
         if (folio == null || folio.trim().isEmpty()) {
+             JOptionPane.showMessageDialog(null,"El folio de la compra no puede ser nulo o vacío para la consulta.");
             throw new NegocioException("El folio de la compra no puede ser nulo o vacío para la consulta.");
         }
         try {
             Compra compraEntity = compraDAO.obtenerPorFolio(folio);
             return CompraMapper.toDTO(compraEntity); // Maneja null si no se encuentra
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener la compra por folio");
             throw new NegocioException("Error al obtener la compra por folio: " + e.getMessage(), e);
         }
     }
@@ -187,6 +203,7 @@ public class CompraBO implements ICompraBO{
             List<Compra> compras = compraDAO.obtenerTodas();
             return CompraMapper.toDTOList(compras);
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener todas las compras");
             throw new NegocioException("Error al obtener todas las compras: " + e.getMessage(), e);
         }
     }
@@ -199,6 +216,7 @@ public class CompraBO implements ICompraBO{
             List<Compra> comprasFiltradas = compraDAO.obtenerPorFiltros(fechaInicio, fechaFin, proveedor, nombreProducto);
             return CompraMapper.toDTOList(comprasFiltradas);
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener compras por filtros");
             throw new NegocioException("Error al obtener compras por filtros: " + e.getMessage(), e);
         }
     }
@@ -206,12 +224,14 @@ public class CompraBO implements ICompraBO{
     @Override
     public List<DetalleCompraDTO> obtenerDetalles(String id) throws NegocioException {
         if (id == null || id.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null,"El ID de la compra no puede ser nulo o vacío para obtener sus detalles.");
             throw new NegocioException("El ID de la compra no puede ser nulo o vacío para obtener sus detalles.");
         }
         try {
             List<DetalleCompra> detalles = compraDAO.obtenerDetalles(id);
             return DetalleCompraMapper.toDTOList(detalles);
         } catch (PersistenciaException e) {
+            JOptionPane.showMessageDialog(null,"Error al obtener los detalles de la compra");
             throw new NegocioException("Error al obtener los detalles de la compra: " + e.getMessage(), e);
         }
     }
