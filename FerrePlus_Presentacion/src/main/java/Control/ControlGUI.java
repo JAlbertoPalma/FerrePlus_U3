@@ -79,13 +79,13 @@ public class ControlGUI {
     private frmProductosRegistrados productosRegistrados;
     private IProductoBO productoBO = new ProductoBO();
     //Compras
-    private ICompraBO compras = new CompraBO();
+    private ICompraBO compraBO = new CompraBO();
     private frmConsultarCompras consultarCompras;
     private frmMenuCompras menuCompras;
     private frmProductoComprado productoComprado;
     private frmRegistrarCompra registrarCompra;
     //Ventas
-    private IVentaBO ventas = new VentaBO();
+    private IVentaBO ventaBO = new VentaBO();
     private frmConsultarVentas consultarVentas;
     private frmMenuVentas menuVentas;
     private frmProductoVendido productoVendido;
@@ -183,6 +183,7 @@ public class ControlGUI {
     
     //////////////////////////////VENTAS////////////////////////////////
     public void mostrarMenuVentas() {
+        this.detallesVentaAux.clear();
         this.menuVentas = new frmMenuVentas();
         this.menuVentas.setLocationRelativeTo(null);
         this.menuVentas.setVisible(true);
@@ -221,6 +222,7 @@ public class ControlGUI {
     }
     
     public void mostrarMenuCompras(){
+        this.detallesCompraAux.clear();
         this.menuCompras = new frmMenuCompras();
         this.menuCompras.setLocationRelativeTo(null);
         this.menuCompras.setVisible(true);
@@ -266,7 +268,7 @@ public class ControlGUI {
         if (observaciones.equalsIgnoreCase("No registrado")) {
             observaciones = "Sin Observaciones";
         }
-        ProductoDTO dto = new ProductoDTO(SKU, nombre, categoria, unidadMedida, precioCompra, Double.parseDouble(precioVenta), proveedor, stockIni, observaciones);
+        ProductoDTO dto = new ProductoDTO(SKU, nombre, categoria, unidadMedida, precioCompra, Double.valueOf(precioVenta), proveedor, stockIni, observaciones);
         return dto;
     }
 
@@ -501,7 +503,7 @@ public class ControlGUI {
         return nuevaVenta;
     }
     public List<VentaDTO> obtenerVentaFiltros(LocalDateTime fechaInicio, LocalDateTime fechaFin,String folio, String nombreProducto, boolean estado) throws NegocioException{
-        return this.ventas.obtenerPorFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
+        return this.ventaBO.obtenerPorFiltros(fechaInicio, fechaFin, folio, nombreProducto, estado);
     }
    
     public List<DetalleVentaDTO> detallesVenta(){
@@ -509,6 +511,7 @@ public class ControlGUI {
     }
     public void guardarDetallesVenta(String id, int cantidad, Double descuento, Double subtotal){
         DetalleVentaDTO detalle = new DetalleVentaDTO(id,cantidad,descuento,subtotal);
+        System.out.println("Guardado en la lista de control detalle: " + detalle);
         this.detallesVentaAux.add(detalle);
     }
 
@@ -517,10 +520,11 @@ public class ControlGUI {
     }
     public VentaDTO registrarVenta(VentaDTO venta) throws NegocioException{
         venta.setIdCaja(sesionCajaActiva.getId());
-        return ventas.agregar(venta);
+        System.out.println("Se le añadieron detalles: " + venta.getDetalles());
+        return ventaBO.agregar(venta);
     }
     public List<CompraDTO> comprasFiltro(LocalDate inicio, LocalDate fin, String proveedor, String nombreProducto) throws NegocioException{
-       return compras.obtenerPorFiltros(inicio, fin, proveedor, nombreProducto);
+       return compraBO.obtenerPorFiltros(inicio, fin, proveedor, nombreProducto);
     }
 
     public void guardarDetalleCompra(String id, int cantidad, double precioCompra, double subtotal){
@@ -535,7 +539,8 @@ public class ControlGUI {
         return this.detallesCompraAux;
     }
     public CompraDTO registrarCompra(CompraDTO compra) throws NegocioException{
-        return compras.agregar(compra);
+        compra.setDetalles(detallesCompraAux);
+        return compraBO.agregar(compra);
     }
     public void limpiarListaDetalles(){
         this.detallesCompraAux = new ArrayList<>();

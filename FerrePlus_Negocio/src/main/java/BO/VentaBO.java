@@ -65,6 +65,8 @@ public class VentaBO implements IVentaBO{
         if (ventaDTO.getFechaHora() == null) {
             ventaDTO.setFechaHora(LocalDateTime.now());
         }
+        
+        System.out.println("VentaBO : detalles" + ventaDTO.getDetalles());
         if (ventaDTO.getDetalles() == null || ventaDTO.getDetalles().isEmpty()) {
             throw new NegocioException("Una venta debe tener al menos un producto en sus detalles.");
         }
@@ -114,6 +116,7 @@ public class VentaBO implements IVentaBO{
 
             totalCalculado += subtotalCalculado;
         }
+        ventaDTO.setFechaHora(LocalDateTime.now());
 
         // Regla: Calcular y establecer el total de la venta.
         ventaDTO.setTotal(totalCalculado);

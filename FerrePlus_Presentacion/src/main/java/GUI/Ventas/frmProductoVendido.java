@@ -208,13 +208,38 @@ public class frmProductoVendido extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarActionPerformed
+        if(txtCantidad.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Ingrese la cantidad a vender", "Datos incompletos", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(txtSubtotal.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Haga click en un borde para calcular el subtotal", "Datos incompletos", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         try {
-            ControlGUI.getInstancia().guardarDetallesVenta(id, Integer.valueOf(this.txtCantidad.getText()), Double.valueOf(this.txtDescuento.getText()),
-                    Double.valueOf(this.txtSubtotal.getText()));
+            int cantidad = Integer.parseInt(this.txtCantidad.getText());
+            double descuento = Double.parseDouble(this.txtDescuento.getText());
+            double subtotal = Double.parseDouble(this.txtSubtotal.getText());
+            
+            if(cantidad <= 0){
+                JOptionPane.showMessageDialog(this, "la cantidad debe ser mayor a 0", "Datos inválidos", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if(subtotal <= 0){
+                JOptionPane.showMessageDialog(this, "La ferretería no acepta ventas gratis", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            ControlGUI.getInstancia().guardarDetallesVenta(id, cantidad, descuento,
+                    subtotal);
             ControlGUI.getInstancia().PasarInfoARegistrarVenta();
 
         } catch (NegocioException ex) {
-            Logger.getLogger(frmProductoVendido.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Ingrese datos numéricos", "Datos erroneos", JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_jButtonConfirmarActionPerformed
