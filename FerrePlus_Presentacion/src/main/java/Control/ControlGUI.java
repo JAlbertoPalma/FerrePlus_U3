@@ -529,6 +529,13 @@ public class ControlGUI {
         System.out.println("Se le añadieron detalles: " + venta.getDetalles());
         return ventaBO.agregar(venta);
     }
+    public VentaDTO cancelarVenta(VentaDTO venta) throws NegocioException{
+        return ventaBO.cancelar(venta.getId());
+    }
+    
+    public VentaDTO obtenerVentaFolio(String folio) throws NegocioException{
+        return ventaBO.obtenerPorFolio(folio);
+    }
     
     public boolean actualizarResumenCaja(String id, double totalVenta, int cantidad) throws NegocioException{
         return cajaBO.actualizarResumenVentas(id, totalVenta, cantidad, 1);

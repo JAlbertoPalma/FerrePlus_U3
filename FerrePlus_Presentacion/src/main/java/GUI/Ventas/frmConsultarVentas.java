@@ -76,7 +76,7 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         jTableVentas = new javax.swing.JTable();
         txtNombreProducto = new javax.swing.JTextField();
         lblFechaInicio = new javax.swing.JLabel();
-        jButtonEliminar = new javax.swing.JButton();
+        jButtonCancelar = new javax.swing.JButton();
         lblFechaFin = new javax.swing.JLabel();
         lblFolio = new javax.swing.JLabel();
         txtFolio = new javax.swing.JTextField();
@@ -175,15 +175,15 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         lblFechaInicio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pnlFondo.add(lblFechaInicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 560, 170, -1));
 
-        jButtonEliminar.setText("Eliminar");
-        jButtonEliminar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonEliminar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCancelar.setText("Cancelar");
+        jButtonCancelar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonCancelar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jButtonCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEliminarActionPerformed(evt);
+                jButtonCancelarActionPerformed(evt);
             }
         });
-        pnlFondo.add(jButtonEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
+        pnlFondo.add(jButtonCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 580, 130, 40));
 
         lblFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         lblFechaFin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -200,9 +200,9 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         txtFolio.setPreferredSize(new java.awt.Dimension(200, 50));
         pnlFondo.add(txtFolio, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 520, 190, 22));
 
-        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonConfirmar.setText("Confirmar");
         jButtonConfirmar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonConfirmar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jButtonConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonConfirmarActionPerformed(evt);
@@ -324,30 +324,24 @@ public class frmConsultarVentas extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
-    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
-//        if (aux == 0) {
-//
-//            this.jButtonConfirmar.setText("Eliminar");
-//            this.jButtonEliminar.setVisible(true);
-//            String id = Integer.toString(fila);
-//            System.out.println(id);
-//            try {
-//                String nombre = this.jTableProductos.getValueAt(fila, 1).toString();
-//                System.out.println(nombre);
-//                ControlGUI.getInstancia().EliminarProducto(ControlGUI.getInstancia().obtenerProductoPorNombre(nombre).getId());
-//                JOptionPane.showMessageDialog(rootPane, "Registro Eliminado con exito");
-//            } catch (NegocioException | PersistenciaException ex) {
-//                Logger.getLogger(frmComprasRegistradas.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+    private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
 
+            try {
+                String nombre = this.jTableVentas.getValueAt(filaSeleccionada, 0).toString();
+                System.out.println(nombre);
+                ControlGUI.getInstancia().cancelarVenta(ControlGUI.getInstancia().obtenerVentaFolio(nombre));
+                JOptionPane.showMessageDialog(rootPane, "Registro Cancelado con exito");
+                this.LlenarTablaDetallesInicial();
+            } catch (NegocioException ex) {
+                Logger.getLogger(frmProductosRegistrados.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-    }//GEN-LAST:event_jButtonEliminarActionPerformed
+    }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jTableVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableVentasMouseClicked
 
         filaSeleccionada = this.jTableVentas.getSelectedRow();
-        this.jButtonEliminar.setVisible(true);
+        this.jButtonCancelar.setVisible(true);
     }//GEN-LAST:event_jTableVentasMouseClicked
 
     private void jTableVentasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTableVentasFocusLost
@@ -356,7 +350,7 @@ public class frmConsultarVentas extends javax.swing.JFrame {
 
     private void pnlFondoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlFondoMouseClicked
         if (filaSeleccionada >= 0) {
-            this.jButtonEliminar.setVisible(false);
+            this.jButtonCancelar.setVisible(false);
 
         }
     }//GEN-LAST:event_pnlFondoMouseClicked
@@ -525,9 +519,9 @@ public class frmConsultarVentas extends javax.swing.JFrame {
         gbc.gridy++;
         this.pnlFondo.add(this.jButtonConfirmar, gbc);
         gbc.gridy++;
-        this.pnlFondo.add(this.jButtonEliminar, gbc);
+        this.pnlFondo.add(this.jButtonCancelar, gbc);
         gbc.gridy++;
-        this.jButtonEliminar.setVisible(false);
+        this.jButtonCancelar.setVisible(false);
         this.pnlFondo.add(this.jButtonVolver, gbc);
         gbc.gridy++;
 
@@ -716,8 +710,8 @@ public class frmConsultarVentas extends javax.swing.JFrame {
     private com.github.lgooddatepicker.components.DateTimePicker datePickerInicio;
     private javax.swing.JButton jButtonAtras;
     private javax.swing.JButton jButtonAtras2;
+    private javax.swing.JButton jButtonCancelar;
     private javax.swing.JButton jButtonConfirmar;
-    private javax.swing.JButton jButtonEliminar;
     private javax.swing.JButton jButtonSiguiente;
     private javax.swing.JButton jButtonSiguiente2;
     private javax.swing.JButton jButtonVolver;
